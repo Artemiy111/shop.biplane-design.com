@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { anonymous } from 'better-auth/plugins'
+import { anonymous, admin } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '../db'
 import * as schema from '../db/schema'
@@ -12,7 +12,7 @@ export const auth = betterAuth({
 
   }),
   emailAndPassword: { enabled: true },
-  plugins: [anonymous()],
+  plugins: [anonymous(), admin()],
   // socialProviders: {
   //   github: {
   //     clientId: process.env.GITHUB_CLIENT_ID!,

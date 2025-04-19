@@ -9,6 +9,10 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
   isAnonymous: boolean('is_anonymous'),
+  role: text('role'),
+  banned: boolean('banned'),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires'),
 })
 
 export const sessions = pgTable('sessions', {
@@ -20,6 +24,7 @@ export const sessions = pgTable('sessions', {
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  impersonatedBy: text('impersonated_by'),
 })
 
 export const accounts = pgTable('accounts', {
