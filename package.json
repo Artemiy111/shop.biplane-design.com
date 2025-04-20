@@ -1,5 +1,5 @@
 {
-  "name": "biplane-desing-shop",
+  "name": "biplane-shop",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,15 +8,21 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:style": "stylelint '**/*.{css,vue}'",
     "lint:style:fix": "stylelint '**/*.{css,vue}' --fix",
+    
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:drop": "drizzle-kit drop",
-    "db:seed": "bun ./server/db/seed.ts"
+    "db:seed": "bun ./server/db/seed.ts",
+
+    "db:create": "docker exec -it biplane-shop-postgres-1 psql -U postgres -c \"CREATE DATABASE biplane_shop;\"", 
+    "db:destroy": "docker exec -it biplane-shop-postgres-1 psql -U postgres -c \"DROP DATABASE IF EXISTS biplane_shop;\"",
+    "db:init": "bun run db:destroy && bun run db:create && bun run db:push && bun run db:seed"
   },
   "dependencies": {
     "@nuxt/eslint": "1.3.0",

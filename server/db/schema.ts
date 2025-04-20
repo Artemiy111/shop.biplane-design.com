@@ -10,7 +10,7 @@ export const users = pgTable('users', {
   createdAt: timestamp().notNull(),
   updatedAt: timestamp().notNull(),
   isAnonymous: boolean(),
-  role: text(),
+  role: text({ enum: ['admin', 'user'] }).default('user'),
   banned: boolean(),
   banReason: text(),
   banExpires: timestamp(),
@@ -100,7 +100,7 @@ export const models = pgTable('models', {
   // fileFormat: text(),
   // fileSize: integer(),
   // revitVersion: text(),
-  price: decimal(),
+  price: decimal({ mode: 'number' }),
   discountId: text().references(() => discounts.id),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow(),
@@ -111,6 +111,7 @@ export const modelRelations = relations(models, ({ one, many }) => ({
   imagesToModel: many(imageToModel),
   files: many(files),
   sets: many(modelsToSets),
+  discount: one(discounts, { fields: [models.discountId], references: [discounts.id] }),
 }))
 
 export type ModelDb = typeof models.$inferSelect
@@ -119,9 +120,10 @@ export const images = pgTable('images', {
   id: text().primaryKey(),
   // modelId: integer().notNull().references(() => models.id),
   mimeType: text({ enum: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'] }).notNull(),
-  size: integer().notNull(),
-  width: integer().notNull(),
-  height: integer().notNull(),
+  url: text(),
+  size: integer(),
+  width: integer(),
+  height: integer(),
   createdAt: timestamp().defaultNow(),
 })
 
@@ -140,7 +142,11 @@ export const imagesOptimized = pgTable('images_optimized', {
   width: integer().notNull(),
   height: integer().notNull(),
   createdAt: timestamp().defaultNow(),
-})
+}, t => [index().on(t.imageId)])
+
+export const imageOptimizedRelations = relations(imagesOptimized, ({ one }) => ({
+  image: one(images, { fields: [imagesOptimized.imageId], references: [images.id] }),
+}))
 
 export type ImageOptimizedDb = typeof imagesOptimized.$inferSelect
 
@@ -153,6 +159,8 @@ export const imageToModelRelations = relations(imageToModel, ({ one }) => ({
   image: one(images, { fields: [imageToModel.imageId], references: [images.id] }),
   model: one(models, { fields: [imageToModel.modelId], references: [models.id] }),
 }))
+
+export type ImageToModelDb = typeof imageToModel.$inferSelect
 
 const mimeRevitFileTypes = [
   'application/revit',
@@ -192,11 +200,16 @@ export const sets = pgTable('sets', {
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
-  price: decimal(),
+  price: decimal().notNull(),
   discountId: text().references(() => discounts.id),
   imageId: text().references(() => images.id),
   createdAt: timestamp().defaultNow(),
 })
+
+export const setRelations = relations(sets, ({ one }) => ({
+  discount: one(discounts, { fields: [sets.discountId], references: [discounts.id] }),
+  image: one(images, { fields: [sets.imageId], references: [images.id] }),
+}))
 
 export type SetDb = typeof sets.$inferSelect
 
@@ -210,10 +223,12 @@ export const modelsToSetsRelations = relations(modelsToSets, ({ one }) => ({
   set: one(sets, { fields: [modelsToSets.setId], references: [sets.id] }),
 }))
 
+export type ModelsToSetsDb = typeof modelsToSets.$inferSelect
+
 export const discounts = pgTable('discounts', {
   id: text().primaryKey(),
   label: text(),
-  discountPercentage: decimal(),
+  discountPercentage: decimal({ mode: 'number' }),
   startDate: timestamp(),
   endDate: timestamp(),
 })
@@ -227,7 +242,7 @@ export type DiscountDb = typeof discounts.$inferSelect
 export const promocodes = pgTable('promocodes', {
   id: text().primaryKey(),
   code: text().notNull().unique(),
-  discountPercentage: decimal(),
+  discountPercentage: decimal({ mode: 'number' }),
   startDate: timestamp(),
   endDate: timestamp(),
   maxUsage: integer(),
@@ -248,7 +263,6 @@ export const orders = pgTable('orders', {
   totalPrice: decimal(),
   totalPriceBeforeDiscount: decimal(),
 
-  discountId: text().references(() => discounts.id),
   promocodeId: text().references(() => promocodes.id),
   createdAt: timestamp().defaultNow(),
 
@@ -260,7 +274,6 @@ export const orders = pgTable('orders', {
 
 export const orderRelations = relations(orders, ({ one, many }) => ({
   items: many(orderItems),
-  discount: one(discounts, { fields: [orders.discountId], references: [discounts.id] }),
   promocode: one(promocodes, { fields: [orders.promocodeId], references: [promocodes.id] }),
 }))
 
