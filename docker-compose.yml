@@ -6,11 +6,13 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: nuxttext
+      POSTGRES_DB: biplane_desing_shop
     ports:
       - 5432:5432
     volumes:
       - .data/postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
     # volumes:
   pgadmin:
     image: dpage/pgadmin4
@@ -22,3 +24,9 @@ services:
       - 5050:80
     volumes:
       - .data/pgadmin_data:/var/lib/pgadmin 
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

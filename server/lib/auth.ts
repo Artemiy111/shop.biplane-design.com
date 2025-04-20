@@ -13,6 +13,12 @@ export const auth = betterAuth({
   }),
   emailAndPassword: { enabled: true },
   plugins: [anonymous(), admin()],
+  advanced: {
+    database: {
+      defaultFindManyLimit: undefined,
+      // 'generateId': {""}
+    },
+  },
   // socialProviders: {
   //   github: {
   //     clientId: process.env.GITHUB_CLIENT_ID!,

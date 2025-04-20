@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: text().primaryKey(),
@@ -77,8 +77,6 @@ export const models = pgTable('models', {
 export const images = pgTable('images', {
   id: text().primaryKey(),
   // modelId: integer().notNull().references(() => models.id),
-  key: text().notNull().unique(),
-
   mimeType: text({ enum: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'] }).notNull(),
   size: integer().notNull(),
   width: integer().notNull(),
@@ -89,14 +87,17 @@ export const images = pgTable('images', {
 export const imagesOptimized = pgTable('images_optimized', {
   id: text().primaryKey(),
   imageId: text().notNull().references(() => images.id),
-  key: text().notNull().unique(),
-
   mimeType: text({ enum: ['image/webp', 'image/avif'] }).notNull(),
   size: integer().notNull(),
   width: integer().notNull(),
   height: integer().notNull(),
   createdAt: timestamp().defaultNow(),
 })
+
+export const modelImages = pgTable('model_images', {
+  modelId: text().notNull().references(() => models.id),
+  imageId: text().notNull().references(() => images.id),
+}, t => [primaryKey({ columns: [t.modelId, t.imageId] })])
 
 const mimeRevitFileTypes = [
   'application/revit',
@@ -119,8 +120,6 @@ const mimeTypeFiles = [...mimeRevitFileTypes, 'application/zip', 'application/oc
 export const modelFiles = pgTable('files', {
   id: text().primaryKey(),
   modelId: text().notNull().references(() => models.id),
-  key: text().notNull().unique(),
-
   mimeType: text({ enum: mimeTypeFiles }).notNull(),
   size: integer().notNull(),
   createdAt: timestamp().defaultNow(),
@@ -161,6 +160,8 @@ export const promocodes = pgTable('promocodes', {
   usedCount: integer().default(0),
 })
 
+export const orderStatuses = ['pending', 'confirmed', 'failed'] as const
+
 export const orders = pgTable('orders', {
   id: text().primaryKey(),
   userId: text().notNull().references(() => users.id),
@@ -170,6 +171,11 @@ export const orders = pgTable('orders', {
   discountId: text().references(() => discounts.id),
   promocodeId: text().references(() => promocodes.id),
   createdAt: timestamp().defaultNow(),
+
+  paymentProviter: text({ enum: ['tbank'] }),
+  paymentId: text(),
+  paymentStatus: text({ enum: orderStatuses }).default('pending'),
+  paymentUrl: text(),
 }, t => [index().on(t.userId)])
 
 export const orderItems = pgTable('order_items', {
@@ -195,12 +201,14 @@ export const cartItems = pgTable('cart_items', {
   addedAt: timestamp().defaultNow(),
 })
 
+export const refundStatuses = ['pending', 'confirmed', 'failed'] as const
+
 export const refunds = pgTable('refunds', {
   id: text().primaryKey(),
   orderItemId: text().notNull().references(() => orderItems.id),
   refundedAmount: decimal(),
   reason: text(),
-  status: text().default('pending'),
+  status: text({ enum: refundStatuses }).default('pending'),
   requestedAt: timestamp().defaultNow(),
   resolvedAt: timestamp(),
 })

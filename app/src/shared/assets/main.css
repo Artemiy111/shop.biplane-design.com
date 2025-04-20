@@ -1,2 +1,73 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@utility container {
+  width: min(1400px, 100% - 2 * var(--container-pad));
+  margin-inline: auto;
+}
+
+@theme {
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+ 
+  --breakpoint-*: initial;
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1400px;
+
+  --text-heading: 30px;
+  --text-heading--line-height: 1.1;
+  --text-heading--font-weight: 600;
+
+  --text-subheading: 24px;
+  --text-subheading--line-height: 1.2;
+  --text-subheading--font-weight: 600;
+
+  --text-base: 20px;
+  --text-base--line-height: 1.5;
+
+  --text-sm: 18px;
+  --text-sm--line-height: var(--text-base--line-height);
+
+  --container-pad: --spacing(10);
+  --header-height: --spacing(20);
+
+  --height-full-except-header: calc(100dvh - var(--header-height));
+
+  /* --margin-container-pad: var(--container-pad); */
+  /* --padding-container-pad: var(--container-pad); */
+}
+
+:root {
+  --ui-primary: black;
+
+  @media (width < theme(--breakpoint-md)) {
+    --container-pad: calc(8 * var(--spacing));
+    --text-heading: 28px;
+    --text-subheading: 22px;
+    --text-base: 18px;
+    --text-sm: 16px;
+  }
+
+  @media (width < theme(--breakpoint-sm)) {
+    --container-pad: calc(4* var(--spacing));
+    --text-heading: 24px;
+    --text-subheading: 20px;
+    --text-base: 16px;
+    --text-sm: 14px;
+  }
+}
+
+.dark {
+  --ui-primary: white;
+}
+
+
+html {
+  scrollbar-gutter: stable;
+}
+

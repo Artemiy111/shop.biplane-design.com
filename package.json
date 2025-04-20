@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "biplane-desing-shop",
   "private": true,
   "type": "module",
   "scripts": {
@@ -25,16 +25,21 @@
     "@nuxt/image": "1.10.0",
     "@nuxt/scripts": "0.11.6",
     "@nuxt/ui": "3.0.2",
+    "@trpc/client": "^11.1.0",
+    "@trpc/server": "^11.1.0",
     "@unhead/vue": "^2.0.3",
     "better-auth": "^1.2.7",
+    "clsx": "^2.1.1",
     "drizzle-orm": "^0.42.0",
     "eslint": "^9.0.0",
     "nuxt": "^3.16.2",
     "pg": "^8.14.1",
+    "tailwind-merge": "^3.2.0",
+    "trpc-nuxt": "^1.0.5",
     "typescript": "^5.6.3",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
-    "zod": "^3.24.3"
+    "zod": "^4.0.0-beta.20250420T053007"
   },
   "devDependencies": {
     "@types/bun": "^1.2.10",
