@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
@@ -15,6 +16,16 @@ export const users = pgTable('users', {
   banExpires: timestamp(),
 })
 
+export type UserDb = typeof users.$inferSelect
+
+export const userReload = relations(users, ({ many }) => ({
+  sessions: many(sessions),
+  accounts: many(accounts),
+  orders: many(orders),
+  favorites: many(favorites),
+  cartItems: many(cartItems),
+}))
+
 export const sessions = pgTable('sessions', {
   id: text().primaryKey(),
   expiresAt: timestamp().notNull(),
@@ -26,6 +37,13 @@ export const sessions = pgTable('sessions', {
   userId: text().notNull().references(() => users.id, { onDelete: 'cascade' }),
   impersonatedBy: text('impersonated_by'),
 }, t => [index().on(t.userId), index().on(t.token)])
+
+export type SessionDb = typeof sessions.$inferSelect
+
+export const sessionRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+  impersonatedBy: one(users, { fields: [sessions.impersonatedBy], references: [users.id] }),
+}))
 
 export const accounts = pgTable('accounts', {
   id: text().primaryKey(),
@@ -43,6 +61,12 @@ export const accounts = pgTable('accounts', {
   updatedAt: timestamp().notNull(),
 }, t => [index().on(t.userId)])
 
+export const accountRelations = relations(accounts, ({ one }) => ({
+  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}))
+
+export type AccountDb = typeof accounts.$inferSelect
+
 export const verifications = pgTable('verifications', {
   id: text().primaryKey(),
   identifier: text().notNull(),
@@ -52,12 +76,20 @@ export const verifications = pgTable('verifications', {
   updatedAt: timestamp(),
 }, t => [index().on(t.identifier)])
 
+export type VerificationDb = typeof verifications.$inferSelect
+
 export const categories = pgTable('categories', {
   id: text().primaryKey(),
   name: text().notNull().unique(),
   slug: text().notNull().unique(),
   description: text(),
 })
+
+export const categoryRelations = relations(categories, ({ many }) => ({
+  models: many(models),
+}))
+
+export type CategoryDb = typeof categories.$inferSelect
 
 export const models = pgTable('models', {
   id: text().primaryKey(),
@@ -74,6 +106,15 @@ export const models = pgTable('models', {
   updatedAt: timestamp().defaultNow(),
 }, t => [index().on(t.categoryId)])
 
+export const modelRelations = relations(models, ({ one, many }) => ({
+  category: one(categories, { fields: [models.categoryId], references: [categories.id] }),
+  imagesToModel: many(imageToModel),
+  files: many(files),
+  sets: many(modelsToSets),
+}))
+
+export type ModelDb = typeof models.$inferSelect
+
 export const images = pgTable('images', {
   id: text().primaryKey(),
   // modelId: integer().notNull().references(() => models.id),
@@ -83,6 +124,13 @@ export const images = pgTable('images', {
   height: integer().notNull(),
   createdAt: timestamp().defaultNow(),
 })
+
+export const imageRelations = relations(images, ({ one, many }) => ({
+  optimizedImages: many(imagesOptimized),
+  imageToModel: one(imageToModel),
+}))
+
+export type ImageDb = typeof images.$inferSelect
 
 export const imagesOptimized = pgTable('images_optimized', {
   id: text().primaryKey(),
@@ -94,10 +142,17 @@ export const imagesOptimized = pgTable('images_optimized', {
   createdAt: timestamp().defaultNow(),
 })
 
-export const modelImages = pgTable('model_images', {
+export type ImageOptimizedDb = typeof imagesOptimized.$inferSelect
+
+export const imageToModel = pgTable('image_to_model', {
+  imageId: text().notNull().primaryKey().references(() => images.id),
   modelId: text().notNull().references(() => models.id),
-  imageId: text().notNull().references(() => images.id),
-}, t => [primaryKey({ columns: [t.modelId, t.imageId] })])
+})
+
+export const imageToModelRelations = relations(imageToModel, ({ one }) => ({
+  image: one(images, { fields: [imageToModel.imageId], references: [images.id] }),
+  model: one(models, { fields: [imageToModel.modelId], references: [models.id] }),
+}))
 
 const mimeRevitFileTypes = [
   'application/revit',
@@ -117,13 +172,19 @@ const mimeRevitFileTypes = [
 
 const mimeTypeFiles = [...mimeRevitFileTypes, 'application/zip', 'application/octet-stream'] as const
 
-export const modelFiles = pgTable('files', {
+export const files = pgTable('files', {
   id: text().primaryKey(),
   modelId: text().notNull().references(() => models.id),
   mimeType: text({ enum: mimeTypeFiles }).notNull(),
   size: integer().notNull(),
   createdAt: timestamp().defaultNow(),
 })
+
+export const fileRelations = relations(files, ({ one }) => ({
+  model: one(models, { fields: [files.modelId], references: [models.id] }),
+}))
+
+export type FileDb = typeof files.$inferSelect
 // export const modelImages
 
 export const sets = pgTable('sets', {
@@ -133,22 +194,35 @@ export const sets = pgTable('sets', {
   description: text(),
   price: decimal(),
   discountId: text().references(() => discounts.id),
-  // imageUrl: text(),
+  imageId: text().references(() => images.id),
   createdAt: timestamp().defaultNow(),
 })
 
-export const modelSets = pgTable('model_sets', {
+export type SetDb = typeof sets.$inferSelect
+
+export const modelsToSets = pgTable('models_to_sets', {
   modelId: text().notNull().references(() => models.id),
   setId: text().notNull().references(() => sets.id),
-})
+}, t => [primaryKey({ columns: [t.modelId, t.setId] })])
+
+export const modelsToSetsRelations = relations(modelsToSets, ({ one }) => ({
+  model: one(models, { fields: [modelsToSets.modelId], references: [models.id] }),
+  set: one(sets, { fields: [modelsToSets.setId], references: [sets.id] }),
+}))
 
 export const discounts = pgTable('discounts', {
   id: text().primaryKey(),
+  label: text(),
   discountPercentage: decimal(),
   startDate: timestamp(),
   endDate: timestamp(),
-  code: text(),
 })
+
+export const discountRelations = relations(discounts, ({ many }) => ({
+  orders: many(orders),
+}))
+
+export type DiscountDb = typeof discounts.$inferSelect
 
 export const promocodes = pgTable('promocodes', {
   id: text().primaryKey(),
@@ -159,6 +233,12 @@ export const promocodes = pgTable('promocodes', {
   maxUsage: integer(),
   usedCount: integer().default(0),
 })
+
+export const promocodeRelations = relations(promocodes, ({ many }) => ({
+  orders: many(orders),
+}))
+
+export type PromocodeDb = typeof promocodes.$inferSelect
 
 export const orderStatuses = ['pending', 'confirmed', 'failed'] as const
 
@@ -178,6 +258,14 @@ export const orders = pgTable('orders', {
   paymentUrl: text(),
 }, t => [index().on(t.userId)])
 
+export const orderRelations = relations(orders, ({ one, many }) => ({
+  items: many(orderItems),
+  discount: one(discounts, { fields: [orders.discountId], references: [discounts.id] }),
+  promocode: one(promocodes, { fields: [orders.promocodeId], references: [promocodes.id] }),
+}))
+
+export type OrderDb = typeof orders.$inferSelect
+
 export const orderItems = pgTable('order_items', {
   id: text().primaryKey(),
   orderId: text().notNull().references(() => orders.id),
@@ -187,11 +275,26 @@ export const orderItems = pgTable('order_items', {
   priseBeforeDiscount: decimal(),
 }, t => [index().on(t.orderId)])
 
+export const orderItemRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
+  model: one(models, { fields: [orderItems.modelId], references: [models.id] }),
+  set: one(sets, { fields: [orderItems.setId], references: [sets.id] }),
+}))
+
+export type OrderItemDb = typeof orderItems.$inferSelect
+
 export const favorites = pgTable('favorites', {
   userId: text().notNull().references(() => users.id),
   modelId: text().notNull().references(() => models.id),
   addedAt: timestamp().defaultNow(),
 })
+
+export const favoriteRelations = relations(favorites, ({ one }) => ({
+  user: one(users, { fields: [favorites.userId], references: [users.id] }),
+  model: one(models, { fields: [favorites.modelId], references: [models.id] }),
+}))
+
+export type FavoriteDb = typeof favorites.$inferSelect
 
 export const cartItems = pgTable('cart_items', {
   id: text().primaryKey(),
@@ -200,6 +303,14 @@ export const cartItems = pgTable('cart_items', {
   setId: text().references(() => sets.id),
   addedAt: timestamp().defaultNow(),
 })
+
+export const cartItemRelations = relations(cartItems, ({ one }) => ({
+  user: one(users, { fields: [cartItems.userId], references: [users.id] }),
+  model: one(models, { fields: [cartItems.modelId], references: [models.id] }),
+  set: one(sets, { fields: [cartItems.setId], references: [sets.id] }),
+}))
+
+export type CartItemDb = typeof cartItems.$inferSelect
 
 export const refundStatuses = ['pending', 'confirmed', 'failed'] as const
 
@@ -212,3 +323,9 @@ export const refunds = pgTable('refunds', {
   requestedAt: timestamp().defaultNow(),
   resolvedAt: timestamp(),
 })
+
+export const refundRelations = relations(refunds, ({ one }) => ({
+  orderItem: one(orderItems, { fields: [refunds.orderItemId], references: [orderItems.id] }),
+}))
+
+export type RefundDb = typeof refunds.$inferSelect

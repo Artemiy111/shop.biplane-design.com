@@ -9,7 +9,7 @@ export const useApi = () => {
     const client = createTRPCNuxtClient<AppRouter>({
       links: [
         httpBatchLink({
-          url: `${import.meta.server ? useRuntimeConfig().BASE_URL : ''}/api/trpc`,
+          url: `${useRequestURL().protocol}//${useRequestURL().host}/api/trpc`,
         }),
       ],
     })
