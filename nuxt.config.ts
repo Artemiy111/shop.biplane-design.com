@@ -7,6 +7,8 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/ui',
     '@nuxt/scripts',
+    '@pinia/colada-nuxt',
+    '@pinia/nuxt',
   ],
   devtools: { enabled: true },
 
