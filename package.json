@@ -23,6 +23,7 @@
     "db:init": "bun run db:destroy && bun run db:create && bun run db:push && bun run db:seed"
   },
   "dependencies": {
+    "@iconify-json/lucide": "^1.2.38",
     "@nuxt/eslint": "1.3.0",
     "@nuxt/fonts": "0.11.1",
     "@nuxt/icon": "1.12.0",

@@ -4,6 +4,7 @@ import { useApi } from '~/src/shared/api'
 
 const route = useRoute()
 const api = useApi()
+const colorMode = useColorMode()
 
 const items = ref<NavigationMenuItem[]>([
   {
@@ -59,10 +60,23 @@ const items = ref<NavigationMenuItem[]>([
         >
         <span class="max-sm:hidden">Biplane-Design</span>
       </NuxtLink>
-      <UNavigationMenu
-        :ui="{ linkLeadingIcon: 'text-2xl text-(--ui-text)' }"
-        :items="items"
-      />
+      <div class="flex gap-2 items-center">
+        <UButton
+          class="w-fit h-fit cursor-pointer"
+          :ui="{ leadingIcon: 'text-3xl' }"
+          :icon="colorMode.value === 'dark' ? 'i-lucide-moon' : 'i-lucide-sun'"
+          :variant="'ghost'"
+          @click="colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'"
+        />
+        <USeparator
+          :orientation="'vertical'"
+          class="h-8"
+        />
+        <UNavigationMenu
+          :ui="{ linkLeadingIcon: 'text-3xl text-(--ui-text) ' }"
+          :items="items"
+        />
+      </div>
     </div>
     <USeparator />
   </header>

@@ -19,19 +19,22 @@
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1400px;
 
-  --text-heading: 30px;
+  --text-heading: 32px;
   --text-heading--line-height: 1.1;
   --text-heading--font-weight: 600;
 
-  --text-subheading: 24px;
+  --text-subheading: 26px;
   --text-subheading--line-height: 1.2;
   --text-subheading--font-weight: 600;
 
   --text-base: 20px;
   --text-base--line-height: 1.5;
 
-  --text-sm: 18px;
+  --text-sm: 16px;
   --text-sm--line-height: var(--text-base--line-height);
+
+  --text-xs: 14px;
+  --text-xs--line-height: var(--text-base--line-height);
 
   --container-pad: --spacing(10);
   --header-height: --spacing(20);

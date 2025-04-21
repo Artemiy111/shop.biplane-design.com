@@ -10,6 +10,7 @@ export const appRouter = router({
       with: {
         models: {
           with: {
+            discount: true,
             imagesToModel: {
               with: {
                 image: {

@@ -14,6 +14,14 @@ export default defineNuxtConfig({
 
   css: ['./app/src/shared/assets/main.css'],
 
+  runtimeConfig: {
+    public: {
+      s3Region: process.env.S3_REGION,
+      s3Bucket: process.env.S3_BUCKET,
+      s3BucketEndpointUrl: process.env.S3_BUCKET_ENDPOINT_URL,
+    },
+  },
+
   build: {
     transpile: ['trpc-nuxt'],
   },
