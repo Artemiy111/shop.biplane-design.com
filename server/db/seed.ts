@@ -14,6 +14,10 @@ import {
   files,
   discounts,
   promocodes,
+  users,
+  accounts,
+  sessions,
+  verifications,
 } from './schema'
 
 import { db } from '.'
@@ -93,6 +97,17 @@ export const _models: ModelDb[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    id: '2',
+    categoryId: '1',
+    name: 'Camps Bay Set Oak',
+    slug: 'camps-bay-set-oak',
+    description: '',
+    price: 2_000,
+    discountId: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ]
 
 export const _images: ImageDb[] = [
@@ -105,12 +120,51 @@ export const _images: ImageDb[] = [
     height: null,
     size: null,
   },
+  {
+    id: '2',
+    mimeType: 'image/jpeg',
+    url: 'https://img-new.cgtrader.com/items/3227239/79fa92efb6/camps-bay-set-oak-3d-model-max-obj-fbx-mat.jpg',
+    createdAt: new Date(),
+    width: null,
+    height: null,
+    size: null,
+  },
+  {
+    id: '3',
+    mimeType: 'image/jpeg',
+    url: 'https://img-new.cgtrader.com/items/3227239/c0a24e23c5/camps-bay-set-oak-3d-model-max-obj-fbx-mat.jpg',
+    createdAt: new Date(),
+    width: null,
+    height: null,
+    size: null,
+  },
+  {
+    id: '4',
+    mimeType: 'image/jpeg',
+    url: 'https://img-new.cgtrader.com/items/3227239/04d79f851d/camps-bay-set-oak-3d-model-max-obj-fbx-mat.jpg',
+    createdAt: new Date(),
+    width: null,
+    height: null,
+    size: null,
+  },
 ]
 
 export const _imagesToModels: ImageToModelDb[] = [
   {
     imageId: '1',
     modelId: '1',
+  },
+  {
+    imageId: '2',
+    modelId: '2',
+  },
+  {
+    imageId: '3',
+    modelId: '2',
+  },
+  {
+    imageId: '4',
+    modelId: '2',
   },
 ]
 
@@ -120,6 +174,13 @@ export const _files: FileDb[] = [
     modelId: '1',
     mimeType: 'application/revit',
     size: 10000,
+    createdAt: new Date(),
+  },
+  {
+    id: '2',
+    modelId: '2',
+    mimeType: 'application/revit',
+    size: 20000,
     createdAt: new Date(),
   },
 ]
