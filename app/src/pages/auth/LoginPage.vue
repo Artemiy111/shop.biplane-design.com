@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { type LoginSchema, loginSchema } from './confg/shema'
+import { type LoginSchema, loginSchema } from './config/shema'
 import { authClient } from '~/src/shared/lib/auth-client'
 import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
 

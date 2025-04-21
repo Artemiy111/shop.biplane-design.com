@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { type RegisterSchema, registerSchema } from './confg/shema'
+import { type RegisterSchema, registerSchema } from './config/shema'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { authClient } from '~/src/shared/lib/auth-client'
 
