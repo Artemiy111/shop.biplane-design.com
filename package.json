@@ -30,6 +30,7 @@
     "@nuxt/image": "1.10.0",
     "@nuxt/scripts": "0.11.6",
     "@nuxt/ui": "3.0.2",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@pinia/colada": "^0.15.0",
     "@pinia/colada-nuxt": "0.1.2",
     "@pinia/nuxt": "0.11.0",
