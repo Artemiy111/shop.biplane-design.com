@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey } from 'drizzle-orm/pg-core'
+import { mimeTypesImages, mimeTypesRevit } from '~/src/shared/config/constants/mime-types'
+import { userRoles } from '~/src/shared/config/constants/user'
 
 export const users = pgTable('users', {
   id: text().primaryKey(),
@@ -10,7 +12,7 @@ export const users = pgTable('users', {
   createdAt: timestamp().notNull(),
   updatedAt: timestamp().notNull(),
   isAnonymous: boolean(),
-  role: text({ enum: ['admin', 'user'] }).default('user'),
+  role: text({ enum: userRoles }).default('user'),
   banned: boolean(),
   banReason: text(),
   banExpires: timestamp(),
@@ -118,8 +120,7 @@ export type ModelDb = typeof models.$inferSelect
 
 export const images = pgTable('images', {
   id: text().primaryKey(),
-  // modelId: integer().notNull().references(() => models.id),
-  mimeType: text({ enum: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'] }).notNull(),
+  mimeType: text({ enum: mimeTypesImages }).notNull(),
   url: text(),
   size: integer(),
   width: integer(),
@@ -162,23 +163,7 @@ export const imageToModelRelations = relations(imageToModel, ({ one }) => ({
 
 export type ImageToModelDb = typeof imageToModel.$inferSelect
 
-const mimeRevitFileTypes = [
-  'application/revit',
-  'application/revit-family',
-  'application/revit-template',
-  'application/revit-family-template',
-  'application/revit-group',
-  'application/x-autodesk-revit',
-  'application/x-autodesk-revit-family',
-  'model/gltf-binary',
-  'model/gltf+json',
-  'application/x-3ds',
-  'model/stl',
-  // 'application/vnd.autodesk.revit.model',
-  // 'application/vnd.autodesk.revit.project',
-] as const
-
-const mimeTypeFiles = [...mimeRevitFileTypes, 'application/zip', 'application/octet-stream'] as const
+const mimeTypeFiles = [...mimeTypesRevit, 'application/zip', 'application/octet-stream'] as const
 
 export const files = pgTable('files', {
   id: text().primaryKey(),

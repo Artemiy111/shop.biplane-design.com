@@ -14,4 +14,5 @@ export async function createContext(event: H3Event) {
     user,
   }
 }
-export type Context = typeof createContext
+export type CreateContext = typeof createContext
+export type Context = Awaited<ReturnType<CreateContext>>
