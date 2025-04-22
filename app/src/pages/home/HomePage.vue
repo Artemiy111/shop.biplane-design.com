@@ -3,11 +3,15 @@ import type { UnwrapRef } from 'vue'
 import ModelCard from './ui/ModelCard.vue'
 import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
 import { useCategories } from '~/src/shared/models/queries'
+import { authClient } from '~/src/shared/lib/auth-client'
 
-const { data: categories, status } = useCategories()
+const { data: categories } = useCategories()
+const session = authClient.useSession()
 
 export type Categories = UnwrapRef<typeof categories>
 export type Model = Exclude<Categories, undefined>[0]['models'][0]
+
+const isAuthedCustomer = computed(() => session.value?.data?.user?.role === 'customer')
 </script>
 
 <template>
@@ -22,16 +26,17 @@ export type Model = Exclude<Categories, undefined>[0]['models'][0]
         <h3 class="text-subheading">
           {{ category.name }}
         </h3>
-        <div class="grid grid-cols-3 gap-6">
+        <div class="grid grid-cols-3 gap-16">
           <ModelCard
             v-for="model in category.models"
             :key="model.id"
+            :is-authed-customer="isAuthedCustomer"
             :model="model"
+            :is-favorite="false"
+            :is-in-cart="true"
           />
         </div>
       </div>
     </div>
-    https://storage.yandexcloud.net/biplane-design/77/4fc4dcf2-7876-4caf-bc99-82b1ea418569.jpeg
-    <!-- {{ session }} -->
   </main>
 </template>

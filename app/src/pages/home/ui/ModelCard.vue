@@ -1,23 +1,44 @@
 <script setup lang="ts">
-import type { Model } from '../home-page.vue'
+import { HeartIcon, ShoppingCart } from 'lucide-vue-next'
+import type { Model } from '../HomePage.vue'
 import { formatPrice, priceAfterDiscount } from '~/src/shared/lib/price'
-import { imageUrl } from '~/src/shared/lib/image'
+import { imageUrl, mimeToExt } from '~/src/shared/lib/image'
+import { useApi } from '~/src/shared/api'
+import { cn } from '~/src/shared/lib/cn'
 
-const { model } = defineProps<{
+const { isAuthedCustomer, model, isFavorite, isInCart } = defineProps<{
+  isAuthedCustomer: boolean
   model: Model
+  isFavorite: boolean
+  isInCart: boolean
 }>()
 
 const currentImage = ref(0)
+
+const toast = useToast()
+
+const { mutate: toggleFavorite } = useMutation({
+  key: () => ['toggleFavorite', model.id],
+  mutation: async (modelId: string) => {
+    if (!isAuthedCustomer) {
+      toast.add({ color: 'info', title: 'Войдите чтобы добавить в избранное', duration: 1000 })
+      return
+    }
+    console.log('toggleFavorite')
+    await useApi().customer.toggleFavorite.mutate({ modelId: modelId })
+    console.log('wft')
+  },
+})
 </script>
 
 <template>
-  <NuxtLink
-    :to="`/models/${model.slug}`"
+  <div
     class="grid grid-rows-[minmax(200px,1fr)_max-content_max-content_max-content]"
   >
-    <div
+    <NuxtLink
       v-if="model.imagesToModel.length"
-      class="relative"
+      :to="`/models/${model.slug}`"
+      class="relative group"
     >
       <NuxtImg
         v-for="(imageToModel, index) in model.imagesToModel"
@@ -27,30 +48,49 @@ const currentImage = ref(0)
         :class="[currentImage === index ? 'block' : 'hidden']"
       />
       <div
+        :class="cn('group-hover:opacity-100 transition duration-300 opacity-0 flex flex-col gap-2 absolute top-4 right-4 text-neutral-800 z-1 w-fit h-fit',
+                   (isFavorite || isInCart) && 'opacity-100')"
+      >
+        <HeartIcon
+          :stroke-width="1.5"
+          :size="36"
+          :absolute-stroke-width="true"
+          :class="cn('hover:text-red-500 duration-300 cursor-pointer', isFavorite && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+          @click.stop.prevent="toggleFavorite(model.id)"
+        />
+        <ShoppingCart
+          :stroke-width="1.5"
+          :size="36"
+          :absolute-stroke-width="true"
+          :class="cn('hover:text-red-500 duration-300 cursor-pointer', isInCart && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+        />
+      </div>
+      <div
         :style="{ '--_img-cols': model.imagesToModel.length }"
-        class="grid grid-cols-[repeat(var(--_img-cols),1fr)] justify-center gap-2 absolute bottom-2 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
+        class="grid grid-cols-[repeat(var(--_img-cols),1fr)] gap-2 justify-center absolute bottom-2 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
       >
         <template v-if="model.imagesToModel.length > 1">
           <div
             v-for="(imageToModel, index) in model.imagesToModel"
             :key="imageToModel.image.id"
-            class="grid grid-rows-[1fr_1fr_min-content] h-full"
+            class="grid grid-rows-[1fr] h-full"
           >
-            <div class="" />
             <div
-              class=" bg-slate-200 opacity-5 w-full"
+              class="w-full relative"
               @mouseenter="currentImage = index"
-            />
-            <div
-              class="h-1"
-              :class="currentImage === index ? 'bg-black/50' : 'bg-black/10' "
-            />
+            >
+              <div
+                class="h-1 absolute bottom-0 inset-x-0"
+                :class="currentImage === index ? 'bg-black/50' : 'bg-black/5' "
+              />
+            </div>
           </div>
         </template>
       </div>
-    </div>
-    <div
+    </NuxtLink>
+    <NuxtLink
       v-else
+      :to="`/models/${model.slug}`"
       class="grid justify-center items-center h-full bg-(--ui-bg-muted)"
     >
       <UIcon
@@ -58,28 +98,43 @@ const currentImage = ref(0)
         size="40"
         class="stroke-1"
       />
-    </div>
+    </NuxtLink>
     <USeparator />
     <div
-      class="flex items-baseline mt-4 gap-4"
+      class="flex items-baseline justify-between mt-4 gap-4"
     >
-      <template v-if="model.discount">
-        <span class="text-subheading">{{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}</span>
+      <div
+        v-if="model.discount"
+        class="flex items-baseline gap-4"
+      >
+        <h6 class="text-subheading font-normal">
+          {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
+        </h6>
         <UBadge
+          :color="'warning'"
           :variant="'soft'"
-          :ui="{ base: 'text-sm' }"
+          :ui="{ base: 'text-sm font-semibold' }"
         >
           {{ model.discount.discountPercentage }}%
         </UBadge>
         <span class="text-sm line-through text-(--ui-text-muted)">{{ model.price }}</span>
-      </template>
-      <template v-else>
-        <span
-          class="text-subheading h-[32px]"
-        >{{ formatPrice(model.price) }}</span>
-      </template>
+      </div>
+      <h6
+        v-else
+        class="text-subheading font-normal h-[32px]"
+      >
+        {{ formatPrice(model.price) }}
+      </h6>
+
+      <UBadge
+        variant="soft"
+        color="neutral"
+        :ui="{ base: 'text-sm' }"
+      >
+        {{ mimeToExt(model.files[0]!.mimeType) }}
+      </UBadge>
     </div>
 
     <span>{{ model.name }}</span>
-  </NuxtLink>
+  </div>
 </template>
