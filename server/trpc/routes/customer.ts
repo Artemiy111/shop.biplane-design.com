@@ -50,7 +50,7 @@ export const customerRouter = router({
   }),
 
   addToCart: customerProsedure
-    .input(z.object({ modelId: z.string(), setId: z.string() }))
+    .input(z.object({ modelId: z.string().nullable(), setId: z.string().nullable() }))
     .mutation(async ({ input, ctx: { user } }) => {
       await db
         .insert(cartItems)
@@ -70,21 +70,39 @@ export const customerRouter = router({
         )
     }),
 
-  addToFavorites: customerProsedure
+  toggleFavorite: customerProsedure
     .input(z.object({ modelId: z.string() }))
     .mutation(async ({ input, ctx: { user } }) => {
-      await db.insert(favorites).values({ userId: user.id, modelId: input.modelId })
+      console.log('toggleFavorite server')
+      db.transaction(async (tx) => {
+        const favorite = await tx.query.favorites.findFirst({
+          where: and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)),
+        })
+
+        if (favorite) {
+          await tx.delete(favorites).where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
+        }
+        else {
+          await tx.insert(favorites).values({ userId: user.id, modelId: input.modelId })
+        }
+      })
     }),
 
-  removeFromFavorites: customerProsedure
-    .input(z.object({ modelId: z.string() }))
-    .mutation(async ({ input, ctx: { user } }) => {
-      await db
-        .delete(favorites)
-        .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
-    }),
+  // addToFavorites: customerProsedure
+  //   .input(z.object({ modelId: z.string() }))
+  //   .mutation(async ({ input, ctx: { user } }) => {
+  //     await db.insert(favorites).values({ userId: user.id, modelId: input.modelId })
+  //   }),
 
-  makeOrder: customerProsedure
+  // removeFromFavorites: customerProsedure
+  //   .input(z.object({ modelId: z.string() }))
+  //   .mutation(async ({ input, ctx: { user } }) => {
+  //     await db
+  //       .delete(favorites)
+  //       .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
+  //   }),
+
+  makeOrderFromCart: customerProsedure
     .input(z.object({ promocodeCode: z.string().nullable() }))
     .mutation(async ({ input: { promocodeCode }, ctx: { user } }) => {
       db.transaction(async (tx) => {

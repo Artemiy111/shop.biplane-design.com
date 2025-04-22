@@ -4,4 +4,7 @@ export default defineAppConfig({
       // primary: 'black',
     },
   },
+  icon: {
+    mode: 'svg',
+  },
 })
