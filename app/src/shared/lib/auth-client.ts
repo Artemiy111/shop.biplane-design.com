@@ -1,6 +1,5 @@
 import { createAuthClient } from 'better-auth/vue'
 import { anonymousClient, adminClient } from 'better-auth/client/plugins'
-import type { UnwrapRef } from 'vue'
 
 export const authClient = createAuthClient({
   plugins: [anonymousClient(), adminClient()],
@@ -8,4 +7,5 @@ export const authClient = createAuthClient({
   // baseURL: 'http://localhost:3000',
 })
 
-export type AuthUser = Exclude<UnwrapRef<Awaited<ReturnType<typeof authClient.useSession>>>['data'], undefined | null>['user']
+export type AuthSession = typeof authClient.$Infer.Session
+export type AuthUser = AuthSession['user']

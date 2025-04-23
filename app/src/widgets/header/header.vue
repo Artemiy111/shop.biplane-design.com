@@ -8,6 +8,8 @@ watch(colorMode, () => {
   console.log('colorMode', colorMode)
 })
 
+const mediaLessThamSmall = useMediaQuery('(max-width: 640px)')
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type
 const items = ref<Array<NavigationMenuItem & { iconComponent: FunctionalComponent<LucideProps, {}, any, {}> }>>([
   {
@@ -70,7 +72,7 @@ const items = ref<Array<NavigationMenuItem & { iconComponent: FunctionalComponen
           <template #item-leading="{ item }">
             <component
               :is="item.iconComponent(
-                { absoluteStrokeWidth: true, strokeWidth: 2, size: 30, class: 'text-(--ui-text)' }, {} as any)"
+                { absoluteStrokeWidth: true, strokeWidth: mediaLessThamSmall ? 1.5 : 2, size: mediaLessThamSmall ? 24 : 30, class: 'text-(--ui-text)' }, {} as any)"
             />
           </template>
         </UNavigationMenu>

@@ -3,7 +3,7 @@ import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey 
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
 import { mimeTypesImages, mimeTypesRevit } from '../../app/src/shared/config/constants/mime-types'
-import { paymentProviters, orderStatuses, refundStatuses } from '~/src/shared/config/constants'
+import { paymentProviters, orderStatuses, refundStatuses } from '../../app/src/shared/config/constants'
 
 export const users = pgTable('users', {
   id: text().primaryKey().$default(makeId),

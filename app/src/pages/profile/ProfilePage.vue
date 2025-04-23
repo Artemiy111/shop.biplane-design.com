@@ -66,14 +66,18 @@ const { mutate: sendVerificationEmail } = useMutation({
   key: ['sendVerificationEmail'],
   mutation: async () => {
     if (!user.value) return
-    await authClient.sendVerificationEmail({ email: user.value.email })
+    authClient.sendVerificationEmail({ email: user.value.email },
+      {
+        onError: () => {
+          toast.add({ color: 'error', title: 'Не удалось отправить письмо для подтверждения почты', description: 'Попробуйте позже' })
+        },
+        onSuccess: () => {
+          toast.add({ color: 'success', title: 'Письмо для подтверждения почты отправлено', description: 'Пожалуйста, проверьте почту' })
+        },
+      },
+    )
   },
-  onError: () => {
-    toast.add({ color: 'error', title: 'Не удалось отправить письмо для подтверждения почты', description: 'Попробуйте позже' })
-  },
-  onSuccess: () => {
-    toast.add({ color: 'success', title: 'Письмо для подтверждения почты отправлено', description: 'Пожалуйста, проверьте почту' })
-  },
+
 })
 
 const changePassword = async (event: FormSubmitEvent<ChangePasswordSchema>) => {
@@ -94,6 +98,11 @@ const changePassword = async (event: FormSubmitEvent<ChangePasswordSchema>) => {
       })
     },
   })
+}
+
+const logout = async () => {
+  await authClient.signOut()
+  navigateTo('/')
 }
 </script>
 
@@ -155,7 +164,10 @@ const changePassword = async (event: FormSubmitEvent<ChangePasswordSchema>) => {
               class="w-full"
               trailing
             >
-              <template #trailing>
+              <template
+                v-if="user.emailVerified"
+                #trailing
+              >
                 <BadgeCheckIcon
                   class="text-green-500"
                   :size="20"
@@ -237,6 +249,17 @@ const changePassword = async (event: FormSubmitEvent<ChangePasswordSchema>) => {
           Изменить пароль
         </UButton>
       </UForm>
+      <div class="mt-7">
+        <UButton
+          variant="soft"
+          color="error"
+          class="cursor-pointer w-fit"
+          type="button"
+          @click="logout()"
+        >
+          Выйти из аккаунта
+        </UButton>
+      </div>
     </div>
   </main>
 </template>

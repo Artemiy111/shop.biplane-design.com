@@ -3,6 +3,7 @@ import { anonymous, admin } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '../db'
 import * as schema from '../db/schema'
+import { sendVerificationEmail } from './email'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -13,9 +14,7 @@ export const auth = betterAuth({
   emailVerification: {
     autoSignInAfterVerification: true,
     sendOnSignUp: true,
-    sendVerificationEmail: async ({ user, url, token }) => {
-      console.log('sendVerificationEmail', user, url, token)
-    },
+    sendVerificationEmail,
   },
   emailAndPassword: { enabled: true },
   plugins: [anonymous(), admin()],
@@ -33,3 +32,6 @@ export const auth = betterAuth({
   //   }
   // }
 })
+
+export type AuthSession = typeof auth.$Infer.Session
+export type AuthUser = AuthSession['user']
