@@ -9,14 +9,20 @@ export const auth = betterAuth({
     provider: 'pg',
     usePlural: true,
     schema,
-
   }),
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url, token }) => {
+      console.log('sendVerificationEmail', user, url, token)
+    },
+  },
   emailAndPassword: { enabled: true },
   plugins: [anonymous(), admin()],
   advanced: {
     database: {
       defaultFindManyLimit: undefined,
-      // 'generateId': {""}
+      generateId: false,
     },
   },
   // socialProviders: {

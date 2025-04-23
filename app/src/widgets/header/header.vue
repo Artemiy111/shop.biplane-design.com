@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { useApi } from '~/src/shared/api'
 
-const route = useRoute()
-const api = useApi()
 const colorMode = useColorMode()
 
 const items = ref<NavigationMenuItem[]>([

@@ -19,13 +19,13 @@
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1400px;
 
-  --text-heading: 32px;
+  --text-heading: 30px;
   --text-heading--line-height: 1.1;
-  --text-heading--font-weight: 600;
+  --text-heading--font-weight: 500;
 
-  --text-subheading: 26px;
+  --text-subheading: 25px;
   --text-subheading--line-height: 1.2;
-  --text-subheading--font-weight: 600;
+  --text-subheading--font-weight: 500;
 
   --text-base: 20px;
   --text-base--line-height: 1.5;
@@ -47,6 +47,10 @@
 
 :root {
   --ui-primary: black;
+  /* --ui-text-muted:  */
+  --ui-text-toned: var(--ui-color-neutral-700); 
+  --ui-text: var(--ui-color-neutral-800);
+  --ui-text-highlighted: var(--ui-color-neutral-950);
 
   @media (width < theme(--breakpoint-md)) {
     --container-pad: calc(8 * var(--spacing));

@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@pinia/colada-nuxt',
     '@pinia/nuxt',
+    '@vueuse/nuxt',
   ],
   devtools: { enabled: true },
 
@@ -29,10 +30,14 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+
   compatibilityDate: '2024-11-01',
 
   eslint: {
     config: {
+      nuxt: {
+        sortConfigKeys: true,
+      },
       stylistic: {
         semi: false,
       },
