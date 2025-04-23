@@ -14,10 +14,6 @@ import {
   files,
   discounts,
   promocodes,
-  users,
-  accounts,
-  sessions,
-  verifications,
 } from './schema'
 
 import { db } from '.'

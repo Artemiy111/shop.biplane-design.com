@@ -15,7 +15,7 @@ export const sendVerificationEmail = async ({ user, url, token }: { user: { [key
   console.log('sendVerificationEmail', user, url, token)
   console.log(env.SMTP_HOST, env.SMTP_USER, env.SMTP_PASS)
   await transporter.sendMail({
-    from: `"Biplane Design Shop" <${env.SMTP_USER}>`,
+    from: `"Biplane-Design Shop" <${env.SMTP_USER}>`,
     to: user.email,
     subject: 'Подтвердите почту для Biplane-Design Shop',
     text: `Подтвердите почту для Biplane-Design Shop\n\n${url}\n\n${token}`,
