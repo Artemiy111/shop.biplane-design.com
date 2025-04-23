@@ -1,43 +1,36 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { ContainerIcon, HeartIcon, ShoppingCartIcon, UserIcon, type LucideProps } from 'lucide-vue-next'
+import type { FunctionalComponent } from 'vue'
 
 const colorMode = useColorMode()
+watch(colorMode, () => {
+  console.log('colorMode', colorMode)
+})
 
-const items = ref<NavigationMenuItem[]>([
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type
+const items = ref<Array<NavigationMenuItem & { iconComponent: FunctionalComponent<LucideProps, {}, any, {}> }>>([
   {
     to: '/profile',
     icon: 'i-lucide-user',
+    iconComponent: UserIcon,
   },
   {
     to: '/orders',
     icon: 'i-lucide-container',
+    iconComponent: ContainerIcon,
   },
   {
     to: '/favorites',
     icon: 'i-lucide-heart',
+    iconComponent: HeartIcon,
   },
   {
     to: '/cart',
     icon: 'i-lucide-shopping-cart',
+    iconComponent: ShoppingCartIcon,
   },
 ])
-
-// const toastMessages = {
-//   success: 'Вы вышли из аккаунта',
-//   error: 'Не удалось выйти из аккаунта',
-// }
-
-// async function singOut() {
-//   try {
-//     await api.auth.logout.query()
-//     user.value = null
-//     toast.success(toastMessages.success)
-//     if (useRoute().path.includes('admin')) await navigateTo('/admin/auth')
-//   }
-//   catch (_e) {
-//     toast.error(toastMessages.error)
-//   }
-// }
 </script>
 
 <template>
@@ -61,6 +54,7 @@ const items = ref<NavigationMenuItem[]>([
         <UButton
           class="w-fit h-fit cursor-pointer"
           :ui="{ leadingIcon: 'text-3xl' }"
+          mode="svg"
           :icon="colorMode.value === 'dark' ? 'i-lucide-moon' : 'i-lucide-sun'"
           :variant="'ghost'"
           @click="colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'"
@@ -70,9 +64,16 @@ const items = ref<NavigationMenuItem[]>([
           class="h-8"
         />
         <UNavigationMenu
-          :ui="{ linkLeadingIcon: 'text-3xl text-(--ui-text) ' }"
+          :ui="{ linkLeadingIcon: 'text-3xl text-(--ui-text)' }"
           :items="items"
-        />
+        >
+          <template #item-leading="{ item }">
+            <component
+              :is="item.iconComponent(
+                { absoluteStrokeWidth: true, strokeWidth: 2, size: 30, class: 'text-(--ui-text)' }, {} as any)"
+            />
+          </template>
+        </UNavigationMenu>
       </div>
     </div>
     <USeparator />
