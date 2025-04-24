@@ -5,13 +5,13 @@ import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
 import { useCategories } from '~/src/shared/models/queries'
 import { authClient } from '~/src/shared/lib/auth-client'
 
-const { data: categories } = useCategories()
+const { categories } = useCategories()
 const session = authClient.useSession()
 
 export type Categories = UnwrapRef<typeof categories>
-export type Model = Exclude<Categories, undefined>[0]['models'][0]
+export type Model = Categories[0]['models'][0]
 
-const isAuthedCustomer = computed(() => session.value?.data?.user?.role === 'customer')
+const isAuthedCustomer = computed(() => session.value?.data?.user?.role === 'user')
 </script>
 
 <template>
@@ -32,8 +32,6 @@ const isAuthedCustomer = computed(() => session.value?.data?.user?.role === 'cus
             :key="model.id"
             :is-authed-customer="isAuthedCustomer"
             :model="model"
-            :is-favorite="false"
-            :is-in-cart="true"
           />
         </div>
       </div>

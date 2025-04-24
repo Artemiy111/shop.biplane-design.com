@@ -257,6 +257,8 @@ export const modelRelations = relations(models, ({ one, many }) => ({
   files: many(files),
   sets: many(modelsToSets),
   discount: one(discounts, { fields: [models.discountId], references: [discounts.id] }),
+  favorites: many(favorites),
+  cartItems: many(cartItems),
 }))
 
 export const categoryRelations = relations(categories, ({ many }) => ({

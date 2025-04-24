@@ -1,17 +1,34 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { ContainerIcon, HeartIcon, ShoppingCartIcon, UserIcon, type LucideProps } from 'lucide-vue-next'
+import {
+  ContainerIcon,
+  HeartIcon,
+  ShoppingCartIcon,
+  UserIcon,
+  type LucideProps,
+} from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
+import { useCartItemsCount, useFavoritesCount } from '~/src/shared/models/queries'
 
 const colorMode = useColorMode()
 watch(colorMode, () => {
   console.log('colorMode', colorMode)
 })
 
+const { favoritesCount } = useFavoritesCount()
+const { cartItemsCount } = useCartItemsCount()
+
 const mediaLessThamSmall = useMediaQuery('(max-width: 640px)')
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type
-const items = ref<Array<NavigationMenuItem & { iconComponent: FunctionalComponent<LucideProps, {}, any, {}> }>>([
+const items = ref<
+  Array<
+    NavigationMenuItem & {
+      count?: Ref<number | undefined>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type
+      iconComponent: FunctionalComponent<LucideProps, {}, any, {}>
+    }
+  >
+>([
   {
     to: '/profile',
     icon: 'i-lucide-user',
@@ -26,11 +43,13 @@ const items = ref<Array<NavigationMenuItem & { iconComponent: FunctionalComponen
     to: '/favorites',
     icon: 'i-lucide-heart',
     iconComponent: HeartIcon,
+    count: favoritesCount,
   },
   {
     to: '/cart',
     icon: 'i-lucide-shopping-cart',
     iconComponent: ShoppingCartIcon,
+    count: cartItemsCount,
   },
 ])
 </script>
@@ -70,9 +89,26 @@ const items = ref<Array<NavigationMenuItem & { iconComponent: FunctionalComponen
           :items="items"
         >
           <template #item-leading="{ item }">
+            <UChip
+              v-if="item.count"
+              :text="item.count"
+              :ui="{ base: 'size-5 text-xs text-(--ui-color-primary-500) font-bold bg-(--ui-color-primary-200) dark:font-semibold dark:bg-(--ui-color-primary-700) dark:text-(--ui-color-primary-200)' }"
+            >
+              <component
+                :is="item.iconComponent(
+                  { absoluteStrokeWidth: true,
+                    strokeWidth: mediaLessThamSmall ? 1.5 : 2,
+                    size: mediaLessThamSmall ? 24 : 30,
+                    class: 'text-(--ui-text)' }, {} as any)"
+              />
+            </UChip>
             <component
               :is="item.iconComponent(
-                { absoluteStrokeWidth: true, strokeWidth: mediaLessThamSmall ? 1.5 : 2, size: mediaLessThamSmall ? 24 : 30, class: 'text-(--ui-text)' }, {} as any)"
+                { absoluteStrokeWidth: true,
+                  strokeWidth: mediaLessThamSmall ? 1.5 : 2,
+                  size: mediaLessThamSmall ? 24 : 30,
+                  class: 'text-(--ui-text)' }, {} as any)"
+              v-else
             />
           </template>
         </UNavigationMenu>

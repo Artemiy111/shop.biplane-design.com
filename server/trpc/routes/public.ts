@@ -7,22 +7,33 @@ import { models } from '~~/server/db/schema'
 
 export const publicRouter = router({
   getCategories: publicProcedure
-    .query(async () => {
-      const categories = await db.query.categories.findMany({
+    .query(async ({ ctx }) => {
+      const { user } = ctx
+      const categories_ = await db.query.categories.findMany({
         with: {
-          models: modelPrequery,
+          models: modelPrequery(user?.id),
         },
       })
+      const categories = categories_.map(category => ({
+        ...category,
+        models: category.models.map(model => ({
+          ...model,
+          isFavorite: model.favorites.length > 0,
+          isInCart: model.cartItems.length > 0,
+        })),
+      }))
       return categories
     }),
 
   getModelBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx
       const model = await db.query.models.findFirst({
         where: eq(models.slug, input.slug),
-        ...modelPrequery,
+        ...modelPrequery(user?.id),
       })
       return model
     }),
+
 })

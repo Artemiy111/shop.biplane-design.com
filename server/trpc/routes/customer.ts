@@ -8,30 +8,28 @@ import type { OrderItemDb } from '~~/server/db/schema'
 import { favorites, orders, cartItems, promocodes } from '~~/server/db/schema'
 
 export const customerRouter = router({
-  getFavoritesCount: customerProsedure.query(async ({ ctx: { user } }) => {
-    const v = await db
-      .select({ count: count() })
-      .from(favorites)
-      .where(eq(favorites.userId, user.id))
-    return v[0].count
-  }),
-
   getFavorites: customerProsedure.query(async ({ ctx: { user } }) => {
-    return db.query.favorites.findMany({
+    return await db.query.favorites.findMany({
       where: eq(favorites.userId, user.id),
       with: {
-        model: modelPrequery,
+        model: modelPrequery(),
       },
     })
   }),
 
+  getFavoritesCount: customerProsedure.query(async ({ ctx: { user } }) => {
+    return (
+      await db.select({ count: count() }).from(favorites).where(eq(favorites.userId, user.id))
+    )[0].count
+  }),
+
   getOrders: customerProsedure.query(async ({ ctx: { user } }) => {
-    return db.query.orders.findMany({
+    return await db.query.orders.findMany({
       where: eq(orders.userId, user.id),
       with: {
         items: {
           with: {
-            model: modelPrequery,
+            model: modelPrequery(),
             set: setPrequery,
           },
         },
@@ -40,67 +38,80 @@ export const customerRouter = router({
   }),
 
   getCartItems: customerProsedure.query(async ({ ctx: { user } }) => {
-    return db.query.cartItems.findMany({
+    return await db.query.cartItems.findMany({
       where: eq(cartItems.userId, user.id),
       with: {
-        model: modelPrequery,
+        model: modelPrequery(),
         set: setPrequery,
       },
     })
   }),
 
-  addToCart: customerProsedure
-    .input(z.object({ modelId: z.string().nullable(), setId: z.string().nullable() }))
-    .mutation(async ({ input, ctx: { user } }) => {
-      await db
-        .insert(cartItems)
-        .values({ userId: user.id, modelId: input.modelId, setId: input.setId })
-    }),
+  getCartItemsCount: customerProsedure.query(async ({ ctx: { user } }) => {
+    return (
+      await db.select({ count: count() }).from(cartItems).where(eq(cartItems.userId, user.id))
+    )[0].count
+  }),
 
-  removeFromCart: customerProsedure
-    .input(z.object({ modelId: z.string(), setId: z.string() }))
-    .mutation(async ({ input, ctx: { user } }) => {
-      await db
-        .delete(cartItems)
-        .where(
-          and(
-            eq(cartItems.userId, user.id),
-            or(eq(cartItems.modelId, input.modelId), eq(cartItems.setId, input.setId)),
-          ),
-        )
-    }),
-
-  toggleFavorite: customerProsedure
+  toggleIsFavorite: customerProsedure
     .input(z.object({ modelId: z.string() }))
     .mutation(async ({ input, ctx: { user } }) => {
-      console.log('toggleFavorite server')
-      db.transaction(async (tx) => {
-        const favorite = await tx.query.favorites.findFirst({
-          where: and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)),
-        })
+      await db.transaction(async (tx) => {
+        const isFavorite = (
+          await db
+            .select({ count: count() })
+            .from(favorites)
+            .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
+            .limit(1)
+        )[0].count > 0
 
-        if (favorite) {
-          await tx.delete(favorites).where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
-        }
-        else {
-          await tx.insert(favorites).values({ userId: user.id, modelId: input.modelId })
-        }
+        if (isFavorite)
+          await tx
+            .delete(favorites)
+            .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
+        else await tx.insert(favorites).values({ userId: user.id, modelId: input.modelId })
       })
     }),
 
-  // addToFavorites: customerProsedure
-  //   .input(z.object({ modelId: z.string() }))
-  //   .mutation(async ({ input, ctx: { user } }) => {
-  //     await db.insert(favorites).values({ userId: user.id, modelId: input.modelId })
-  //   }),
+  toggleIsInCart: customerProsedure
+    .input(z.object({ modelId: z.string().nullable(), setId: z.string().nullable() }))
+    .mutation(async ({ input, ctx: { user } }) => {
+      await db.transaction(async (tx) => {
+        if (input.modelId) {
+          const isInCart = (
+            await db
+              .select({ count: count() })
+              .from(cartItems)
+              .where(and(eq(cartItems.userId, user.id), eq(cartItems.modelId, input.modelId)))
+              .limit(1)
+          )[0].count > 0
 
-  // removeFromFavorites: customerProsedure
-  //   .input(z.object({ modelId: z.string() }))
-  //   .mutation(async ({ input, ctx: { user } }) => {
-  //     await db
-  //       .delete(favorites)
-  //       .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
-  //   }),
+          if (isInCart)
+            await tx
+              .delete(cartItems)
+              .where(and(eq(cartItems.userId, user.id), eq(cartItems.modelId, input.modelId)))
+          else await tx.insert(cartItems).values({ userId: user.id, modelId: input.modelId })
+
+          return
+        }
+
+        if (!input.setId) throw tx.rollback()
+
+        const isInCart = (
+          await db
+            .select({ count: count() })
+            .from(cartItems)
+            .where(and(eq(cartItems.userId, user.id), eq(cartItems.setId, input.setId)))
+            .limit(1)
+        )[0].count > 0
+
+        if (isInCart)
+          await tx
+            .delete(cartItems)
+            .where(and(eq(cartItems.userId, user.id), eq(cartItems.setId, input.setId)))
+        else await tx.insert(cartItems).values({ userId: user.id, setId: input.setId })
+      })
+    }),
 
   makeOrderFromCart: customerProsedure
     .input(z.object({ promocodeCode: z.string().nullable() }))

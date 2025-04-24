@@ -6,27 +6,50 @@ import { imageUrl, mimeToExt } from '~/src/shared/lib/image'
 import { useApi } from '~/src/shared/api'
 import { cn } from '~/src/shared/lib/cn'
 
-const { isAuthedCustomer, model, isFavorite, isInCart } = defineProps<{
+const { isAuthedCustomer, model } = defineProps<{
   isAuthedCustomer: boolean
   model: Model
-  isFavorite: boolean
-  isInCart: boolean
 }>()
 
 const currentImage = ref(0)
 
 const toast = useToast()
 
-const { mutate: toggleFavorite } = useMutation({
-  key: () => ['toggleFavorite', model.id],
+const { mutate: toggleIsFavorite } = useMutation({
+  key: () => ['toggle-is-favorite', model.id],
   mutation: async (modelId: string) => {
     if (!isAuthedCustomer) {
       toast.add({ color: 'info', title: 'Войдите чтобы добавить в избранное', duration: 1000 })
       return
     }
-    console.log('toggleFavorite')
-    await useApi().customer.toggleFavorite.mutate({ modelId: modelId })
-    console.log('wft')
+    await useApi().customer.toggleIsFavorite.mutate({ modelId: modelId })
+  },
+  onError: () => {
+    toast.add({ color: 'error', title: 'Не удалось добавить в избранное' })
+  },
+  onSuccess: async () => {
+    const qc = useQueryCache()
+    await qc.invalidateQueries({ key: ['categories'] })
+    await qc.invalidateQueries({ key: ['favorites', 'count'] })
+  },
+})
+
+const { mutate: toggleIsInCart } = useMutation({
+  key: () => ['toggle-is-in-cart', model.id],
+  mutation: async (modelId: string) => {
+    if (!isAuthedCustomer) {
+      toast.add({ color: 'info', title: 'Войдите чтобы добавить в корзину', duration: 1000 })
+      return
+    }
+    await useApi().customer.toggleIsInCart.mutate({ modelId: modelId, setId: null })
+  },
+  onError: () => {
+    toast.add({ color: 'error', title: 'Не удалось добавить в корзину' })
+  },
+  onSuccess: async () => {
+    const qc = useQueryCache()
+    await qc.invalidateQueries({ key: ['categories'] })
+    await qc.invalidateQueries({ key: ['cart-items', 'count'] })
   },
 })
 </script>
@@ -49,20 +72,23 @@ const { mutate: toggleFavorite } = useMutation({
       />
       <div
         :class="cn('group-hover:opacity-100 transition duration-300 opacity-0 flex flex-col gap-2 absolute top-4 right-4 text-neutral-800 z-1 w-fit h-fit',
-                   (isFavorite || isInCart) && 'opacity-100')"
+                   (model.isFavorite || model.isInCart) && 'opacity-100')"
       >
         <HeartIcon
           :stroke-width="1.5"
           :size="36"
           :absolute-stroke-width="true"
-          :class="cn('hover:text-red-500 duration-300 cursor-pointer', isFavorite && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
-          @click.stop.prevent="toggleFavorite(model.id)"
+          :class="cn('hover:text-red-500 duration-300 cursor-pointer',
+                     model.isFavorite && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+          @click.stop.prevent="toggleIsFavorite(model.id)"
         />
         <ShoppingCart
           :stroke-width="1.5"
           :size="36"
           :absolute-stroke-width="true"
-          :class="cn('hover:text-red-500 duration-300 cursor-pointer', isInCart && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+          :class="cn('hover:text-red-500 duration-300 cursor-pointer',
+                     model.isInCart && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+          @click.stop.prevent="toggleIsInCart(model.id)"
         />
       </div>
       <div
