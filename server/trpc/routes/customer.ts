@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { count, eq, and, or } from 'drizzle-orm'
+import { count, eq, and } from 'drizzle-orm'
 import { modelPrequery, setPrequery } from '~~/server/trpc/query-templates'
 import { router, customerProsedure } from '~~/server/trpc'
 import { priceAfterDiscount } from '~/src/shared/lib/price'

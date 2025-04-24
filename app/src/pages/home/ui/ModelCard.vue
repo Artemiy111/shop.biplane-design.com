@@ -5,9 +5,11 @@ import { formatPrice, priceAfterDiscount } from '~/src/shared/lib/price'
 import { imageUrl, mimeToExt } from '~/src/shared/lib/image'
 import { useApi } from '~/src/shared/api'
 import { cn } from '~/src/shared/lib/cn'
+import { useAuthUtils } from '~/src/shared/models/auth-utils'
 
-const { isAuthedCustomer, model } = defineProps<{
-  isAuthedCustomer: boolean
+const authUtils = useAuthUtils()
+
+const { model } = defineProps<{
   model: Model
 }>()
 
@@ -18,7 +20,7 @@ const toast = useToast()
 const { mutate: toggleIsFavorite } = useMutation({
   key: () => ['toggle-is-favorite', model.id],
   mutation: async (modelId: string) => {
-    if (!isAuthedCustomer) {
+    if (!authUtils.isCustomer) {
       toast.add({ color: 'info', title: 'Войдите чтобы добавить в избранное', duration: 1000 })
       return
     }
@@ -37,10 +39,11 @@ const { mutate: toggleIsFavorite } = useMutation({
 const { mutate: toggleIsInCart } = useMutation({
   key: () => ['toggle-is-in-cart', model.id],
   mutation: async (modelId: string) => {
-    if (!isAuthedCustomer) {
+    if (!authUtils.isCustomer) {
       toast.add({ color: 'info', title: 'Войдите чтобы добавить в корзину', duration: 1000 })
       return
     }
+    console.log('wft')
     await useApi().customer.toggleIsInCart.mutate({ modelId: modelId, setId: null })
   },
   onError: () => {

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { type LoginSchema, loginSchema } from './config/shema'
-import { authClient } from '~/src/shared/lib/auth-client'
+import { authClient } from '~/src/shared/models/auth-utils'
 import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
+
+// TODO забыли пароль
 
 const toast = useToast()
 
@@ -18,7 +20,6 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
     email: event.data.email,
     password: event.data.password,
     rememberMe: true,
-    callbackURL: '/',
   }, {
     onError: (ctx) => {
       console.log(ctx)
@@ -28,7 +29,7 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
       else toast.add({ color: 'error', title: 'Не удалось войти', description: 'Неизвестная ошибка' })
     },
     onSuccess: () => {
-      toast.add({ color: 'success', title: 'Вход успешен' })
+      navigateTo('/')
     },
   })
 }

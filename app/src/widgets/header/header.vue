@@ -3,6 +3,8 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 import {
   ContainerIcon,
   HeartIcon,
+  MoonIcon,
+  SunIcon,
   ShoppingCartIcon,
   UserIcon,
   type LucideProps,
@@ -73,19 +75,33 @@ const items = ref<
       </NuxtLink>
       <div class="flex gap-2 items-center">
         <UButton
-          class="w-fit h-fit cursor-pointer"
-          :ui="{ leadingIcon: 'text-3xl' }"
-          mode="svg"
-          :icon="colorMode.value === 'dark' ? 'i-lucide-moon' : 'i-lucide-sun'"
-          :variant="'ghost'"
+          class="w-[50px] aspect-square cursor-pointer justify-center items-center"
+          color="neutral"
+          variant="ghost"
+          leading
           @click="colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'"
-        />
+        >
+          <template #leading>
+            <MoonIcon
+              v-if="colorMode.value === 'dark'"
+              :size="mediaLessThamSmall ? 24 : 30"
+              :absolute-stroke-width="true"
+              :stroke-width="mediaLessThamSmall ? 1.5 : 2"
+            />
+            <SunIcon
+              v-else
+              :size="mediaLessThamSmall ? 24 : 30"
+              :absolute-stroke-width="true"
+              :stroke-width="mediaLessThamSmall ? 1.5 : 2"
+            />
+          </template>
+        </UButton>
         <USeparator
           :orientation="'vertical'"
           class="h-8"
         />
         <UNavigationMenu
-          :ui="{ linkLeadingIcon: 'text-3xl text-(--ui-text)' }"
+          :ui="{ link: 'aspect-square', item: 'py-0', linkLeadingIcon: 'text-3xl text-(--ui-text)' }"
           :items="items"
         >
           <template #item-leading="{ item }">
@@ -103,11 +119,10 @@ const items = ref<
               />
             </UChip>
             <component
-              :is="item.iconComponent(
-                { absoluteStrokeWidth: true,
-                  strokeWidth: mediaLessThamSmall ? 1.5 : 2,
-                  size: mediaLessThamSmall ? 24 : 30,
-                  class: 'text-(--ui-text)' }, {} as any)"
+              :is="item.iconComponent({ absoluteStrokeWidth: true,
+                                        strokeWidth: mediaLessThamSmall ? 1.5 : 2,
+                                        size: mediaLessThamSmall ? 24 : 30,
+                                        class: 'text-(--ui-text)' }, {} as any)"
               v-else
             />
           </template>

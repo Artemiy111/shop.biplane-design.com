@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { type RegisterSchema, registerSchema } from './config/shema'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import { authClient } from '~/src/shared/lib/auth-client'
+import { authClient } from '~/src/shared/models/auth-utils'
 
 const toast = useToast()
 
@@ -18,13 +18,12 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
     name: event.data.name,
     email: event.data.email,
     password: event.data.password,
-    callbackURL: '/',
   }, {
     onError: (e) => {
       toast.add({ color: 'error', title: e.error.statusText })
     },
     onSuccess: () => {
-      toast.add({ color: 'success', title: 'Регистрация успешена' })
+      navigateTo('/')
     },
   })
 }

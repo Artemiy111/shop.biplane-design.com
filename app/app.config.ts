@@ -5,7 +5,7 @@ export default defineAppConfig({
     },
     button: {
       slots: {
-        base: 'font-bold cursor-pointer',
+        base: 'cursor-pointer',
       },
     },
   },

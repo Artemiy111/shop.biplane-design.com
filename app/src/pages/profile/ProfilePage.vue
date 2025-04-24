@@ -3,13 +3,13 @@ import { BadgeCheckIcon, LoaderCircleIcon } from 'lucide-vue-next'
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { errorMessages, minMaxString } from '~/src/shared/config/validation/base'
-import { authClient } from '~/src/shared/lib/auth-client'
+import { authClient, useAuthUtils } from '~/src/shared/models/auth-utils'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { InputPassword } from '~/src/shared/ui/kit'
 
+const authUtils = useAuthUtils()
+const user = authUtils.useUser()
 const toast = useToast()
-const session = authClient.useSession()
-const user = computed(() => session.value?.data?.user || null)
 
 const userSettingsForm = useTemplateRef('userSettingsForm')
 const changePasswordForm = useTemplateRef('changePasswordForm')
@@ -47,13 +47,10 @@ const onSubmit = async (event: FormSubmitEvent<ChangeUserSettingsSchema>) => {
   if (event.data.email === currentUser.email) return
 
   authClient.changeEmail({ newEmail: event.data.email }, {
-    onError: (ctx) => {
-      console.log('changeEmail Error', ctx)
+    onError: () => {
       toast.add({ color: 'error', title: 'Не удалось изменить email', description: 'Неизвестная ошибка' })
     },
-    onSuccess: async (ctx) => {
-      const data = ctx.response.json()
-      console.log('changeEmail Success', data)
+    onSuccess: () => {
       if (currentUser.emailVerified) toast.add({ color: 'success', title: 'Email изменён, проверьте почту для подтверждения' })
     },
   })

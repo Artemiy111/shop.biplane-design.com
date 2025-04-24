@@ -10,9 +10,10 @@ export default defineNuxtConfig({
     '@pinia/colada-nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+
   ],
   devtools: { enabled: true },
-
+  app: { head: { htmlAttrs: { lang: 'ru' } } },
   css: ['./app/src/shared/assets/main.css'],
 
   runtimeConfig: {
@@ -31,7 +32,13 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
+  experimental: {
+    typedPages: true,
+    crossOriginPrefetch: true,
+  },
+
   compatibilityDate: '2024-11-01',
+  telemetry: { enabled: false },
 
   eslint: {
     config: {

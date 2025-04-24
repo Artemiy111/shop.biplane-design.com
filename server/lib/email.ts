@@ -14,14 +14,11 @@ const transporter = nodemailer.createTransport({
 export const sendVerificationEmail = async ({
   user,
   url,
-  token,
 }: {
   user: { [key: string]: unknown } & { email: string }
   url: string
   token: string
 }) => {
-  console.log('sendVerificationEmail', user, url, token)
-  console.log(env.SMTP_HOST, env.SMTP_USER, env.SMTP_PASS)
   await transporter.sendMail({
     from: `"Biplane-Design Shop" <${env.SMTP_USER}>`,
     to: user.email,
@@ -40,7 +37,6 @@ export const sendChangeEmailVerification = async ({
   url: string
   token: string
 }) => {
-  console.log('sendChangeEmailVerification', user.email, url)
   await transporter.sendMail({
     from: `"Biplane-Design Shop" <${env.SMTP_USER}>`,
     to: user.email,

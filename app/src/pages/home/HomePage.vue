@@ -3,15 +3,11 @@ import type { UnwrapRef } from 'vue'
 import ModelCard from './ui/ModelCard.vue'
 import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
 import { useCategories } from '~/src/shared/models/queries'
-import { authClient } from '~/src/shared/lib/auth-client'
 
 const { categories } = useCategories()
-const session = authClient.useSession()
 
 export type Categories = UnwrapRef<typeof categories>
 export type Model = Categories[0]['models'][0]
-
-const isAuthedCustomer = computed(() => session.value?.data?.user?.role === 'user')
 </script>
 
 <template>
@@ -30,7 +26,6 @@ const isAuthedCustomer = computed(() => session.value?.data?.user?.role === 'use
           <ModelCard
             v-for="model in category.models"
             :key="model.id"
-            :is-authed-customer="isAuthedCustomer"
             :model="model"
           />
         </div>

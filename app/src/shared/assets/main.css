@@ -1,9 +1,7 @@
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 
 @custom-variant dark (&:where(.dark, .dark *));
-
-
 
 @utility container {
   width: min(1400px, 100% - 2 * var(--container-pad));
@@ -12,7 +10,7 @@
 
 @theme {
   --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
- 
+
   --breakpoint-*: initial;
   --breakpoint-xs: 480px;
   --breakpoint-sm: 640px;
@@ -49,7 +47,7 @@
 
 @layer base {
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role='button']:not(:disabled) {
     cursor: pointer;
   }
 }
@@ -57,7 +55,7 @@
 :root {
   --ui-primary: black;
   /* --ui-text-muted:  */
-  --ui-text-toned: var(--ui-color-neutral-700); 
+  --ui-text-toned: var(--ui-color-neutral-700);
   --ui-text: var(--ui-color-neutral-800);
   --ui-text-highlighted: var(--ui-color-neutral-950);
 
@@ -70,7 +68,7 @@
   }
 
   @media (width < theme(--breakpoint-sm)) {
-    --container-pad: calc(4* var(--spacing));
+    --container-pad: calc(4 * var(--spacing));
     --text-heading: 24px;
     --text-subheading: 20px;
     --text-base: 16px;
@@ -85,4 +83,3 @@
 html {
   scrollbar-gutter: stable;
 }
-
