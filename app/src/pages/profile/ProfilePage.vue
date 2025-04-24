@@ -34,14 +34,27 @@ watchImmediate(user, () => {
 }, { deep: true })
 
 const onSubmit = async (event: FormSubmitEvent<ChangeUserSettingsSchema>) => {
+  const currentUser = user.value
+  if (!currentUser) return
   authClient.updateUser({
     name: event.data.name,
   }, {
     onError: () => {
-      toast.add({ color: 'error', title: 'Не удалось изменить настройки', description: 'Попробуйте позже' })
+      toast.add({ color: 'error', title: 'Не удалось изменить имя', description: 'Неизвестная ошибка' })
     },
-    onSuccess: () => {
-      toast.add({ color: 'success', title: 'Настройки изменены' })
+  })
+
+  if (event.data.email === currentUser.email) return
+
+  authClient.changeEmail({ newEmail: event.data.email }, {
+    onError: (ctx) => {
+      console.log('changeEmail Error', ctx)
+      toast.add({ color: 'error', title: 'Не удалось изменить email', description: 'Неизвестная ошибка' })
+    },
+    onSuccess: async (ctx) => {
+      const data = ctx.response.json()
+      console.log('changeEmail Success', data)
+      if (currentUser.emailVerified) toast.add({ color: 'success', title: 'Email изменён, проверьте почту для подтверждения' })
     },
   })
 }
@@ -94,7 +107,6 @@ const changePassword = async (event: FormSubmitEvent<ChangePasswordSchema>) => {
       toast.add({
         color: 'success',
         title: 'Пароль изменен',
-        // description: 'Пожалуйста, проверьте почту',
       })
     },
   })
@@ -134,7 +146,7 @@ const logout = async () => {
         >
           <InputPassword
             v-model="user.id"
-            :show="true"
+            :show="false"
             variant="soft"
             disabled
             class="w-full"
@@ -181,7 +193,7 @@ const logout = async () => {
           v-if="!user.emailVerified"
           type="button"
           variant="outline"
-          class="cursor-pointer w-fit"
+          class="w-fit"
           :disabled="!!userSettingsForm?.dirtyFields.size"
           @click="sendVerificationEmail()"
         >
@@ -190,7 +202,7 @@ const logout = async () => {
 
         <UButton
           type="submit"
-          class="cursor-pointer mt-4 w-fit"
+          class="mt-4 w-fit"
           :disabled="!userSettingsForm?.dirtyFields.size || !!userSettingsForm?.errors.length"
           loading-auto
           :trailing="true"
@@ -240,7 +252,7 @@ const logout = async () => {
         <UButton
           type="submit"
           variant="soft"
-          class="cursor-pointer mt-4 w-fit"
+          class="mt-4 w-fit"
           :disabled="!changePasswordForm?.dirtyFields.size || !!changePasswordForm?.errors.length"
           loading-auto
           trailing
@@ -253,7 +265,7 @@ const logout = async () => {
         <UButton
           variant="soft"
           color="error"
-          class="cursor-pointer w-fit"
+          class="w-fit"
           type="button"
           @click="logout()"
         >

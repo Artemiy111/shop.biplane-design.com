@@ -3,6 +3,8 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+
+
 @utility container {
   width: min(1400px, 100% - 2 * var(--container-pad));
   margin-inline: auto;
@@ -45,6 +47,13 @@
   /* --padding-container-pad: var(--container-pad); */
 }
 
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 :root {
   --ui-primary: black;
   /* --ui-text-muted:  */
@@ -67,12 +76,11 @@
     --text-base: 16px;
     --text-sm: 14px;
   }
-}
 
-.dark {
-  --ui-primary: white;
+  @variant dark {
+    --ui-primary: white;
+  }
 }
-
 
 html {
   scrollbar-gutter: stable;
