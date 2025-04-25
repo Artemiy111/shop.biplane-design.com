@@ -14,7 +14,7 @@ export const customerRouter = router({
         userId: user.id,
       },
       with: {
-        model: modelPrequery(),
+        model: { with: modelPrequery() },
       },
     })
   }),
@@ -33,7 +33,7 @@ export const customerRouter = router({
       with: {
         items: {
           with: {
-            model: modelPrequery(),
+            model: { with: modelPrequery() },
             set: setPrequery,
           },
         },
@@ -47,7 +47,7 @@ export const customerRouter = router({
         userId: user.id,
       },
       with: {
-        model: modelPrequery(),
+        model: { with: modelPrequery() },
         set: setPrequery,
       },
     })

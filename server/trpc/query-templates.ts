@@ -1,34 +1,32 @@
 export const modelPrequery = (userId?: string) => ({
-  with: {
-    discount: true,
-    files: true,
-    images: {
-      with: {
-        optimized: true,
-      },
+  discount: true,
+  files: true,
+  images: {
+    with: {
+      optimized: true,
     },
-    ...(userId
-      ? { favorites: {
-          where: {
-            userId: userId,
-          },
-          columns: {
-            userId: true,
-          },
-          limit: 1,
-        },
-        cartItems: {
-          where: {
-            userId: userId,
-          },
-          columns: {
-            userId: true,
-          },
-          limit: 1,
-        },
-        }
-      : {}),
   },
+  ...(userId
+    ? { favorites: {
+        where: {
+          userId: userId,
+        },
+        columns: {
+          userId: true,
+        },
+        limit: 1,
+      },
+      cartItems: {
+        where: {
+          userId: userId,
+        },
+        columns: {
+          userId: true,
+        },
+        limit: 1,
+      },
+      }
+    : {}),
 } as const)
 
 export const setPrequery = {

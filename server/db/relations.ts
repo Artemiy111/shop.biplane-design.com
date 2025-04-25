@@ -15,12 +15,14 @@ export const relations = defineRelations(schema, r => ({
     user: r.one.users({
       from: r.sessions.userId,
       to: r.users.id,
+      optional: false,
     }),
   },
   accounts: {
     user: r.one.users({
       from: r.accounts.userId,
       to: r.users.id,
+      optional: false,
     }),
   },
   categories: {
@@ -44,6 +46,7 @@ export const relations = defineRelations(schema, r => ({
     category: r.one.categories({
       from: r.models.categoryId,
       to: r.categories.id,
+      optional: false,
     }),
     images: r.many.images({
       from: r.models.id.through(r.imageToModel.modelId),
@@ -73,18 +76,21 @@ export const relations = defineRelations(schema, r => ({
     model: r.one.models({
       from: r.images.id.through(r.imageToModel.imageId),
       to: r.models.id.through(r.imageToModel.modelId),
+      optional: false,
     }),
   },
   imagesOptimized: {
     original: r.one.images({
       from: r.imagesOptimized.imageId,
       to: r.images.id,
+      optional: false,
     }),
   },
   files: {
     model: r.one.models({
       from: r.files.modelId,
       to: r.models.id,
+      optional: false,
     }),
   },
   discounts: {
@@ -105,41 +111,49 @@ export const relations = defineRelations(schema, r => ({
     user: r.one.users({
       from: r.favorites.userId,
       to: r.users.id,
+      optional: false,
     }),
     model: r.one.models({
       from: r.favorites.modelId,
       to: r.models.id,
+      optional: false,
     }),
   },
   cartItems: {
     model: r.one.models({
       from: r.cartItems.modelId,
       to: r.models.id,
+      optional: false,
     }),
     set: r.one.sets({
       from: r.cartItems.setId,
       to: r.sets.id,
+      optional: false,
     }),
     user: r.one.users({
       from: r.cartItems.userId,
       to: r.users.id,
+      optional: false,
     }),
   },
   orders: {
     user: r.one.users({
       from: r.orders.userId,
       to: r.users.id,
+      optional: false,
     }),
     items: r.many.orderItems(),
     promocode: r.one.promocodes({
       from: r.orders.promocodeId,
       to: r.promocodes.id,
+      optional: true,
     }),
   },
   orderItems: {
     order: r.one.orders({
       from: r.orderItems.orderId,
       to: r.orders.id,
+      optional: false,
     }),
     model: r.one.models({
       from: r.orderItems.modelId,
@@ -151,12 +165,12 @@ export const relations = defineRelations(schema, r => ({
       to: r.sets.id,
       optional: true,
     }),
-    refunds: r.many.refunds(),
   },
   refunds: {
-    orderItem: r.one.orderItems({
+    order: r.one.orders({
       from: r.refunds.orderId,
-      to: r.orderItems.id,
+      to: r.orders.id,
+      optional: false,
     }),
   },
 }))

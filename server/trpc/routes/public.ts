@@ -9,7 +9,7 @@ export const publicRouter = router({
       const { user } = ctx
       const categories_ = await db.query.categories.findMany({
         with: {
-          models: modelPrequery(user?.id),
+          models: { with: modelPrequery(user?.id) },
         },
       })
       const categories = categories_.map(category => ({
@@ -27,12 +27,24 @@ export const publicRouter = router({
     .input(z.object({ slug: z.string() }))
     .query(async ({ ctx, input }) => {
       const { user } = ctx
-      const model = await db.query.models.findFirst({
+      const model_ = await db.query.models.findFirst({
         where: {
           slug: input.slug,
         },
-        ...modelPrequery(user?.id),
+        with: {
+          category: true,
+          ...modelPrequery(user?.id),
+        },
       })
+
+      const model = model_
+        ? ({
+            ...model_,
+            isFavorite: model_.favorites.length > 0,
+            isInCart: model_.cartItems.length > 0,
+          })
+        : null
+
       return model
     }),
 
