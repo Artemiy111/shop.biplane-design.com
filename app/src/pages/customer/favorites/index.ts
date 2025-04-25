@@ -1,1 +1,1 @@
-export { default as FavoritesPage } from './FavoritesPage.vue'
+export { default as FavoritesPage } from './favorites-page.vue'

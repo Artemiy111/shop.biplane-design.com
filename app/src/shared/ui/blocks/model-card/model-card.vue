@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Model } from '../HomePage.vue'
-import ImageSlider from './ImageSlider.vue'
+import ImageSlider from './image-slider.vue'
 import { formatPrice, priceAfterDiscount } from '~/src/shared/lib/price'
 import { mimeToExt } from '~/src/shared/lib/image'
 
 import { useToggleIsFavoriteMutation, useToggleIsInCartMutation } from '~/src/shared/models/mutations'
+import type { CategoryModel } from '~/src/shared/models/queries'
 
 const { model } = defineProps<{
-  model: Model
+  model: CategoryModel
 }>()
 
 const { toggleIsFavorite } = useToggleIsFavoriteMutation()

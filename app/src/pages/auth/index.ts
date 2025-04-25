@@ -1,2 +1,2 @@
-export { default as LoginPage } from './LoginPage.vue'
-export { default as RegisterPage } from './RegisterPage.vue'
+export { default as LoginPage } from './login-page.vue'
+export { default as RegisterPage } from './register-page.vue'

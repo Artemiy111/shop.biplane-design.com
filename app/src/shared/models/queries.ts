@@ -1,3 +1,4 @@
+import type { UnwrapRef } from 'vue'
 import { useAuthUtils } from './auth-utils'
 import { useApi } from '~/src/shared/api'
 
@@ -10,6 +11,9 @@ export const useCategories = defineQuery(() => {
   return { categories, ...rest }
 })
 
+export type Category = UnwrapRef<ReturnType<typeof useCategories>['categories']>[number]
+export type CategoryModel = Category['models'][number]
+
 export const useModelBySlug = defineQuery(() => {
   const modelSlug = ref<string | null>(null)
   const { data: model, state: _, ...rest } = useQuery({
@@ -19,6 +23,8 @@ export const useModelBySlug = defineQuery(() => {
   })
   return { model, modelSlug, ...rest }
 })
+
+export type Model = UnwrapRef<ReturnType<typeof useModelBySlug>['model']>
 
 export const useFavoritesCount = defineQuery(() => {
   const authUtils = useAuthUtils()

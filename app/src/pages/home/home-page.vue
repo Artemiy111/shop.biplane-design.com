@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UnwrapRef } from 'vue'
-import ModelCard from './ui/ModelCard.vue'
-import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
+import { ModelCard } from '~/src/shared/ui/blocks/model-card'
+import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { useCategories } from '~/src/shared/models/queries'
 
 const { categories } = useCategories()

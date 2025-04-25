@@ -1,1 +1,1 @@
-export { default as CartPage } from './CartPage.vue'
+export { default as CartPage } from './cart-page.vue'
