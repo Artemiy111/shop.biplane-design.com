@@ -115,6 +115,8 @@ export const _images: ImageDb[] = [
     width: null,
     height: null,
     size: null,
+    alt: null,
+    originalFilename: null,
   },
   {
     id: '2',
@@ -124,6 +126,8 @@ export const _images: ImageDb[] = [
     width: null,
     height: null,
     size: null,
+    alt: null,
+    originalFilename: null,
   },
   {
     id: '3',
@@ -133,6 +137,8 @@ export const _images: ImageDb[] = [
     width: null,
     height: null,
     size: null,
+    alt: null,
+    originalFilename: null,
   },
   {
     id: '4',
@@ -142,6 +148,8 @@ export const _images: ImageDb[] = [
     width: null,
     height: null,
     size: null,
+    alt: null,
+    originalFilename: null,
   },
 ]
 

@@ -62,14 +62,14 @@ const { mutate: toggleIsInCart } = useMutation({
     class="grid grid-rows-[minmax(200px,1fr)_max-content_max-content_max-content]"
   >
     <NuxtLink
-      v-if="model.imagesToModel.length"
+      v-if="model.images.length"
       :to="`/models/${model.slug}`"
       class="relative group"
     >
       <NuxtImg
-        v-for="(imageToModel, index) in model.imagesToModel"
-        :key="imageToModel.image.id"
-        :src="imageToModel.image.url || imageUrl(imageToModel.image)"
+        v-for="(image, index) in model.images"
+        :key="image.id"
+        :src="image.url || imageUrl(image)"
         :alt="model.name"
         :class="[currentImage === index ? 'block' : 'hidden']"
       />
@@ -95,13 +95,13 @@ const { mutate: toggleIsInCart } = useMutation({
         />
       </div>
       <div
-        :style="{ '--_img-cols': model.imagesToModel.length }"
+        :style="{ '--_img-cols': model.images.length }"
         class="grid grid-cols-[repeat(var(--_img-cols),1fr)] gap-2 justify-center absolute bottom-2 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
       >
-        <template v-if="model.imagesToModel.length > 1">
+        <template v-if="model.images.length > 1">
           <div
-            v-for="(imageToModel, index) in model.imagesToModel"
-            :key="imageToModel.image.id"
+            v-for="(image, index) in model.images"
+            :key="image.id"
             class="grid grid-rows-[1fr] h-full"
           >
             <div

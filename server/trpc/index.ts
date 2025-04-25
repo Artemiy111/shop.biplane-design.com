@@ -12,7 +12,7 @@ type AuthedContext = Context & {
   user: Exclude<Context['user'], null>
 }
 
-const isAuthed = t.middleware(({ ctx, next, ...r }) => {
+const isAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.user || !ctx.session) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Пользователь не авторизован' })
   return next({
     ctx: {

@@ -12,7 +12,6 @@ const show = defineModel<boolean>('show', { default: false })
   <UInput
     v-bind="props"
     v-model="model"
-
     :type="show ? 'text' : 'password'"
     @blur="emit('blur', $event)"
     @change="emit('change', $event)"

@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey } from 'drizzle-orm/pg-core'
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
@@ -74,12 +73,25 @@ export const categories = pgTable('categories', {
 
 export type CategoryDb = typeof categories.$inferSelect
 
+export const sets = pgTable('sets', {
+  id: text().primaryKey().$default(makeId),
+  name: text().notNull(),
+  slug: text().notNull().unique(),
+  description: text(),
+  price: decimal({ mode: 'number' }).notNull(),
+  discountId: text().references(() => discounts.id),
+  imageId: text().references(() => images.id),
+  createdAt: timestamp().defaultNow(),
+})
+
+export type SetDb = typeof sets.$inferSelect
+
 export const models = pgTable('models', {
   id: text().primaryKey().$default(makeId),
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
-  categoryId: text().notNull().references(() => categories.id, { onDelete: 'cascade' }),
+  categoryId: text().notNull().references(() => categories.id, { onDelete: 'set null' }),
   // fileFormat: text(),
   // fileSize: integer(),
   // revitVersion: text(),
@@ -94,7 +106,9 @@ export type ModelDb = typeof models.$inferSelect
 export const images = pgTable('images', {
   id: text().primaryKey().$default(makeId),
   mimeType: text({ enum: mimeTypesImages }).notNull(),
+  originalFilename: text(),
   url: text(),
+  alt: text(),
   size: integer(),
   width: integer(),
   height: integer(),
@@ -134,19 +148,6 @@ export const files = pgTable('files', {
 
 export type FileDb = typeof files.$inferSelect
 
-export const sets = pgTable('sets', {
-  id: text().primaryKey().$default(makeId),
-  name: text().notNull(),
-  slug: text().notNull().unique(),
-  description: text(),
-  price: decimal({ mode: 'number' }).notNull(),
-  discountId: text().references(() => discounts.id),
-  imageId: text().references(() => images.id),
-  createdAt: timestamp().defaultNow(),
-})
-
-export type SetDb = typeof sets.$inferSelect
-
 export const modelsToSets = pgTable('models_to_sets', {
   modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
   setId: text().notNull().references(() => sets.id, { onDelete: 'cascade' }),
@@ -178,7 +179,7 @@ export type PromocodeDb = typeof promocodes.$inferSelect
 
 export const orders = pgTable('orders', {
   id: text().primaryKey().$default(makeId),
-  userId: text().notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: text().notNull().references(() => users.id, { onDelete: 'restrict' }),
   totalPrice: decimal({ mode: 'number' }).notNull(),
   totalPriceBeforeDiscount: decimal({ mode: 'number' }).notNull(),
 
@@ -195,7 +196,7 @@ export type OrderDb = typeof orders.$inferSelect
 
 export const orderItems = pgTable('order_items', {
   id: text().primaryKey().$default(makeId),
-  orderId: text().notNull().references(() => orders.id, { onDelete: 'cascade' }),
+  orderId: text().notNull().references(() => orders.id, { onDelete: 'restrict' }),
   modelId: text().references(() => models.id),
   setId: text().references(() => sets.id),
   price: decimal({ mode: 'number' }).notNull(),
@@ -224,7 +225,7 @@ export type CartItemDb = typeof cartItems.$inferSelect
 
 export const refunds = pgTable('refunds', {
   id: text().primaryKey().$default(makeId),
-  orderItemId: text().notNull().references(() => orderItems.id, { onDelete: 'cascade' }),
+  orderId: text().notNull().references(() => orders.id, { onDelete: 'restrict' }),
   refundedAmount: decimal(),
   reason: text(),
   status: text({ enum: refundStatuses }).default('pending'),
@@ -234,95 +235,8 @@ export const refunds = pgTable('refunds', {
 
 export type RefundDb = typeof refunds.$inferSelect
 
-export const userRelations = relations(users, ({ many }) => ({
-  sessions: many(sessions),
-  accounts: many(accounts),
-  orders: many(orders),
-  favorites: many(favorites),
-  cartItems: many(cartItems),
-}))
-
-export const sessionRelations = relations(sessions, ({ one }) => ({
-  user: one(users, { fields: [sessions.userId], references: [users.id] }),
-  impersonatedBy: one(users, { fields: [sessions.impersonatedBy], references: [users.id] }),
-}))
-
-export const accountRelations = relations(accounts, ({ one }) => ({
-  user: one(users, { fields: [accounts.userId], references: [users.id] }),
-}))
-
-export const modelRelations = relations(models, ({ one, many }) => ({
-  category: one(categories, { fields: [models.categoryId], references: [categories.id] }),
-  imagesToModel: many(imageToModel),
-  files: many(files),
-  sets: many(modelsToSets),
-  discount: one(discounts, { fields: [models.discountId], references: [discounts.id] }),
-  favorites: many(favorites),
-  cartItems: many(cartItems),
-}))
-
-export const categoryRelations = relations(categories, ({ many }) => ({
-  models: many(models),
-}))
-
-export const imageOptimizedRelations = relations(imagesOptimized, ({ one }) => ({
-  image: one(images, { fields: [imagesOptimized.imageId], references: [images.id] }),
-}))
-
-export const imageRelations = relations(images, ({ one, many }) => ({
-  optimizedImages: many(imagesOptimized),
-  imageToModel: one(imageToModel),
-}))
-
-export const imageToModelRelations = relations(imageToModel, ({ one }) => ({
-  image: one(images, { fields: [imageToModel.imageId], references: [images.id] }),
-  model: one(models, { fields: [imageToModel.modelId], references: [models.id] }),
-}))
-
-export const fileRelations = relations(files, ({ one }) => ({
-  model: one(models, { fields: [files.modelId], references: [models.id] }),
-}))
-
-export const setRelations = relations(sets, ({ one }) => ({
-  discount: one(discounts, { fields: [sets.discountId], references: [discounts.id] }),
-  image: one(images, { fields: [sets.imageId], references: [images.id] }),
-}))
-
-export const modelsToSetsRelations = relations(modelsToSets, ({ one }) => ({
-  model: one(models, { fields: [modelsToSets.modelId], references: [models.id] }),
-  set: one(sets, { fields: [modelsToSets.setId], references: [sets.id] }),
-}))
-
-export const discountRelations = relations(discounts, ({ many }) => ({
-  orders: many(orders),
-}))
-
-export const promocodeRelations = relations(promocodes, ({ many }) => ({
-  orders: many(orders),
-}))
-
-export const orderRelations = relations(orders, ({ one, many }) => ({
-  items: many(orderItems),
-  promocode: one(promocodes, { fields: [orders.promocodeId], references: [promocodes.id] }),
-}))
-
-export const orderItemRelations = relations(orderItems, ({ one }) => ({
-  order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
-  model: one(models, { fields: [orderItems.modelId], references: [models.id] }),
-  set: one(sets, { fields: [orderItems.setId], references: [sets.id] }),
-}))
-
-export const favoriteRelations = relations(favorites, ({ one }) => ({
-  user: one(users, { fields: [favorites.userId], references: [users.id] }),
-  model: one(models, { fields: [favorites.modelId], references: [models.id] }),
-}))
-
-export const cartItemRelations = relations(cartItems, ({ one }) => ({
-  user: one(users, { fields: [cartItems.userId], references: [users.id] }),
-  model: one(models, { fields: [cartItems.modelId], references: [models.id] }),
-  set: one(sets, { fields: [cartItems.setId], references: [sets.id] }),
-}))
-
-export const refundRelations = relations(refunds, ({ one }) => ({
-  orderItem: one(orderItems, { fields: [refunds.orderItemId], references: [orderItems.id] }),
-}))
+export const refundItems = pgTable('refund_items', {
+  id: text().primaryKey().$default(makeId),
+  refundId: text().notNull().references(() => refunds.id, { onDelete: 'restrict' }),
+  orderItemId: text().notNull().references(() => orderItems.id, { onDelete: 'restrict' }),
+})

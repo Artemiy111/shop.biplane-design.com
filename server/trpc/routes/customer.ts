@@ -5,12 +5,14 @@ import { router, customerProsedure } from '~~/server/trpc'
 import { priceAfterDiscount } from '~/src/shared/lib/price'
 import { db } from '~~/server/db'
 import type { OrderItemDb } from '~~/server/db/schema'
-import { favorites, orders, cartItems, promocodes } from '~~/server/db/schema'
+import { favorites, orders, cartItems } from '~~/server/db/schema'
 
 export const customerRouter = router({
   getFavorites: customerProsedure.query(async ({ ctx: { user } }) => {
     return await db.query.favorites.findMany({
-      where: eq(favorites.userId, user.id),
+      where: {
+        userId: user.id,
+      },
       with: {
         model: modelPrequery(),
       },
@@ -25,7 +27,9 @@ export const customerRouter = router({
 
   getOrders: customerProsedure.query(async ({ ctx: { user } }) => {
     return await db.query.orders.findMany({
-      where: eq(orders.userId, user.id),
+      where: {
+        userId: user.id,
+      },
       with: {
         items: {
           with: {
@@ -39,7 +43,9 @@ export const customerRouter = router({
 
   getCartItems: customerProsedure.query(async ({ ctx: { user } }) => {
     return await db.query.cartItems.findMany({
-      where: eq(cartItems.userId, user.id),
+      where: {
+        userId: user.id,
+      },
       with: {
         model: modelPrequery(),
         set: setPrequery,
@@ -118,7 +124,9 @@ export const customerRouter = router({
     .mutation(async ({ input: { promocodeCode }, ctx: { user } }) => {
       db.transaction(async (tx) => {
         const cart = await tx.query.cartItems.findMany({
-          where: eq(cartItems.userId, user.id),
+          where: {
+            userId: user.id,
+          },
           with: {
             model: { with: { discount: true } },
             set: { with: { discount: true } },
@@ -152,7 +160,9 @@ export const customerRouter = router({
 
         const promocode = promocodeCode
           ? (await tx.query.promocodes.findFirst({
-              where: eq(promocodes.code, promocodeCode),
+              where: {
+                code: promocodeCode,
+              },
             })) || null
           : null
         const promocodeDiscountPersentage = promocode?.discountPercentage || 0

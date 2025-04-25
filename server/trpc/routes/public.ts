@@ -1,9 +1,7 @@
 import { z } from 'zod'
-import { eq } from 'drizzle-orm'
 import { router, publicProcedure } from '~~/server/trpc'
 import { modelPrequery } from '~~/server/trpc/query-templates'
 import { db } from '~~/server/db'
-import { models } from '~~/server/db/schema'
 
 export const publicRouter = router({
   getCategories: publicProcedure
@@ -30,7 +28,9 @@ export const publicRouter = router({
     .query(async ({ ctx, input }) => {
       const { user } = ctx
       const model = await db.query.models.findFirst({
-        where: eq(models.slug, input.slug),
+        where: {
+          slug: input.slug,
+        },
         ...modelPrequery(user?.id),
       })
       return model

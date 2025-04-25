@@ -1,48 +1,31 @@
-import { eq, sql } from 'drizzle-orm'
-import { models, favorites, cartItems } from '../db/schema'
-
-// export const modelPrequery = {
-//   with: {
-//     discount: true,
-//     files: true,
-//     imagesToModel: {
-//       with: {
-//         image: {
-//           with: {
-//             optimizedImages: true,
-//           },
-//         },
-//       },
-//     },
-//   },
-// } as const
-
 export const modelPrequery = (userId?: string) => ({
   with: {
     discount: true,
     files: true,
-
-    imagesToModel: {
+    images: {
       with: {
-        image: {
-          with: {
-            optimizedImages: true,
-          },
-        },
+        optimized: true,
       },
     },
     ...(userId
-      ? {
-          favorites: {
-            where: eq(favorites.userId, userId),
-            columns: { userId: true },
-            limit: 1,
+      ? { favorites: {
+          where: {
+            userId: userId,
           },
-          cartItems: {
-            where: eq(cartItems.userId, userId),
-            columns: { userId: true },
-            limit: 1,
+          columns: {
+            userId: true,
           },
+          limit: 1,
+        },
+        cartItems: {
+          where: {
+            userId: userId,
+          },
+          columns: {
+            userId: true,
+          },
+          limit: 1,
+        },
         }
       : {}),
   },
@@ -53,7 +36,7 @@ export const setPrequery = {
     discount: true,
     image: {
       with: {
-        optimizedImages: true,
+        optimized: true,
       },
     },
   },
