@@ -10,6 +10,16 @@ export const useCategories = defineQuery(() => {
   return { categories, ...rest }
 })
 
+export const useModelBySlug = defineQuery(() => {
+  const modelSlug = ref<string | null>(null)
+  const { data: model, state: _, ...rest } = useQuery({
+    key: () => ['categories', 'models', { slug: modelSlug.value }],
+    query: async () => await useApi().public.getModelBySlug.query({ slug: modelSlug.value! }),
+    enabled: () => !!modelSlug.value,
+  })
+  return { model, modelSlug, ...rest }
+})
+
 export const useFavoritesCount = defineQuery(() => {
   const authUtils = useAuthUtils()
 
