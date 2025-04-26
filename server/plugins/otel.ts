@@ -1,7 +1,7 @@
-import { sdk } from '../scripts/otel'
+// import { sdk } from '../services/otel'
 
-export default defineNitroPlugin((nitro) => {
-  sdk.start()
+export default defineNitroPlugin(() => {
+  // sdk.start()
 
-  console.log('otel sdk started')
+  // console.log('otel sdk started')
 })

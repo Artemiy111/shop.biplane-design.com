@@ -35,6 +35,7 @@ export default defineNuxtConfig({
   experimental: {
     typedPages: true,
     crossOriginPrefetch: true,
+    // asyncContext: true,
   },
 
   compatibilityDate: '2024-11-01',

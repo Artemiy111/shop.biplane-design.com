@@ -193,4 +193,10 @@ export const customerRouter = router({
         await tx.delete(cartItems).where(eq(cartItems.userId, user.id))
       })
     }),
+
+  addToQueue: customerProsedure
+    .input(z.object({ message: z.string() }))
+    .mutation(async ({ input, ctx: { user } }) => {
+      // await rabbit.publish('tasks', { userId: user.id, message: input.message })
+    }),
 })

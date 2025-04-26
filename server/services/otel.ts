@@ -10,14 +10,14 @@ import {
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
 const metricExporter = new PrometheusExporter({
-  port: 9464, // Порт для метрик Prometheus
+  port: 8888, // Порт для метрик Prometheus
 })
 
 export const sdk = new NodeSDK({
   traceExporter: new OTLPTraceExporter({ url: 'http://localhost:4317/v1/traces' }),
-  metricReader: new PeriodicExportingMetricReader({
-    exporter: metricExporter,
-    exportIntervalMillis: 1000,
-  }),
+  // metricReader: new PeriodicExportingMetricReader({
+  // exporter: metricExporter,
+  // exportIntervalMillis: 1000,
+  // }),
   instrumentations: [getNodeAutoInstrumentations()],
 })

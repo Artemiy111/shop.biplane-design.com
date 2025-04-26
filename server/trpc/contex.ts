@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import { auth } from '~~/server/lib/auth'
+// import { rabbitMQService } from '~~/server/services/rabbitmq'
 
 export async function createContext(event: H3Event) {
   const data = await auth.api.getSession({ headers: event.headers })
@@ -12,7 +13,9 @@ export async function createContext(event: H3Event) {
     event,
     session,
     user,
+    // rabbit: rabbitMQService,
   }
 }
+
 export type CreateContext = typeof createContext
 export type Context = Awaited<ReturnType<CreateContext>>
