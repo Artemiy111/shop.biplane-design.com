@@ -44,7 +44,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
 <template>
   <main
     v-if="model"
-    class="container grid grid-cols-2 gap-16"
+    class="container grid grid-cols-2 gap-20"
   >
     <div class="">
       <UBreadcrumb
@@ -52,13 +52,14 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
       />
       <UCarousel
         v-slot="{ item: image }"
-        class="mt-2"
+        class="mt-3"
         loop
         :arrows="model.images.length > 1"
         :dots="model.images.length > 1"
         wheel-gestures
         :items="model.images"
         :ui="{
+          item: 'rounded-none',
           // controls: 'w-[calc(100%-2*var(--spacing))] relative',
           arrows: '[&>button]:first:start-4 [&>button]:last:end-4 [&>button]:bg-transparent [&>button]:hover:bg-black/30 [&>button]:ring-black ',
           dots: 'bottom-4 w-full px-4 grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-4 justify-center',
@@ -70,13 +71,12 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
           :alt="model.name"
           :width="image.width || undefined"
           :height="image.height || undefined"
-          class="rounded-lg"
         />
       </UCarousel>
     </div>
 
     <div class="flex flex-col">
-      <h1 class="text-subheading mt-8">
+      <h1 class="text-subheading mt-12">
         {{ model.name }}
       </h1>
       <p

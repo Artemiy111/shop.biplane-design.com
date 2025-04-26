@@ -1,31 +1,127 @@
 
 services:
-  postgres:
-    image: postgres:17
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: biplane_shop
-    ports:
-      - 5432:5432
+  # postgres:
+  #   image: postgres:17
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: root
+  #     POSTGRES_DB: biplane_shop
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - .data/postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - app-network
+  #   # volumes:
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   ports:
+  #     - 5050:80
+  #   volumes:
+  #     - .data/pgadmin_data:/var/lib/pgadmin 
+  #   networks:
+  #     - app-network
+
+  # otel-collector:
+  #   image: otel/opentelemetry-collector
+  #   command: ["--config=/etc/otel-collector-config.yaml"]
+  #   volumes:
+  #     - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+  #   ports:
+  #     - "4317:4317"   # OTLP gRPC
+  #     - "4318:4318"   # OTLP HTTP
+  #     - "8889:8889"   # Prometheus metrics
+  #   networks:
+  #     - app-network
+
+  # prometheus:
+  #   image: prom/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - app-network
+
+  # jaeger:
+  #   image: jaegertracing/all-in-one
+  #   ports:
+  #     - "16686:16686" # Jaeger UI
+  #     - "14250:14250" # Jaeger gRPC
+  #   environment:
+  #     - COLLECTOR_OTLP_ENABLED=true
+  #   networks:
+  #     - app-network
+
+  # grafana:
+  #   image: grafana/grafana
+  #   ports:
+  #     - "3030:3000"
+  #   volumes:
+  #     - .data/grafana_data:/var/lib/grafana
+  #   networks:
+  #     - app-network
+
+
+
+  otel-collector:
+    image: otel/opentelemetry-collector
+    command: --config=/etc/otel-config.yaml
     volumes:
-      - .data/postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    # volumes:
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      - ./docker/otel-config.yaml:/etc/otel-config.yaml
     ports:
-      - 5050:80
+      - "4317:4317"  # OTLP gRPC
+      - "4318:4318"  # OTLP HTTP
+    depends_on:
+      - tempo
+      - loki
+      - prometheus
+
+  # Grafana Tempo (трейсы)
+  tempo:
+    image: grafana/tempo:latest
+    command: -config.file=/etc/tempo.yaml
     volumes:
-      - .data/pgadmin_data:/var/lib/pgadmin 
-    networks:
-      - app-network
+      - ./docker/tempo.yaml:/etc/tempo.yaml
+      - ./.data/tempo:/tmp/tempo  # Данные трейсов
+    ports:
+      - "3200:3200"  # Tempo HTTP
+      - "9093:9093"  # Grafana
+
+  # Loki (логи)
+  loki:
+    image: grafana/loki:latest
+    volumes:
+      - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
+      - ./.data/loki:/tmp/loki  # Данные логов
+    ports:
+      - "3100:3100"  # Loki HTTP
+
+  # Prometheus (метрики)
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./.data/prometheus:/prometheus  # Данные метрик
+    ports:
+      - "9090:9090"
+
+  # Grafana (визуализация)
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./.data/grafana:/var/lib/grafana  # Дашборды и настройки
+    ports:
+      - "3000:3000"
+    depends_on:
+      - tempo
+      - loki
+      - prometheus
 
 networks:
   app-network:
