@@ -83,13 +83,13 @@ const items = ref<
           <template #leading>
             <MoonIcon
               v-if="colorMode.value === 'dark'"
-              :size="mediaLessThamSmall ? 24 : 32"
+              class="size-8 max-sm:size-6"
               :absolute-stroke-width="true"
-              :stroke-width="mediaLessThamSmall ? 1.5 : 2"
+              :stroke-width="1.5 "
             />
             <SunIcon
               v-else
-              :size="mediaLessThamSmall ? 24 : 32"
+              class="size-8 max-sm:size-6"
               :absolute-stroke-width="true"
               :stroke-width="mediaLessThamSmall ? 1.5 : 2"
             />
@@ -107,21 +107,20 @@ const items = ref<
             <UChip
               v-if="item.count"
               :text="item.count"
-              :ui="{ base: 'size-5 text-xs text-(--ui-color-primary-500) font-bold bg-(--ui-color-primary-200) dark:font-semibold dark:bg-(--ui-color-primary-700) dark:text-(--ui-color-primary-200)' }"
+              :ui="{ base: 'size-5 text-xs text-(--ui-color-primary-500) font-bold bg-(--ui-color-primary-100) dark:font-semibold dark:bg-(--ui-color-primary-700) dark:text-(--ui-color-primary-200)' }"
             >
               <component
                 :is="item.iconComponent(
                   { absoluteStrokeWidth: true,
-                    strokeWidth: mediaLessThamSmall ? 1.5 : 2,
-                    size: mediaLessThamSmall ? 24 : 32,
-                    class: 'text-(--ui-text)' }, {} as any)"
+                    strokeWidth: 1.5,
+                    class: 'size-8 max-sm:size-6 text-(--ui-text)' }, {} as any)"
               />
             </UChip>
             <component
               :is="item.iconComponent({
+                absoluteStrokeWidth: true,
                 strokeWidth: 1.5,
-                size: mediaLessThamSmall ? 24 : 32,
-                class: 'text-(--ui-text)' }, {} as any)"
+                class: 'size-8 max-sm:size-6 text-(--ui-text)' }, {} as any)"
               v-else
             />
           </template>

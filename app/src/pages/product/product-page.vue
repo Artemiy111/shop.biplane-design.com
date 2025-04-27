@@ -44,15 +44,15 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
 <template>
   <main
     v-if="model"
-    class="container grid grid-cols-2 gap-20"
+    class="container grid grid-cols-2 gap-x-16 max-lg:gap-x-10 max-xl:gap-14 gap-y-3"
   >
+    <UBreadcrumb
+      class="col-span-2"
+      :items="breadcrumb"
+    />
     <div class="">
-      <UBreadcrumb
-        :items="breadcrumb"
-      />
       <UCarousel
         v-slot="{ item: image }"
-        class="mt-3"
         loop
         :arrows="model.images.length > 1"
         :dots="model.images.length > 1"
@@ -76,22 +76,22 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
     </div>
 
     <div class="flex flex-col">
-      <h1 class="text-subheading mt-12">
+      <h1 class="text-subheading font-normal">
         {{ model.name }}
       </h1>
       <p
-        v-if="model.description"
+        v-if="!model.description"
         class="mt-2"
       >
         {{ 'Этот товар самый лучший из всех, что вы видели' }}
       </p>
 
-      <div class="mt-8">
+      <div class="mt-6">
         <div
           v-if="model.discount"
           class="flex items-end gap-4"
         >
-          <div class="text-heading font-bold">
+          <div class="text-heading">
             {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
           </div>
           <UBadge
@@ -105,13 +105,13 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
         </div>
         <div
           v-else
-          class="text-heading font-bold h-[32px]"
+          class="text-heading"
         >
           {{ formatPrice(model.price) }}
         </div>
       </div>
 
-      <div class="flex gap-x-4 mt-8">
+      <div class="flex gap-x-4 mt-6">
         <button @click="toggleIsFavorite(model.id)">
           <HeartIcon
             :size="32"
