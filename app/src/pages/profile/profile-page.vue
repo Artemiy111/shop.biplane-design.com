@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { BadgeCheckIcon, LoaderCircleIcon } from 'lucide-vue-next'
+import { BadgeCheckIcon } from 'lucide-vue-next'
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { emailSchema, minMaxString, passwordSchema } from '~/src/shared/config/validation/base'
 import { authClient, useAuthUtils } from '~/src/shared/models/auth-utils'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { InputPassword } from '~/src/shared/ui/kit'
+import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 
 const authUtils = useAuthUtils()
 const user = authUtils.useUser()
@@ -122,12 +123,11 @@ const logout = async () => {
 <template>
   <main class="container">
     <PageHeading>Профиль</PageHeading>
-    <div
-      v-if="!user"
-      class="grid justify-center items-center h-full"
-    >
-      <LoaderCircleIcon class="animate-spin" />
-    </div>
+    <ContentLoader v-if="authUtils.sessionData.isPending" />
+    <ContentLoaderError
+      v-else-if="authUtils.sessionData.isError"
+      :show-refresh-button="false"
+    />
     <div
       v-else
       class="flex gap-x-16 gap-y-16 flex-wrap"

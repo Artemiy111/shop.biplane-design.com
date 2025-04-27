@@ -1,22 +1,25 @@
 import { z } from 'zod'
-import { count, eq, and } from 'drizzle-orm'
+import { count, eq, and, sql } from 'drizzle-orm'
 import { modelPrequery, setPrequery } from '~~/server/trpc/query-templates'
 import { router, customerProsedure } from '~~/server/trpc'
 import { priceAfterDiscount } from '~/src/shared/lib/price'
 import { db } from '~~/server/db'
 import type { OrderItemDb } from '~~/server/db/schema'
-import { favorites, orders, cartItems } from '~~/server/db/schema'
+import { favorites, orders, cartItems, models } from '~~/server/db/schema'
 
 export const customerRouter = router({
   getFavorites: customerProsedure.query(async ({ ctx: { user } }) => {
-    return await db.query.favorites.findMany({
+    const models_ = await db.query.models.findMany({
       where: {
-        userId: user.id,
+        RAW: t => sql`EXISTS (SELECT 1 FROM ${favorites} WHERE ${favorites.userId} = ${user.id} AND ${favorites.modelId} = ${t.id})`.mapWith(Boolean),
       },
-      with: {
-        model: { with: modelPrequery() },
-      },
+      with: modelPrequery(user.id),
     })
+    return models_.map(model => ({
+      ...model,
+      isFavorite: true,
+      isInCart: model.cartItems?.length > 0,
+    }))
   }),
 
   getFavoritesCount: customerProsedure.query(async ({ ctx: { user } }) => {

@@ -20,8 +20,6 @@ export const publicRouter = router({
           isInCart: model.cartItems?.length > 0,
         })),
       }))
-      console.dir(categories)
-
       return categories
     }),
 

@@ -24,7 +24,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
 
 <template>
   <div
-    class="relative group h-full"
+    class="relative group h-full @container/slider"
   >
     <NuxtImg
       v-for="(image, index) in images"
@@ -35,13 +35,13 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
     />
     <div
       v-if="actionsEnabled"
-      :class="cn('flex flex-col gap-3 absolute top-4 right-4 max-xs:right-2 max-xs:top-2 text-neutral-800 z-1 w-fit h-fit')"
+      :class="cn('flex flex-col gap-3 absolute top-4 right-4 @max-3xs/slider:right-2 @max-3xs/slider:top-2 text-neutral-800 z-1 w-fit h-fit')"
     >
       <button @click.stop.prevent="emit('toggle:is-favorite', model.id)">
         <HeartIcon
           :absolute-stroke-width="true"
           :stroke-width="1.5"
-          :class="cn('size-8 max-xs:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none [@media(pointer:coarse)]:opacity-100 ',
+          :class="cn('size-8 @max-3xs/slider:size-7 @max-4xs/slider:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none pointer-coarse:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
                      model.isFavorite && 'opacity-100 text-red-500 hover:text-red-300')"
         />
@@ -50,10 +50,10 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
         <ShoppingBagIcon
           :absolute-stroke-width="true"
           :stroke-width="1.5"
-          :class="cn('size-8 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none [@media(pointer:coarse)]:opacity-100 ',
+          :class="cn('size-8 @max-3xs/slider:size-7 @max-4xs/slider:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none pointer-coarse:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
                      model.isInCart && 'opacity-100 text-red-500 hover:text-red-300',
-                     'max-md:hidden',
+                     '@max-xs/slider:hidden',
           )"
         />
       </button>

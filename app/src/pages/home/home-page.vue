@@ -3,17 +3,26 @@ import type { UnwrapRef } from 'vue'
 import { ModelCard } from '~/src/shared/ui/blocks/model-card'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { useCategories } from '~/src/shared/models/queries'
+import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 
-const { categories } = useCategories()
+const { categories, status, refresh } = useCategories()
 
 export type Categories = UnwrapRef<typeof categories>
 export type Model = Categories[0]['models'][0]
 </script>
 
 <template>
-  <main class="container flex flex-col">
+  <main class="container">
     <PageHeading>Каталог</PageHeading>
-    <div class="flex flex-col gap-y-8">
+    <ContentLoader v-if="status === 'pending'" />
+    <ContentLoaderError
+      v-else-if="status === 'error'"
+      @refresh="refresh"
+    />
+    <div
+      v-else
+      class="flex flex-col gap-y-8 @container/content"
+    >
       <div
         v-for="category in categories"
         :key="category.id"
@@ -22,7 +31,7 @@ export type Model = Categories[0]['models'][0]
         <h3 class="text-subheading">
           {{ category.name }}
         </h3>
-        <div class="grid grid-cols-3 max-lg:grid-cols-2 gap-(--container-pad)">
+        <div class="grid grid-cols-3 @max-5xl/content:grid-cols-2 gap-(--container-pad)">
           <ModelCard
             v-for="model in category.models"
             :key="model.id"

@@ -3,6 +3,21 @@ export default defineAppConfig({
     colors: {
       primary: 'amber',
     },
+    input: {
+      variants: {
+        size: {
+          sm: {
+            base: 'text-sm',
+          },
+          md: {
+            base: 'text-base',
+          },
+          lg: {
+            base: 'text-base',
+          },
+        },
+      },
+    },
     button: {
       slots: {
         base: 'cursor-pointer',
@@ -19,10 +34,10 @@ export default defineAppConfig({
       variants: {
         active: {
           false: {
-            dot: 'bg-black/5',
+            dot: 'bg-(--ui-border)',
           },
           true: {
-            dot: 'bg-black/50',
+            dot: 'bg-neutral-400',
           },
         },
       },

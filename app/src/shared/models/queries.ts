@@ -45,3 +45,14 @@ export const useCartItemsCount = defineQuery(() => {
   })
   return { cartItemsCount, ...rest }
 })
+
+export const useFavoriteModels = defineQuery(() => {
+  const authUtils = useAuthUtils()
+  const { data, state: _, ...rest } = useQuery({
+    key: () => ['favorites', { userId: authUtils.user?.id }],
+    query: () => useApi().customer.getFavorites.query(),
+    enabled: () => authUtils.isCustomer,
+  })
+  const favoriteModels = computed(() => data.value || [])
+  return { favoriteModels, ...rest }
+})

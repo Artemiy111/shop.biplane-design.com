@@ -43,7 +43,7 @@ const { toggleIsInCart } = useToggleIsInCartMutation()
         />
       </div>
     </NuxtLink>
-    <div class="[grid-area:image] z-1 justify-self-end self-end bottom-4 right-4 relative flex gap-x-3">
+    <div class="[grid-area:image] z-1 justify-self-end self-end bottom-4 right-4 relative flex gap-x-3  @max-3xs/card:right-2 @max-3xs/card:bottom-2">
       <UBadge
         v-for="file in model.files"
         :key="file.id"
@@ -66,18 +66,18 @@ const { toggleIsInCart } = useToggleIsInCartMutation()
           v-if="model.discount"
           class="flex items-baseline gap-4 max-xs:gap-x-2"
         >
-          <div class="text-subheading font-normal @max-xs:text-base-max @max-2xs:text-sm-max">
+          <div class="text-subheading font-normal @max-xs/card:text-base-max @max-2xs/card:text-sm-max">
             {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
           </div>
           <UBadge
             color="primary"
             variant="soft"
-            class="@max-3xs:text-xs @max-3xs:px-1.5 @max-3xs:py-0.5"
+            class="@max-3xs/card:text-xs @max-3xs/card:px-1.5 @max-3xs/card:py-0.5"
             :ui="{ base: 'text-sm font-bold ' }"
           >
             {{ model.discount.discountPercentage }}%
           </UBadge>
-          <span class="@max-3xs:text-xs text-sm line-through text-(--ui-text-muted)">{{ model.price }}</span>
+          <span class="@max-3xs/card:text-xs text-sm line-through text-(--ui-text-muted)">{{ model.price }}</span>
         </div>
         <div
           v-else
@@ -87,13 +87,13 @@ const { toggleIsInCart } = useToggleIsInCartMutation()
         </div>
       </div>
 
-      <h6 class="mt-1 @max-xs:text-sm">
+      <h6 class="mt-1 @max-xs/card:text-sm">
         {{ model.name }}
       </h6>
 
-      <div class="max-md:block hidden mt-4 @max-3xs:mt-3">
+      <div class="@max-xs/card:block hidden mt-4 @max-3xs/card:mt-3">
         <UButton
-          class="w-full justify-center"
+          class="w-full justify-center @max-3xs/card:text-xs"
           variant="soft"
           :color="model.isInCart ? 'error' : 'neutral'"
           @click="toggleIsInCart(model.id)"
