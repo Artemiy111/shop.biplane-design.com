@@ -3,7 +3,7 @@ import { anonymous, admin } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '../db'
 import * as schema from '../db/schema'
-import { sendVerificationEmail, sendChangeEmailVerification } from './email'
+import { sendVerificationEmail, sendChangeEmailVerification, sendResetPassword } from './email'
 
 export const auth = betterAuth({
   plugins: [anonymous(), admin()],
@@ -21,7 +21,11 @@ export const auth = betterAuth({
     },
   },
 
-  emailAndPassword: { enabled: true },
+  emailAndPassword: {
+    enabled: true,
+    sendResetPassword,
+    autoSignIn: true,
+  },
 
   emailVerification: {
     autoSignInAfterVerification: true,

@@ -3,16 +3,15 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 import { type LoginSchema, loginSchema } from './config/shema'
 import { authClient } from '~/src/shared/models/auth-utils'
 import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
-
-// TODO забыли пароль
+import { InputPassword } from '~/src/shared/ui/kit'
 
 const toast = useToast()
 
 const form = useTemplateRef('form')
 
 const state = ref<Partial<LoginSchema>>({
-  email: '',
-  password: '',
+  email: undefined,
+  password: undefined,
 })
 
 const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
@@ -36,13 +35,15 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
 </script>
 
 <template>
-  <main class="flex flex-col w-sm mx-auto">
-    <PageHeading>Вход</PageHeading>
+  <main class="flex flex-col auth-container">
+    <PageHeading size="subheading">
+      Вход
+    </PageHeading>
     <UForm
       ref="form"
       :schema="loginSchema"
       :state="state"
-      class="flex flex-col gap-y-4 "
+      class="flex flex-col gap-y-5 mt-1"
       @submit="onSubmit"
     >
       <UFormField
@@ -60,23 +61,34 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
         name="password"
         label="Пароль"
       >
-        <UInput
+        <InputPassword
           v-model="state.password"
           class="w-full"
-          type="password"
         />
+        <template #hint>
+          <ULink
+            class="text-sm"
+            to="/auth/forget-password"
+          >Забыли пароль?</ULink>
+        </template>
       </UFormField>
-      <div class="flex gap-x-4 items-baseline">
-        <UButton
-          type="submit"
-          loading-auto
-          class="w-fit mt-4"
-          :disabled="!!form?.errors.length "
-        >
-          Войти
-        </UButton>
+      <div class="flex flex-col gap-4">
+        <div class="flex gap-x-4 items-baseline">
+          <UButton
+            type="submit"
+            color="neutral"
+            loading-auto
+            class="w-fit mt-4"
+            :disabled="!!form?.errors.length "
+          >
+            Войти
+          </UButton>
 
-        <ULink to="/auth/register">Регистрация</ULink>
+          <ULink
+            class="text-sm"
+            to="/auth/register"
+          >Зарегистрироваться</ULink>
+        </div>
       </div>
     </UForm>
   </main>

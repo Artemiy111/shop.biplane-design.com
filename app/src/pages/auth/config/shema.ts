@@ -1,17 +1,17 @@
 import { z } from 'zod'
-import { minMaxString, requiredString, errorMessages } from '~/src/shared/config/validation/base'
+import { requiredString, errorMessages, emailSchema, passwordSchema } from '~/src/shared/config/validation/base'
 
 export const loginSchema = z.object({
-  email: z.email(errorMessages.email),
-  password: minMaxString(8, 100),
+  email: emailSchema,
+  password: passwordSchema,
 })
 
 export type LoginSchema = z.output<typeof loginSchema>
 
 export const registerSchema = z.object({
-  name: minMaxString(2, 100),
+  name: emailSchema,
   email: z.email(errorMessages.email),
-  password: minMaxString(8, 100),
+  password: passwordSchema,
   confirm: requiredString,
 }).refine(data => data.password === data.confirm, {
   error: 'Пароли не совпадают',
@@ -19,3 +19,17 @@ export const registerSchema = z.object({
 })
 
 export type RegisterSchema = z.output<typeof registerSchema>
+
+export const forgetPasswordSchema = z.object({
+  email: emailSchema,
+})
+
+export type ForgetPasswordSchema = z.output<typeof forgetPasswordSchema>
+
+export const resetPasswordSchema = z.object({
+  token: requiredString,
+  password: passwordSchema,
+  confirm: requiredString,
+})
+
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>

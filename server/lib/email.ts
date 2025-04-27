@@ -45,3 +45,19 @@ export const sendChangeEmailVerification = async ({
     `Подтвердите изменение почты для Biplane-Design Shop\n\nНовая почта: ${newEmail}\n\n${url}`,
   })
 }
+
+export const sendResetPassword = async ({
+  user,
+  url,
+}: {
+  user: { [key: string]: unknown } & { email: string }
+  url: string
+  token: string
+}) => {
+  await transporter.sendMail({
+    from: `"Biplane-Design Shop" <${env.SMTP_USER}>`,
+    to: user.email,
+    subject: 'Сброс пароля для Biplane-Design Shop',
+    text: `Сброс пароля для Biplane-Design Shop\n\n${url}`,
+  })
+}

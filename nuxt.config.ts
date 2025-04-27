@@ -16,6 +16,10 @@ export default defineNuxtConfig({
   app: { head: { htmlAttrs: { lang: 'ru' } } },
   css: ['./app/src/shared/assets/main.css'],
 
+  colorMode: {
+    storage: 'cookie',
+  },
+
   runtimeConfig: {
     public: {
       s3Region: process.env.S3_REGION,
@@ -23,7 +27,6 @@ export default defineNuxtConfig({
       s3BucketEndpointUrl: process.env.S3_BUCKET_ENDPOINT_URL,
     },
   },
-
   build: {
     transpile: ['trpc-nuxt'],
   },

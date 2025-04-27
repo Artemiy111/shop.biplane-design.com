@@ -1,30 +1,38 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { type RegisterSchema, registerSchema } from './config/shema'
+import { type ResetPasswordSchema, resetPasswordSchema } from './config/shema'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { authClient } from '~/src/shared/models/auth-utils'
 import { InputPassword } from '~/src/shared/ui/kit'
 
 const toast = useToast()
-
 const form = useTemplateRef('form')
+const route = useRoute()
+const token = route.query.token?.toString() || ''
 
-const state = ref<Partial<RegisterSchema>>({
-  email: undefined,
+const state = ref<Partial<ResetPasswordSchema>>({
+  token: undefined,
   password: undefined,
+  confirm: undefined,
 })
 
-const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
-  await authClient.signUp.email({
-    name: event.data.name,
-    email: event.data.email,
-    password: event.data.password,
+onMounted(() => {
+  if (!token || route.query.error === 'invalid_token')
+    form.value?.setErrors([{ name: 'token', message: 'Не удалось получить токен' }])
+  else
+    state.value.token = token
+})
+
+const onSubmit = async (event: FormSubmitEvent<ResetPasswordSchema>) => {
+  await authClient.resetPassword({
+    newPassword: event.data.password,
+    token,
   }, {
     onError: () => {
-      toast.add({ color: 'error', title: 'Не удалось зарегистрироваться' })
+      toast.add({ color: 'error', title: 'Не удалось сбросить пароль' })
     },
     onSuccess: () => {
-      navigateTo('/')
+      navigateTo('/auth/login')
     },
   })
 }
@@ -33,38 +41,29 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
 <template>
   <main class="flex flex-col auth-container">
     <PageHeading size="subheading">
-      Регистрация
+      Сброс пароля
     </PageHeading>
     <UForm
       ref="form"
-      :schema="registerSchema"
+      :schema="resetPasswordSchema"
       :state="state"
       class="flex flex-col gap-y-5 mt-1"
       @submit="onSubmit"
     >
       <UFormField
-        name="name"
-        label="Имя"
+        name="token"
+        label="Токен"
       >
         <UInput
-          v-model="state.name"
+          :model-value="state.token"
+          class="w-full"
           type="text"
-          class="w-full"
-        />
-      </UFormField>
-      <UFormField
-        name="email"
-        label="Email"
-      >
-        <UInput
-          v-model="state.email"
-          type="email"
-          class="w-full"
+          disabled
         />
       </UFormField>
       <UFormField
         name="password"
-        label="Пароль"
+        label="Новый пароль"
       >
         <InputPassword
           v-model="state.password"
@@ -85,17 +84,12 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
         <UButton
           type="submit"
           color="neutral"
-          loading-auto
           class="w-fit mt-4"
+          loading-auto
           :disabled="!!form?.errors.length "
         >
-          Зарегистрироваться
+          Поменять пароль
         </UButton>
-
-        <ULink
-          class="text-sm"
-          to="/auth/login"
-        >Войти</ULink>
       </div>
     </UForm>
   </main>
