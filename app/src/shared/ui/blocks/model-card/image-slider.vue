@@ -24,8 +24,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
 
 <template>
   <div
-    :to="`/models/${model.slug}`"
-    class="relative group"
+    class="relative group h-full"
   >
     <NuxtImg
       v-for="(image, index) in images"
@@ -44,7 +43,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
           :stroke-width="1.5"
           :class="cn('size-8 max-xs:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none [@media(pointer:coarse)]:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
-                     model.isFavorite && 'opacity-100  text-red-500  hover:text-red-300')"
+                     model.isFavorite && 'opacity-100 text-red-500 hover:text-red-300')"
         />
       </button>
       <button @click.stop.prevent="emit('toggle:is-in-cart', model.id)">
@@ -53,7 +52,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
           :stroke-width="1.5"
           :class="cn('size-8 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none [@media(pointer:coarse)]:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
-                     model.isInCart && 'opacity-100  text-red-500  hover:text-red-300',
+                     model.isInCart && 'opacity-100 text-red-500 hover:text-red-300',
                      'max-md:hidden',
           )"
         />
@@ -61,7 +60,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
     </div>
     <div
       :style="{ '--_img-cols': images.length }"
-      class="grid grid-cols-[repeat(var(--_img-cols),1fr)] gap-2 justify-center absolute bottom-2 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
+      class="grid grid-cols-[repeat(var(--_img-cols),1fr)] gap-2 justify-center absolute bottom-0 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
     >
       <template v-if="images.length > 1">
         <div
@@ -75,7 +74,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
           >
             <div
               class="h-0.5 absolute bottom-0 inset-x-0"
-              :class="currentImage === index ? 'bg-black/50' : 'bg-black/5' "
+              :class="currentImage === index ? 'bg-neutral-400' : 'bg-(--ui-border)' "
             />
           </div>
         </div>
