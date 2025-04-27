@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { HeartIcon, ShoppingCart } from 'lucide-vue-next'
-import type { Model } from '../HomePage.vue'
+import { HeartIcon, ShoppingBagIcon, ShoppingCart } from 'lucide-vue-next'
+import type { CategoryModel } from '~/src/shared/models/queries'
 import { imageUrl } from '~/src/shared/lib/image'
 import { cn } from '~/src/shared/lib/cn'
+import { useIsTouchScreen } from '~/src/shared/models/device'
 
 const { model, actionsEnabled = true } = defineProps<{
   actionsEnabled?: boolean
-  model: Model
+  model: CategoryModel
 }>()
 
 const emit = defineEmits<{
@@ -15,6 +16,10 @@ const emit = defineEmits<{
 }>()
 
 const currentImage = ref(0)
+
+const isTouchScreen = useIsTouchScreen()
+
+const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.images)
 </script>
 
 <template>
@@ -23,41 +28,42 @@ const currentImage = ref(0)
     class="relative group"
   >
     <NuxtImg
-      v-for="(image, index) in model.images"
+      v-for="(image, index) in images"
       :key="image.id"
       :src="image.url || imageUrl(image)"
       :alt="model.name"
-      :class="[currentImage === index ? 'block' : 'hidden']"
+      :class="[currentImage === index || images.length === 1 ? 'block' : 'hidden']"
     />
     <div
       v-if="actionsEnabled"
-      :class="cn('group-hover:opacity-100 transition duration-300 opacity-0 flex flex-col gap-2 absolute top-4 right-4 text-neutral-800 z-1 w-fit h-fit',
-                 (model.isFavorite || model.isInCart) && 'opacity-100')"
+      :class="cn('flex flex-col gap-3 absolute top-4 right-4 max-xs:right-2 max-xs:top-2 text-neutral-800 z-1 w-fit h-fit')"
     >
       <button @click.stop.prevent="emit('toggle:is-favorite', model.id)">
         <HeartIcon
-          :size="36"
           :absolute-stroke-width="true"
           :stroke-width="1.5"
-          :class="cn('hover:text-red-500 duration-300 cursor-pointer',
-                     model.isFavorite && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+          :class="cn('size-8 max-xs:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none [@media(pointer:coarse)]:opacity-100 ',
+                     'hover:text-red-500 duration-base cursor-pointer',
+                     model.isFavorite && 'opacity-100  text-red-500  hover:text-red-300')"
         />
       </button>
       <button @click.stop.prevent="emit('toggle:is-in-cart', model.id)">
-        <ShoppingCart
-          :stroke-width="1.5"
-          :size="36"
+        <ShoppingBagIcon
           :absolute-stroke-width="true"
-          :class="cn('hover:text-red-500 duration-300 cursor-pointer',
-                     model.isInCart && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+          :stroke-width="1.5"
+          :class="cn('size-8 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none [@media(pointer:coarse)]:opacity-100 ',
+                     'hover:text-red-500 duration-base cursor-pointer',
+                     model.isInCart && 'opacity-100  text-red-500  hover:text-red-300',
+                     'max-md:hidden',
+          )"
         />
       </button>
     </div>
     <div
-      :style="{ '--_img-cols': model.images.length }"
+      :style="{ '--_img-cols': images.length }"
       class="grid grid-cols-[repeat(var(--_img-cols),1fr)] gap-2 justify-center absolute bottom-2 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
     >
-      <template v-if="model.images.length > 1">
+      <template v-if="images.length > 1">
         <div
           v-for="(image, index) in model.images"
           :key="image.id"
@@ -68,7 +74,7 @@ const currentImage = ref(0)
             @mouseenter="currentImage = index"
           >
             <div
-              class="h-1 absolute bottom-0 inset-x-0"
+              class="h-0.5 absolute bottom-0 inset-x-0"
               :class="currentImage === index ? 'bg-black/50' : 'bg-black/5' "
             />
           </div>

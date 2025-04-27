@@ -2,7 +2,7 @@
 import { BadgeCheckIcon, LoaderCircleIcon } from 'lucide-vue-next'
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { errorMessages, minMaxString } from '~/src/shared/config/validation/base'
+import { emailSchema, minMaxString, passwordSchema } from '~/src/shared/config/validation/base'
 import { authClient, useAuthUtils } from '~/src/shared/models/auth-utils'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { InputPassword } from '~/src/shared/ui/kit'
@@ -16,7 +16,7 @@ const changePasswordForm = useTemplateRef('changePasswordForm')
 
 const changeUserSettingsSchema = z.object({
   name: minMaxString(2, 100),
-  email: z.email(errorMessages.email),
+  email: emailSchema,
 })
 
 type ChangeUserSettingsSchema = z.output<typeof changeUserSettingsSchema>
@@ -57,9 +57,9 @@ const onSubmit = async (event: FormSubmitEvent<ChangeUserSettingsSchema>) => {
 }
 
 const changePasswordSchema = z.object({
-  currentPassword: minMaxString(2, 100),
-  newPassword: minMaxString(2, 100),
-  confirmPassword: minMaxString(2, 100),
+  currentPassword: passwordSchema,
+  newPassword: passwordSchema,
+  confirmPassword: passwordSchema,
 }).refine(data => data.newPassword === data.confirmPassword, {
   message: 'Пароли не совпадают',
 })
@@ -111,7 +111,11 @@ const changePassword = async (event: FormSubmitEvent<ChangePasswordSchema>) => {
 
 const logout = async () => {
   await authClient.signOut()
-  navigateTo('/')
+  await navigateTo('/')
+  const qc = useQueryCache()
+  await qc.invalidateQueries({ key: ['categories'] })
+  await qc.invalidateQueries({ key: ['favorites', 'count'] })
+  await qc.invalidateQueries({ key: ['cart-items', 'count'] })
 }
 </script>
 
@@ -199,6 +203,7 @@ const logout = async () => {
 
         <UButton
           type="submit"
+          color="neutral"
           class="mt-4 w-fit"
           :disabled="!userSettingsForm?.dirtyFields.size || !!userSettingsForm?.errors.length"
           loading-auto
@@ -248,6 +253,7 @@ const logout = async () => {
         </UFormField>
         <UButton
           type="submit"
+          color="neutral"
           variant="soft"
           class="mt-4 w-fit"
           :disabled="!changePasswordForm?.dirtyFields.size || !!changePasswordForm?.errors.length"

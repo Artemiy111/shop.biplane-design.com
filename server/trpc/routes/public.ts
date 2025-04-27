@@ -16,10 +16,12 @@ export const publicRouter = router({
         ...category,
         models: category.models.map(model => ({
           ...model,
-          isFavorite: model.favorites.length > 0,
-          isInCart: model.cartItems.length > 0,
+          isFavorite: model.favorites?.length > 0,
+          isInCart: model.cartItems?.length > 0,
         })),
       }))
+      console.dir(categories)
+
       return categories
     }),
 
@@ -40,8 +42,8 @@ export const publicRouter = router({
       const model = model_
         ? ({
             ...model_,
-            isFavorite: model_.favorites.length > 0,
-            isInCart: model_.cartItems.length > 0,
+            isFavorite: model_.favorites?.length > 0,
+            isInCart: model_.cartItems?.length > 0,
           })
         : null
 

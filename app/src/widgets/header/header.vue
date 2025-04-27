@@ -5,17 +5,15 @@ import {
   HeartIcon,
   MoonIcon,
   SunIcon,
-  ShoppingCartIcon,
+  ShoppingBagIcon,
   UserIcon,
   type LucideProps,
 } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 import { useCartItemsCount, useFavoritesCount } from '~/src/shared/models/queries'
+import { Logo } from '~/src/shared/ui/kit/logo'
 
 const colorMode = useColorMode()
-watch(colorMode, () => {
-  console.log('colorMode', colorMode)
-})
 
 const { favoritesCount } = useFavoritesCount()
 const { cartItemsCount } = useCartItemsCount()
@@ -50,7 +48,7 @@ const items = ref<
   {
     to: '/cart',
     icon: 'i-lucide-shopping-cart',
-    iconComponent: ShoppingCartIcon,
+    iconComponent: ShoppingBagIcon,
     count: cartItemsCount,
   },
 ])
@@ -66,11 +64,12 @@ const items = ref<
         class="flex items-center gap-4"
         to="/"
       >
-        <img
+        <Logo />
+        <!-- <img
           alt="Логотип"
           class="h-10 dark:invert-[70%] max-md:h-8"
           src="/logo.svg"
-        >
+        > -->
         <span class="max-sm:hidden">Biplane-Design</span>
       </NuxtLink>
       <div class="flex gap-2 items-center">
@@ -79,18 +78,18 @@ const items = ref<
           color="neutral"
           variant="ghost"
           leading
-          @click="colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'"
+          @click="colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
         >
           <template #leading>
             <MoonIcon
               v-if="colorMode.value === 'dark'"
-              :size="mediaLessThamSmall ? 24 : 30"
+              :size="mediaLessThamSmall ? 24 : 32"
               :absolute-stroke-width="true"
               :stroke-width="mediaLessThamSmall ? 1.5 : 2"
             />
             <SunIcon
               v-else
-              :size="mediaLessThamSmall ? 24 : 30"
+              :size="mediaLessThamSmall ? 24 : 32"
               :absolute-stroke-width="true"
               :stroke-width="mediaLessThamSmall ? 1.5 : 2"
             />
@@ -114,15 +113,15 @@ const items = ref<
                 :is="item.iconComponent(
                   { absoluteStrokeWidth: true,
                     strokeWidth: mediaLessThamSmall ? 1.5 : 2,
-                    size: mediaLessThamSmall ? 24 : 30,
+                    size: mediaLessThamSmall ? 24 : 32,
                     class: 'text-(--ui-text)' }, {} as any)"
               />
             </UChip>
             <component
-              :is="item.iconComponent({ absoluteStrokeWidth: true,
-                                        strokeWidth: mediaLessThamSmall ? 1.5 : 2,
-                                        size: mediaLessThamSmall ? 24 : 30,
-                                        class: 'text-(--ui-text)' }, {} as any)"
+              :is="item.iconComponent({
+                strokeWidth: 1.5,
+                size: mediaLessThamSmall ? 24 : 32,
+                class: 'text-(--ui-text)' }, {} as any)"
               v-else
             />
           </template>

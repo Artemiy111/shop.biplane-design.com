@@ -24,15 +24,14 @@ export const useModelBySlug = defineQuery(() => {
   return { model, modelSlug, ...rest }
 })
 
-export type Model = UnwrapRef<ReturnType<typeof useModelBySlug>['model']>
+export type Model = Exclude<UnwrapRef<ReturnType<typeof useModelBySlug>['model']>, null | undefined>
 
 export const useFavoritesCount = defineQuery(() => {
   const authUtils = useAuthUtils()
 
   const { data: favoritesCount, state: _, ...rest } = useQuery({
-    key: ['favorites', 'count'],
-    query: () => useApi().customer.getFavoritesCount.query(),
-    enabled: () => authUtils.isCustomer,
+    key: () => ['favorites', 'count', { userId: authUtils.user?.id }],
+    query: () => authUtils.isCustomer ? useApi().customer.getFavoritesCount.query() : Promise.resolve(0),
   })
   return { favoritesCount, ...rest }
 })
@@ -41,9 +40,8 @@ export const useCartItemsCount = defineQuery(() => {
   const authUtils = useAuthUtils()
 
   const { data: cartItemsCount, state: _, ...rest } = useQuery({
-    key: ['cart-items', 'count'],
-    query: () => useApi().customer.getCartItemsCount.query(),
-    enabled: () => authUtils.isCustomer,
+    key: () => ['cart-items', 'count', { userId: authUtils.user?.id }],
+    query: () => authUtils.isCustomer ? useApi().customer.getCartItemsCount.query() : Promise.resolve(0),
   })
   return { cartItemsCount, ...rest }
 })

@@ -24,3 +24,6 @@ export const requiredNumber = z.number(errorMessages.required)
 
 export const minMaxString = (min: number, max: number) => requiredString.min(min, errorMessages.minLength(min)).max(max, errorMessages.maxLength(max))
 export const minMaxNumber = (min: number, max: number) => requiredNumber.min(min, errorMessages.minValue(min)).max(max, errorMessages.maxValue(max))
+
+export const emailSchema = z.email(errorMessages.email)
+export const passwordSchema = minMaxString(8, 100)

@@ -194,9 +194,9 @@ export const customerRouter = router({
       })
     }),
 
-  addToQueue: customerProsedure
-    .input(z.object({ message: z.string() }))
-    .mutation(async ({ input, ctx: { user } }) => {
-      // await rabbit.publish('tasks', { userId: user.id, message: input.message })
-    }),
+  // addToQueue: customerProsedure
+  //   .input(z.object({ message: z.string() }))
+  //   .mutation(async ({ input, ctx: { user } }) => {
+  //     // await rabbit.publish('tasks', { userId: user.id, message: input.message })
+  //   }),
 })

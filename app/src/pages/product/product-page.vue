@@ -61,7 +61,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
         :ui="{
           item: 'rounded-none',
           // controls: 'w-[calc(100%-2*var(--spacing))] relative',
-          arrows: '[&>button]:first:start-4 [&>button]:last:end-4 [&>button]:bg-transparent [&>button]:hover:bg-black/30 [&>button]:ring-black ',
+          arrows: '[&>button]:first:start-4 [&>button]:last:end-4 [&>button]:bg-transparent [&>button]:text-black [&>button]:hover:bg-black/30 [&>button]:ring-black ',
           dots: 'bottom-4 w-full px-4 grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-4 justify-center',
           dot: 'rounded-none h-1 w-full',
         }"
@@ -114,11 +114,11 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
       <div class="flex gap-x-4 mt-8">
         <button @click="toggleIsFavorite(model.id)">
           <HeartIcon
-            :size="36"
+            :size="32"
             :absolute-stroke-width="true"
             :stroke-width="1.5"
             :class="cn('hover:text-red-500 duration-300 cursor-pointer',
-                       model.isFavorite && 'fill-red-500 text-red-500 hover:fill-red-300 hover:text-red-300')"
+                       model.isFavorite && ' text-red-500  hover:text-red-300')"
           />
         </button>
         <UButton

@@ -26,7 +26,7 @@ export const modelPrequery = (userId?: string) => ({
         limit: 1,
       },
       }
-    : {}),
+    : { }),
 } as const)
 
 export const setPrequery = {
