@@ -1,31 +1,31 @@
-  # postgres:
-  #   image: postgres:17
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: root
-  #     POSTGRES_DB: biplane_shop
-  #   ports:
-  #     - 5432:5432
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - app-network
-  #   # volumes:
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   restart: always
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #   ports:
-  #     - 5050:80
-  #   volumes:
-  #     - pgadmin_data:/var/lib/pgadmin 
-  #   networks:
-  #     - app-network
+# pgadmin:
+#   image: dpage/pgadmin4
+#   restart: always
+#   environment:
+#     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+#     PGADMIN_DEFAULT_PASSWORD: admin
+#   ports:
+#     - 5050:80
+#   volumes:
+#     - pgadmin_data:/var/lib/pgadmin
+#   networks:
+#     - app-network
 
 services:
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: biplane
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
   rabbitmq:
     image: rabbitmq:4-management
     ports:
@@ -46,6 +46,8 @@ services:
       - tempo
       - loki
       - prometheus
+    networks:
+      - app-network
 
   tempo:
     image: grafana/tempo:latest
@@ -56,6 +58,8 @@ services:
     ports:
       - "3200:3200"
       - "9093:9093"
+    networks:
+      - app-network
 
   loki:
     image: grafana/loki:latest
@@ -65,6 +69,8 @@ services:
       - loki_data:/tmp/loki
     ports:
       - "3100:3100"
+    networks:
+      - app-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -73,6 +79,8 @@ services:
       - prometheus_data:/prometheus
     ports:
       - "9090:9090"
+    networks:
+      - app-network
 
   grafana:
     image: grafana/grafana:latest
@@ -88,7 +96,9 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-
+    networks:
+      - app-network
+      
 networks:
   app-network:
     driver: bridge
@@ -109,11 +119,11 @@ volumes:
       device: "./.data/pgadmin"
 
   rabbitmq_data:
-    # driver: local
-    # driver_opts:
-    #   o: bind
-    #   type: none
-    #   device: "./.data/rabbitmq"
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: "./.data/rabbitmq"
 
   tempo_data:
     driver: local
@@ -121,21 +131,21 @@ volumes:
       o: bind
       type: none
       device: "./.data/tempo"
-  
+
   loki_data:
     driver: local
     driver_opts:
       o: bind
       type: none
       device: "./.data/loki"
-  
+
   prometheus_data:
     driver: local
     driver_opts:
       o: bind
       type: none
       device: "./.data/prometheus"
-  
+
   grafana_data:
     driver: local
     driver_opts:
