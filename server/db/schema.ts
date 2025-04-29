@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey 
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
 import { mimeTypesImages, mimeTypesRevit } from '../../app/src/shared/config/constants/mime-types'
-import { paymentProviters, orderStatuses, refundStatuses } from '../../app/src/shared/config/constants'
+import { paymentProviders, orderStatuses, refundStatuses } from '../../app/src/shared/config/constants'
 
 export const users = pgTable('users', {
   id: text().primaryKey().$default(makeId),
@@ -94,7 +94,7 @@ export const models = pgTable('models', {
   categoryId: text().notNull().references(() => categories.id, { onDelete: 'set null' }),
   // fileFormat: text(),
   // fileSize: integer(),
-  // revitVersion: text(),
+  revitVersion: text({ enum: ['2023'] }),
   price: decimal({ mode: 'number' }).notNull(),
   discountId: text().references(() => discounts.id),
   createdAt: timestamp().defaultNow(),
@@ -186,7 +186,7 @@ export const orders = pgTable('orders', {
   promocodeId: text().references(() => promocodes.id),
   createdAt: timestamp().notNull().defaultNow(),
 
-  paymentProviter: text({ enum: paymentProviters }).notNull().default('tbank'),
+  paymentProvider: text({ enum: paymentProviders }).notNull().default('tbank'),
   paymentId: text(),
   paymentStatus: text({ enum: orderStatuses }).notNull().default('pending'),
   paymentUrl: text(),
@@ -219,7 +219,7 @@ export const cartItems = pgTable('cart_items', {
   modelId: text().references(() => models.id, { onDelete: 'cascade' }),
   setId: text().references(() => sets.id, { onDelete: 'cascade' }),
   addedAt: timestamp().defaultNow(),
-})
+}, t => [index().on(t.userId, t.modelId), index().on(t.userId, t.setId)])
 
 export type CartItemDb = typeof cartItems.$inferSelect
 
@@ -231,7 +231,7 @@ export const refunds = pgTable('refunds', {
   status: text({ enum: refundStatuses }).default('pending'),
   requestedAt: timestamp().defaultNow(),
   resolvedAt: timestamp(),
-})
+}, t => [index().on(t.orderId)])
 
 export type RefundDb = typeof refunds.$inferSelect
 
@@ -239,4 +239,4 @@ export const refundItems = pgTable('refund_items', {
   id: text().primaryKey().$default(makeId),
   refundId: text().notNull().references(() => refunds.id, { onDelete: 'restrict' }),
   orderItemId: text().notNull().references(() => orderItems.id, { onDelete: 'restrict' }),
-})
+}, t => [index().on(t.refundId, t.orderItemId)])

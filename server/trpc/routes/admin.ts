@@ -1,4 +1,4 @@
-import { router, adminProsedure } from '~~/server/trpc'
+import { router, adminProcedure } from '~~/server/trpc'
 
 export const adminRouter = router({
 

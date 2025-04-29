@@ -1,14 +1,14 @@
 import { z } from 'zod'
 import { count, eq, and, sql } from 'drizzle-orm'
 import { modelPrequery, setPrequery } from '~~/server/trpc/query-templates'
-import { router, customerProsedure } from '~~/server/trpc'
+import { router, customerProcedure } from '~~/server/trpc'
 import { priceAfterDiscount } from '~/src/shared/lib/price'
 import { db } from '~~/server/db'
 import type { OrderItemDb } from '~~/server/db/schema'
-import { favorites, orders, cartItems, models } from '~~/server/db/schema'
+import { favorites, orders, cartItems } from '~~/server/db/schema'
 
 export const customerRouter = router({
-  getFavorites: customerProsedure.query(async ({ ctx: { user } }) => {
+  getFavorites: customerProcedure.query(async ({ ctx: { user } }) => {
     const models_ = await db.query.models.findMany({
       where: {
         RAW: t => sql`EXISTS (SELECT 1 FROM ${favorites} WHERE ${favorites.userId} = ${user.id} AND ${favorites.modelId} = ${t.id})`.mapWith(Boolean),
@@ -22,13 +22,13 @@ export const customerRouter = router({
     }))
   }),
 
-  getFavoritesCount: customerProsedure.query(async ({ ctx: { user } }) => {
+  getFavoritesCount: customerProcedure.query(async ({ ctx: { user } }) => {
     return (
       await db.select({ count: count() }).from(favorites).where(eq(favorites.userId, user.id))
     )[0].count
   }),
 
-  getOrders: customerProsedure.query(async ({ ctx: { user } }) => {
+  getOrders: customerProcedure.query(async ({ ctx: { user } }) => {
     return await db.query.orders.findMany({
       where: {
         userId: user.id,
@@ -44,25 +44,37 @@ export const customerRouter = router({
     })
   }),
 
-  getCartItems: customerProsedure.query(async ({ ctx: { user } }) => {
-    return await db.query.cartItems.findMany({
+  getCartItems: customerProcedure.query(async ({ ctx: { user } }) => {
+    const cartItems = await db.query.cartItems.findMany({
       where: {
         userId: user.id,
       },
       with: {
         model: { with: modelPrequery() },
-        set: setPrequery,
+        set: {
+          with: {
+            discount: true,
+            models: { with: modelPrequery(user.id) },
+          },
+        },
       },
+    })
+    return cartItems
+
+    return cartItems.map((item) => {
+      if (item.modelId && item.model) return { ...item.model, isFavorite: item.model.favorites?.length > 0, isInCart: true }
+      else if (item.setId && item.set) return item.set
+      else throw new Error('Должна быть модель или сет')
     })
   }),
 
-  getCartItemsCount: customerProsedure.query(async ({ ctx: { user } }) => {
+  getCartItemsCount: customerProcedure.query(async ({ ctx: { user } }) => {
     return (
       await db.select({ count: count() }).from(cartItems).where(eq(cartItems.userId, user.id))
     )[0].count
   }),
 
-  toggleIsFavorite: customerProsedure
+  toggleIsFavorite: customerProcedure
     .input(z.object({ modelId: z.string() }))
     .mutation(async ({ input, ctx: { user } }) => {
       await db.transaction(async (tx) => {
@@ -82,7 +94,7 @@ export const customerRouter = router({
       })
     }),
 
-  toggleIsInCart: customerProsedure
+  toggleIsInCart: customerProcedure
     .input(z.object({ modelId: z.string().nullable(), setId: z.string().nullable() }))
     .mutation(async ({ input, ctx: { user } }) => {
       await db.transaction(async (tx) => {
@@ -122,7 +134,7 @@ export const customerRouter = router({
       })
     }),
 
-  makeOrderFromCart: customerProsedure
+  makeOrderFromCart: customerProcedure
     .input(z.object({ promocodeCode: z.string().nullable() }))
     .mutation(async ({ input: { promocodeCode }, ctx: { user } }) => {
       db.transaction(async (tx) => {

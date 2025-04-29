@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { requiredString, errorMessages, emailSchema, passwordSchema } from '~/src/shared/config/validation/base'
+import { requiredString, errorMessages, emailSchema, passwordSchema, minMaxString } from '~/src/shared/config/validation/base'
 
 export const loginSchema = z.object({
   email: emailSchema,
@@ -9,7 +9,7 @@ export const loginSchema = z.object({
 export type LoginSchema = z.output<typeof loginSchema>
 
 export const registerSchema = z.object({
-  name: emailSchema,
+  name: minMaxString(2, 50),
   email: z.email(errorMessages.email),
   password: passwordSchema,
   confirm: requiredString,

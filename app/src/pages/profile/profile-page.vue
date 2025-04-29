@@ -115,8 +115,8 @@ const logout = async () => {
   await navigateTo('/')
   const qc = useQueryCache()
   await qc.invalidateQueries({ key: ['categories'] })
-  await qc.invalidateQueries({ key: ['favorites', 'count'] })
-  await qc.invalidateQueries({ key: ['cart-items', 'count'] })
+  await qc.invalidateQueries({ key: ['favorites'] })
+  await qc.invalidateQueries({ key: ['cart-items'] })
 }
 </script>
 
@@ -125,7 +125,7 @@ const logout = async () => {
     <PageHeading>Профиль</PageHeading>
     <ContentLoader v-if="authUtils.sessionData.isPending" />
     <ContentLoaderError
-      v-else-if="authUtils.sessionData.isError"
+      v-else-if="authUtils.sessionData.isError || !user"
       :show-refresh-button="false"
     />
     <div

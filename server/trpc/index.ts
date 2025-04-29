@@ -34,5 +34,5 @@ const isNotAdmin = t.middleware<AuthedContext>(({ ctx, next }) => {
 })
 
 export const authedProcedure = publicProcedure.use(isAuthed)
-export const adminProsedure = authedProcedure.use(isAdmin)
-export const customerProsedure = authedProcedure.use(isNotAdmin)
+export const adminProcedure = authedProcedure.use(isAdmin)
+export const customerProcedure = authedProcedure.use(isNotAdmin)

@@ -123,12 +123,12 @@ export const relations = defineRelations(schema, r => ({
     model: r.one.models({
       from: r.cartItems.modelId,
       to: r.models.id,
-      optional: false,
+      optional: true,
     }),
     set: r.one.sets({
       from: r.cartItems.setId,
       to: r.sets.id,
-      optional: false,
+      optional: true,
     }),
     user: r.one.users({
       from: r.cartItems.userId,

@@ -36,6 +36,17 @@ export const useFavoritesCount = defineQuery(() => {
   return { favoritesCount, ...rest }
 })
 
+export const useFavoriteModels = defineQuery(() => {
+  const authUtils = useAuthUtils()
+  const { data, state: _, ...rest } = useQuery({
+    key: () => ['favorites', { userId: authUtils.user?.id }],
+    query: () => useApi().customer.getFavorites.query(),
+    enabled: () => authUtils.isCustomer,
+  })
+  const favoriteModels = computed(() => data.value || [])
+  return { favoriteModels, ...rest }
+})
+
 export const useCartItemsCount = defineQuery(() => {
   const authUtils = useAuthUtils()
 
@@ -46,13 +57,13 @@ export const useCartItemsCount = defineQuery(() => {
   return { cartItemsCount, ...rest }
 })
 
-export const useFavoriteModels = defineQuery(() => {
+export const useCartItems = defineQuery(() => {
   const authUtils = useAuthUtils()
   const { data, state: _, ...rest } = useQuery({
-    key: () => ['favorites', { userId: authUtils.user?.id }],
-    query: () => useApi().customer.getFavorites.query(),
+    key: () => ['cart-items', { userId: authUtils.user?.id }],
+    query: () => useApi().customer.getCartItems.query(),
     enabled: () => authUtils.isCustomer,
   })
-  const favoriteModels = computed(() => data.value || [])
-  return { favoriteModels, ...rest }
+  const cartItems = computed(() => data.value || [])
+  return { cartItems, ...rest }
 })
