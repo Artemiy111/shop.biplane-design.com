@@ -39,7 +39,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
     >
       <button @click.stop.prevent="emit('toggle:is-favorite', model.id)">
         <HeartIcon
-          :absolute-stroke-width="true"
+          absolute-stroke-width
           :stroke-width="1.5"
           :class="cn('size-8 @max-3xs/slider:size-7 @max-4xs/slider:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none pointer-coarse:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
@@ -48,7 +48,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
       </button>
       <button @click.stop.prevent="emit('toggle:is-in-cart', model.id)">
         <ShoppingBagIcon
-          :absolute-stroke-width="true"
+          absolute-stroke-width
           :stroke-width="1.5"
           :class="cn('size-8 @max-3xs/slider:size-7 @max-4xs/slider:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none pointer-coarse:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',

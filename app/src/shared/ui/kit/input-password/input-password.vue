@@ -19,7 +19,7 @@ const show = defineModel<boolean>('show', { default: false })
     <template #trailing>
       <button
         type="button"
-        :aria-label="show ? 'Спрятать Текст' : 'Показать текст'"
+        :aria-label="show ? 'Спрятать текст' : 'Показать текст'"
         :aria-pressed="show"
         @click="show = !show"
       >

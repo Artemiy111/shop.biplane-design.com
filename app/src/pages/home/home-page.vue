@@ -31,7 +31,7 @@ export type Model = Categories[0]['models'][0]
         <h3 class="text-subheading">
           {{ category.name }}
         </h3>
-        <div class="grid grid-cols-3 @max-5xl/content:grid-cols-2 gap-(--container-pad)">
+        <div class="grid grid-cols-3 @max-5xl/content:grid-cols-2 gap-(--container-pad) @max-sm/content:gap-4 @max-xs/content:gap-2">
           <ModelCard
             v-for="model in category.models"
             :key="model.id"

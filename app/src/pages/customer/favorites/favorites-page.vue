@@ -17,7 +17,7 @@ const { favoriteModels, status, refresh } = useFavoriteModels()
         @refresh="refresh"
       />
 
-      <template v-if="status === 'success'">
+      <template v-else-if="status === 'success'">
         <div
           v-if="favoriteModels.length"
           class="grid grid-cols-3 @max-5xl/content:grid-cols-2 gap-(--container-pad)"

@@ -94,14 +94,10 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
           <div class="text-heading">
             {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
           </div>
-          <UBadge
-            color="warning"
-            variant="soft"
-            :ui="{ base: 'text-sm font-semibold' }"
-          >
-            {{ model.discount.discountPercentage }}%
-          </UBadge>
-          <span class="text-sm line-through text-(--ui-text-muted)">{{ model.price }}</span>
+
+          <span class="text-subheading text-primary">{{ model.discount.discountPercentage }}%</span>
+
+          <span class="line-through text-(--ui-text-muted)">{{ model.price }}</span>
         </div>
         <div
           v-else

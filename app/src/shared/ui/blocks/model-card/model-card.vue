@@ -51,7 +51,8 @@ const { toggleIsInCart } = useToggleIsInCartMutation()
         color="neutral"
         :ui="{ base: 'text-xs px-1.5 py-0.5' }"
       >
-        {{ mimeToExt(file.mimeType) }}
+        <!-- {{ mimeToExt(file.mimeType) }} -->
+        Revit 2023
       </UBadge>
     </div>
     <USeparator
@@ -60,34 +61,35 @@ const { toggleIsInCart } = useToggleIsInCartMutation()
     />
     <section class="[grid-area:content]">
       <div
-        class="flex items-baseline justify-between mt-4 gap-4"
+        class="flex items-baseline justify-between mt-4 gap-4 @max-4xs/card:mt-3 @max-5xs/card:mt-2"
       >
         <div
           v-if="model.discount"
-          class="flex items-baseline gap-4 max-xs:gap-x-2"
+          class="flex items-baseline gap-4 @max-4xs/card:gap-x-3 @max-5xs/card:gap-x-2 @max-6xs/card:gap-x-1.5"
         >
-          <div class="text-subheading font-normal @max-xs/card:text-base-max @max-2xs/card:text-sm-max">
+          <div class="text-subheading font-normal @max-4xs/card:text-base-max @max-5xs/card:text-base @max-6xs/card:text-[15px]">
             {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
+            <!-- 00 000 ₽ -->
           </div>
-          <UBadge
-            color="primary"
-            variant="soft"
-            class="@max-3xs/card:text-xs @max-3xs/card:px-1.5 @max-3xs/card:py-0.5"
-            :ui="{ base: 'text-sm font-bold ' }"
-          >
+
+          <span class="font-semibold text-primary @max-4xs/card:text-sm @max-5xs/card:text-xs">
             {{ model.discount.discountPercentage }}%
-          </UBadge>
-          <span class="@max-3xs/card:text-xs text-sm line-through text-(--ui-text-muted)">{{ model.price }}</span>
+            <!-- 00% -->
+          </span>
+          <span class="@max-4xs/card:text-xs @max-5xs/card:text-xs-min @max-6xs/card:text-2xs text-sm line-through text-(--ui-text-muted)">
+            {{ model.price }}
+            <!-- 00 000 -->
+          </span>
         </div>
         <div
           v-else
-          class="text-subheading font-normal @max-xs:text-base-max @max-2xs:text-sm-max"
+          class="text-subheading font-normal @max-4xs/card:text-base-max @max-5xs/card:text-base @max-6xs/card:text-[15px]"
         >
           {{ formatPrice(model.price) }}
         </div>
       </div>
 
-      <h6 class="mt-1 @max-xs/card:text-sm">
+      <h6 class="mt-1 @max-4xs/card:text-sm @max-5xs/card:text-sm-min">
         {{ model.name }}
       </h6>
 

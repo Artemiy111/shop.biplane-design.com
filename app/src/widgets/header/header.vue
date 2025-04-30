@@ -18,8 +18,6 @@ const colorMode = useColorMode()
 const { favoritesCount } = useFavoritesCount()
 const { cartItemsCount } = useCartItemsCount()
 
-const mediaLessThamSmall = useMediaQuery('(max-width: 640px)')
-
 const items = ref<
   Array<
     NavigationMenuItem & {
@@ -65,16 +63,12 @@ const items = ref<
         to="/"
       >
         <Logo />
-        <!-- <img
-          alt="Логотип"
-          class="h-10 dark:invert-[70%] max-md:h-8"
-          src="/logo.svg"
-        > -->
         <span class="max-sm:hidden">Biplane-Design</span>
       </NuxtLink>
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-3 items-center">
         <UButton
-          class="w-[50px] aspect-square cursor-pointer justify-center items-center"
+          square
+          class="aspect-square cursor-pointer justify-center items-center"
           color="neutral"
           variant="ghost"
           leading
@@ -91,7 +85,7 @@ const items = ref<
               v-else
               class="size-8 max-sm:size-6"
               :absolute-stroke-width="true"
-              :stroke-width="mediaLessThamSmall ? 1.5 : 2"
+              :stroke-width="1.5"
             />
           </template>
         </UButton>
@@ -99,32 +93,36 @@ const items = ref<
           :orientation="'vertical'"
           class="h-8"
         />
-        <UNavigationMenu
-          :ui="{ link: 'aspect-square', item: 'py-0', linkLeadingIcon: 'text-3xl text-(--ui-text)' }"
-          :items="items"
-        >
-          <template #item-leading="{ item }">
+        <nav class="flex gap-x-3">
+          <UButton
+            v-for="item in items"
+            :key="item.to as string"
+            :to="item.to"
+            square
+            variant="ghost"
+            color="neutral"
+          >
             <UChip
               v-if="item.count"
               :text="item.count"
-              :ui="{ base: 'size-5 text-xs text-(--ui-color-primary-500) font-bold bg-(--ui-color-primary-100) dark:font-semibold dark:bg-(--ui-color-primary-700) dark:text-(--ui-color-primary-200)' }"
+              :ui="{ base: 'size-5 text-xs-max! text-(--ui-color-primary-500) font-bold bg-(--ui-color-primary-100) dark:font-semibold dark:bg-(--ui-color-primary-700) dark:text-(--ui-color-primary-200)' }"
             >
               <component
-                :is="item.iconComponent(
-                  { absoluteStrokeWidth: true,
-                    strokeWidth: 1.5,
-                    class: 'size-8 max-sm:size-6 text-(--ui-text)' }, {} as any)"
+                :is="item.iconComponent"
+                absolute-stroke-width
+                :stroke-width="1.5"
+                class="size-8 max-sm:size-6 text-(--ui-text)"
               />
             </UChip>
             <component
-              :is="item.iconComponent({
-                absoluteStrokeWidth: true,
-                strokeWidth: 1.5,
-                class: 'size-8 max-sm:size-6 text-(--ui-text)' }, {} as any)"
+              :is="item.iconComponent"
               v-else
+              absolute-stroke-width
+              :stroke-width="1.5"
+              class="size-8 max-sm:size-6 text-(--ui-text)"
             />
-          </template>
-        </UNavigationMenu>
+          </UButton>
+        </nav>
       </div>
     </div>
     <USeparator />
