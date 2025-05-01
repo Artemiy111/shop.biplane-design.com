@@ -35,7 +35,7 @@
   --container-5xs: 12rem; /* 192px */ 
   --container-6xs: 10rem; /* 160px */
 
-  --container-width: min(var(--breakpoint-3xl), 100% - 2 * var(--container-pad));
+  --container-width: min(var(--breakpoint-3xl), 100vw - 2 * var(--container-pad));
 
   --_text-screen-min: 360px;
   --_text-screen-min-num: 360;

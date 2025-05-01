@@ -23,6 +23,23 @@ export const publicRouter = router({
       return categories
     }),
 
+  // getModels: publicProcedure
+  //   .query(async ({ ctx }) => {
+  //     const { user } = ctx
+  //     const models_ = await db.query.models.findMany({
+  //       with: {
+  //         category: true,
+  //         ...modelPrequery(user?.id),
+  //       },
+  //     })
+  //     const models = models_.map(model => ({
+  //       ...model,
+  //       isFavorite: model.favorites?.length > 0,
+  //       isInCart: model.cartItems?.length > 0,
+  //     }))
+  //     return models
+  //   }),
+
   getModelBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ ctx, input }) => {

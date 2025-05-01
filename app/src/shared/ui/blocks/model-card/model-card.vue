@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ImageOffIcon } from 'lucide-vue-next'
 import ImageSlider from './image-slider.vue'
-import { formatPrice, priceAfterDiscount } from '~/src/shared/lib/price'
+import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { mimeToExt } from '~/src/shared/lib/image'
 import { useToggleIsFavoriteMutation, useToggleIsInCartMutation } from '~/src/shared/models/mutations'
 import type { CategoryModel } from '~/src/shared/models/queries'
@@ -68,7 +68,7 @@ const { toggleIsInCart } = useToggleIsInCartMutation()
           class="flex items-baseline gap-4 @max-4xs/card:gap-x-3 @max-5xs/card:gap-x-2 @max-6xs/card:gap-x-1.5"
         >
           <div class="text-subheading font-normal @max-4xs/card:text-base-max @max-5xs/card:text-base @max-6xs/card:text-[15px]">
-            {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
+            {{ formatPrice(getPriceAfterDiscount(model.price, model.discount.discountPercentage)) }}
             <!-- 00 000 ₽ -->
           </div>
 

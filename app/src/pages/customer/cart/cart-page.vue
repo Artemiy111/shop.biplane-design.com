@@ -4,7 +4,7 @@ import { ModelCard } from '~/src/shared/ui/blocks/model-card'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { useCartItems } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
-import { formatPrice, priceAfterDiscount } from '~/src/shared/lib/price'
+import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { imageUrl } from '~/src/shared/lib/image'
 
 const { cartItems, status, refresh } = useCartItems()
@@ -46,7 +46,7 @@ const { cartItems, status, refresh } = useCartItems()
                     class="flex items-baseline gap-4 max-xs:gap-x-2"
                   >
                     <div class="text-subheading font-normal @max-xs/card:text-base-max @max-2xs/card:text-sm-max">
-                      {{ formatPrice(priceAfterDiscount(item.model.price, item.model.discount.discountPercentage)) }}
+                      {{ formatPrice(getPriceAfterDiscount(item.model.price, item.model.discount.discountPercentage)) }}
                     </div>
                     <UBadge
                       color="primary"

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { count, eq, and, sql } from 'drizzle-orm'
 import { modelPrequery, setPrequery } from '~~/server/trpc/query-templates'
 import { router, customerProcedure } from '~~/server/trpc'
-import { priceAfterDiscount } from '~/src/shared/lib/price'
+import { getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { db } from '~~/server/db'
 import type { OrderItemDb } from '~~/server/db/schema'
 import { favorites, orders, cartItems } from '~~/server/db/schema'
@@ -156,12 +156,12 @@ export const customerRouter = router({
           if (item.model) {
             priceBeforeDiscount = item.model.price
             discountPercentage = item.model.discount?.discountPercentage || 0
-            price = priceAfterDiscount(item.model.price, discountPercentage)
+            price = getPriceAfterDiscount(item.model.price, discountPercentage)
           }
           else if (item.set) {
             priceBeforeDiscount = item.set.price
             discountPercentage = item.set.discount?.discountPercentage || 0
-            price = priceAfterDiscount(item.set.price, discountPercentage)
+            price = getPriceAfterDiscount(item.set.price, discountPercentage)
           }
           else throw tx.rollback()
 
@@ -190,7 +190,7 @@ export const customerRouter = router({
           (acc, item) => acc + item.price,
           0,
         )
-        const totalPrice = priceAfterDiscount(totalPriceWithDiscount, promocodeDiscountPersentage)
+        const totalPrice = getPriceAfterDiscount(totalPriceWithDiscount, promocodeDiscountPersentage)
 
         // TODO подключить оплату через банковскую систему
 

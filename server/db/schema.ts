@@ -204,6 +204,7 @@ export const orderItems = pgTable('order_items', {
   setId: text().references(() => sets.id),
   price: decimal({ mode: 'number' }).notNull(),
   priceBeforeDiscount: decimal({ mode: 'number' }).notNull(),
+  discountId: text().references(() => discounts.id),
 }, t => [index().on(t.orderId)])
 
 export type OrderItemDb = typeof orderItems.$inferSelect

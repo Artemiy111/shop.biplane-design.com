@@ -59,7 +59,7 @@ const centerItems = computed(() => {
 const rightItems = computed<
   Array<
     NavigationMenuItem & {
-      count?: Ref<number | undefined>
+      count?: number
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type
       iconComponent: FunctionalComponent<LucideProps, {}, any, {}>
     }
@@ -82,13 +82,13 @@ const rightItems = computed<
       to: '/favorites',
       icon: 'i-lucide-heart',
       iconComponent: HeartIcon,
-      count: favoritesCount,
+      count: favoritesCount.value,
     },
     {
       to: '/cart',
       icon: 'i-lucide-shopping-cart',
       iconComponent: ShoppingBagIcon,
-      count: cartItemsCount,
+      count: cartItemsCount.value,
     },
   ]
   return authUtils.isAdmin ? base : [...base, ...customer]
@@ -131,13 +131,13 @@ const rightItems = computed<
             <MoonIcon
               v-if="colorMode.value === 'dark'"
               class="size-8 max-sm:size-6"
-              :absolute-stroke-width="true"
-              :stroke-width="1.5 "
+              absolute-stroke-width
+              :stroke-width="1.5"
             />
             <SunIcon
               v-else
               class="size-8 max-sm:size-6"
-              :absolute-stroke-width="true"
+              absolute-stroke-width
               :stroke-width="1.5"
             />
           </template>
@@ -149,7 +149,7 @@ const rightItems = computed<
         <nav class="flex gap-x-3">
           <UButton
             v-for="item in rightItems"
-            :key="item.to"
+            :key="(item.to as string)"
             :to="item.to"
             square
             variant="ghost"

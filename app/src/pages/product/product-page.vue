@@ -4,7 +4,7 @@ import { HeartIcon, LoaderCircleIcon } from 'lucide-vue-next'
 import { imageUrl } from '~/src/shared/lib/image'
 import { useModelBySlug } from '~/src/shared/models/queries'
 import { PageHeadingSkeleton } from '~/src/shared/ui/blocks/page-heading'
-import { formatPrice, priceAfterDiscount } from '~/src/shared/lib/price'
+import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { cn } from '~/src/shared/lib/cn'
 import { useToggleIsFavoriteMutation, useToggleIsInCartMutation } from '~/src/shared/models/mutations'
 
@@ -92,7 +92,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
           class="flex items-end gap-4"
         >
           <div class="text-heading">
-            {{ formatPrice(priceAfterDiscount(model.price, model.discount.discountPercentage)) }}
+            {{ formatPrice(getPriceAfterDiscount(model.price, model.discount.discountPercentage)) }}
           </div>
 
           <span class="text-subheading text-primary">{{ model.discount.discountPercentage }}%</span>
