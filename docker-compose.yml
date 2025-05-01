@@ -26,78 +26,78 @@ services:
     networks:
       - app-network
 
-  rabbitmq:
-    image: rabbitmq:4-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+  # rabbitmq:
+  #   image: rabbitmq:4-management
+  #   ports:
+  #     - "15672:15672"
+  #     - "5672:5672"
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
 
-  otel-collector:
-    image: otel/opentelemetry-collector
-    command: --config=/etc/otel-config.yaml
-    volumes:
-      - ./docker/otel-config.yaml:/etc/otel-config.yaml
-    ports:
-      - "4317:4317"
-      - "4318:4318"
-    depends_on:
-      - tempo
-      - loki
-      - prometheus
-    networks:
-      - app-network
+  # otel-collector:
+  #   image: otel/opentelemetry-collector
+  #   command: --config=/etc/otel-config.yaml
+  #   volumes:
+  #     - ./docker/otel-config.yaml:/etc/otel-config.yaml
+  #   ports:
+  #     - "4317:4317"
+  #     - "4318:4318"
+  #   depends_on:
+  #     - tempo
+  #     - loki
+  #     - prometheus
+  #   networks:
+  #     - app-network
 
-  tempo:
-    image: grafana/tempo:latest
-    command: -config.file=/etc/tempo.yaml
-    volumes:
-      - ./docker/tempo.yaml:/etc/tempo.yaml
-      - tempo_data:/tmp/tempo
-    ports:
-      - "3200:3200"
-      - "9093:9093"
-    networks:
-      - app-network
+  # tempo:
+  #   image: grafana/tempo:latest
+  #   command: -config.file=/etc/tempo.yaml
+  #   volumes:
+  #     - ./docker/tempo.yaml:/etc/tempo.yaml
+  #     - tempo_data:/tmp/tempo
+  #   ports:
+  #     - "3200:3200"
+  #     - "9093:9093"
+  #   networks:
+  #     - app-network
 
-  loki:
-    image: grafana/loki:latest
-    # command: -config.file=/etc/loki/local-config.yaml -validation.allow-structured-metadata=false
-    volumes:
-      - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
-      - loki_data:/tmp/loki
-    ports:
-      - "3100:3100"
-    networks:
-      - app-network
+  # loki:
+  #   image: grafana/loki:latest
+  #   # command: -config.file=/etc/loki/local-config.yaml -validation.allow-structured-metadata=false
+  #   volumes:
+  #     - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
+  #     - loki_data:/tmp/loki
+  #   ports:
+  #     - "3100:3100"
+  #   networks:
+  #     - app-network
 
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./docker/prometheus.yaml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    ports:
-      - "9090:9090"
-    networks:
-      - app-network
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   volumes:
+  #     - ./docker/prometheus.yaml:/etc/prometheus/prometheus.yml
+  #     - prometheus_data:/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   networks:
+  #     - app-network
 
-  grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - grafana_data:/var/lib/grafana
-    ports:
-      - "3001:3000"
-    depends_on:
-      - tempo
-      - loki
-      - prometheus
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    networks:
-      - app-network
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   volumes:
+  #     - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+  #     - grafana_data:/var/lib/grafana
+  #   ports:
+  #     - "3001:3000"
+  #   depends_on:
+  #     - tempo
+  #     - loki
+  #     - prometheus
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   networks:
+  #     - app-network
       
 networks:
   app-network:
@@ -105,11 +105,11 @@ networks:
 
 volumes:
   postgres_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/postgres"
+    # driver: local
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: "./.data/postgres"
 
   pgadmin_data:
     driver: local

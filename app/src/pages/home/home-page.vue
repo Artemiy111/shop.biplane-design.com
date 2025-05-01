@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import { OrbitControls } from '@tresjs/cientos'
+// import { OrbitControls } from '@tresjs/cientos'
 </script>
 
 <template>
   <main class="container">
     <div class="w-full h-[600px]">
+      <!--
       <TresCanvas
         shadows
         alpha
         preset="realistic"
       >
-        <!-- <TresPerspectiveCamera :args="[45, 1, 0.1, 1000]" /> -->
+
         <TresPerspectiveCamera />
         <OrbitControls />
         <TresAmbientLight :intensity="0.5" />
-        <!-- <TresMesh>
-          <TresTorusGeometry :args="[1, 0.5, 16, 32]" />
-          <TresMeshBasicMaterial color="orange" />
-        </TresMesh> -->
+
         <TresDirectionalLight
           :position="[4, 4, 2]"
           cast-shadow
@@ -50,8 +48,7 @@ import { OrbitControls } from '@tresjs/cientos'
           />
         </Plane>
       </TresCanvas>
+     -->
     </div>
-
-    3
   </main>
 </template>

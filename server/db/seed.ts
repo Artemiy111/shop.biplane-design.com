@@ -1,5 +1,7 @@
+import { logger } from 'better-auth'
 import { auth } from '../lib/auth'
 import {
+  type SetDb,
   type DiscountDb,
   type FileDb,
   type ImageDb,
@@ -7,6 +9,7 @@ import {
   type ModelDb,
   type CategoryDb,
   type PromocodeDb,
+  type ModelsToSetsDb,
   categories,
   models,
   images,
@@ -14,6 +17,8 @@ import {
   files,
   discounts,
   promocodes,
+  sets,
+  modelsToSets,
 } from './schema'
 
 import { db } from '.'
@@ -92,6 +97,7 @@ export const _models: ModelDb[] = [
     discountId: '1',
     createdAt: new Date(),
     updatedAt: new Date(),
+    revitVersion: '2023',
   },
   {
     id: '2',
@@ -103,6 +109,31 @@ export const _models: ModelDb[] = [
     discountId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
+    revitVersion: '2023',
+  },
+]
+
+export const _sets: SetDb[] = [
+  {
+    id: '1',
+    name: 'Набор моделей столов',
+    description: 'Включает различные функциоанльные столы для офисов и квартир',
+    slug: 'table-set-1',
+    price: 5000,
+    discountId: null,
+    createdAt: new Date(),
+    imageId: null,
+  },
+]
+
+export const _modelsToSets: ModelsToSetsDb[] = [
+  {
+    setId: '1',
+    modelId: '1',
+  },
+  {
+    setId: '1',
+    modelId: '2',
   },
 ]
 
@@ -157,18 +188,22 @@ export const _imagesToModels: ImageToModelDb[] = [
   {
     imageId: '1',
     modelId: '1',
+    sortOrder: 1,
   },
   {
     imageId: '2',
     modelId: '2',
+    sortOrder: 1,
   },
   {
     imageId: '3',
     modelId: '2',
+    sortOrder: 2,
   },
   {
     imageId: '4',
     modelId: '2',
+    sortOrder: 3,
   },
 ]
 
@@ -195,7 +230,7 @@ export const _discounts: DiscountDb[] = [
     label: 'Пасха 2025',
     discountPercentage: 10,
     startDate: new Date('2025-01-01'),
-    endDate: new Date('2025-12-31'),
+    endDate: new Date('2025-3-31'),
   },
 ]
 
@@ -213,31 +248,34 @@ export const _promocodes: PromocodeDb[] = [
 
 const seed = async () => {
   await db.transaction(async (tx) => {
+    await tx.insert(discounts).values(_discounts)
+    await tx.insert(promocodes).values(_promocodes)
+
+    await tx.insert(categories).values(_categories)
+    await tx.insert(models).values(_models)
+    await tx.insert(sets).values(_sets)
+    await tx.insert(modelsToSets).values(_modelsToSets)
+    await tx.insert(images).values(_images)
+    await tx.insert(imageToModel).values(_imagesToModels)
+    await tx.insert(files).values(_files)
+
     const _admin = await auth.api.createUser({ body: {
       email: 'admin@admin.com',
-      password: 'adminadmin',
+      password: 'admin@admin.com',
       name: 'Admin',
       role: 'admin',
     } })
 
     const _user = await auth.api.createUser({ body: {
       email: 'user@user.com',
-      password: 'useruser',
+      password: 'user@user.com',
       name: 'User',
       role: 'user',
     } })
-
-    await tx.insert(discounts).values(_discounts)
-    await tx.insert(promocodes).values(_promocodes)
-
-    await tx.insert(categories).values(_categories)
-    await tx.insert(models).values(_models)
-    await tx.insert(images).values(_images)
-    await tx.insert(imageToModel).values(_imagesToModels)
-    await tx.insert(files).values(_files)
   }, {
     deferrable: true,
   })
 }
 
 seed()
+logger.success('Seed is done')

@@ -12,6 +12,8 @@ const drop = async () => {
     await tx.delete(schema.imageToModel)
     await tx.delete(schema.images)
 
+    await tx.delete(schema.sets)
+    await tx.delete(schema.modelsToSets)
     await tx.delete(schema.models)
     await tx.delete(schema.categories)
 

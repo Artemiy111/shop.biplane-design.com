@@ -103,6 +103,13 @@ export const models = pgTable('models', {
 
 export type ModelDb = typeof models.$inferSelect
 
+export const modelsToSets = pgTable('models_to_sets', {
+  modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
+  setId: text().notNull().references(() => sets.id, { onDelete: 'cascade' }),
+}, t => [primaryKey({ columns: [t.modelId, t.setId] })])
+
+export type ModelsToSetsDb = typeof modelsToSets.$inferSelect
+
 export const images = pgTable('images', {
   id: text().primaryKey().$default(makeId),
   mimeType: text({ enum: mimeTypesImages }).notNull(),
@@ -150,13 +157,6 @@ export const files = pgTable('files', {
 })
 
 export type FileDb = typeof files.$inferSelect
-
-export const modelsToSets = pgTable('models_to_sets', {
-  modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
-  setId: text().notNull().references(() => sets.id, { onDelete: 'cascade' }),
-}, t => [primaryKey({ columns: [t.modelId, t.setId] })])
-
-export type ModelsToSetsDb = typeof modelsToSets.$inferSelect
 
 export const discounts = pgTable('discounts', {
   id: text().primaryKey().$default(makeId),

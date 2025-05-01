@@ -10,15 +10,53 @@ import {
   type LucideProps,
 } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
+import { useAuthUtils } from '~/src/shared/models/auth-utils'
 import { useCartItemsCount, useFavoritesCount } from '~/src/shared/models/queries'
 import { Logo } from '~/src/shared/ui/kit/logo'
 
 const colorMode = useColorMode()
+const authUtils = useAuthUtils()
 
 const { favoritesCount } = useFavoritesCount()
 const { cartItemsCount } = useCartItemsCount()
 
-const items = ref<
+const centerItems = computed(() => {
+  const base: NavigationMenuItem[] = [
+    {
+      to: '/catalog',
+      label: 'Каталог',
+    },
+  ]
+
+  if (authUtils.isAdmin) {
+    base.push({
+      to: '/admin',
+      label: 'Админка',
+      children: [
+        {
+          to: '/admin/models',
+          label: 'Модели',
+        },
+        {
+          to: '/admin/sets',
+          label: 'Наборы',
+        },
+        {
+          to: '/admin/discounts',
+          label: 'Скидки',
+        },
+        {
+          to: '/admin/promocodes',
+          label: 'Промокоды',
+        },
+      ],
+    })
+  }
+
+  return base
+})
+
+const rightItems = computed<
   Array<
     NavigationMenuItem & {
       count?: Ref<number | undefined>
@@ -26,30 +64,35 @@ const items = ref<
       iconComponent: FunctionalComponent<LucideProps, {}, any, {}>
     }
   >
->([
-  {
-    to: '/profile',
-    icon: 'i-lucide-user',
-    iconComponent: UserIcon,
-  },
-  {
-    to: '/orders',
-    icon: 'i-lucide-container',
-    iconComponent: ContainerIcon,
-  },
-  {
-    to: '/favorites',
-    icon: 'i-lucide-heart',
-    iconComponent: HeartIcon,
-    count: favoritesCount,
-  },
-  {
-    to: '/cart',
-    icon: 'i-lucide-shopping-cart',
-    iconComponent: ShoppingBagIcon,
-    count: cartItemsCount,
-  },
-])
+>(() => {
+  const base = [
+    {
+      to: '/profile',
+      icon: 'i-lucide-user',
+      iconComponent: UserIcon,
+    },
+  ]
+  const customer = [
+    {
+      to: '/orders',
+      icon: 'i-lucide-container',
+      iconComponent: ContainerIcon,
+    },
+    {
+      to: '/favorites',
+      icon: 'i-lucide-heart',
+      iconComponent: HeartIcon,
+      count: favoritesCount,
+    },
+    {
+      to: '/cart',
+      icon: 'i-lucide-shopping-cart',
+      iconComponent: ShoppingBagIcon,
+      count: cartItemsCount,
+    },
+  ]
+  return authUtils.isAdmin ? base : [...base, ...customer]
+})
 </script>
 
 <template>
@@ -65,7 +108,17 @@ const items = ref<
         <Logo />
         <span class="max-sm:hidden">Biplane-Design</span>
       </NuxtLink>
-      <div class="flex gap-3 items-center">
+
+      <UNavigationMenu
+        color="neutral"
+        variant="link"
+        :items="centerItems"
+        :ui="{ link: 'text-base' }"
+      />
+
+      <div
+        class="flex gap-3 items-center"
+      >
         <UButton
           square
           class="aspect-square cursor-pointer justify-center items-center"
@@ -95,8 +148,8 @@ const items = ref<
         />
         <nav class="flex gap-x-3">
           <UButton
-            v-for="item in items"
-            :key="item.to as string"
+            v-for="item in rightItems"
+            :key="item.to"
             :to="item.to"
             square
             variant="ghost"
