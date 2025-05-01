@@ -132,7 +132,10 @@ export type ImageOptimizedDb = typeof imagesOptimized.$inferSelect
 export const imageToModel = pgTable('image_to_model', {
   imageId: text().notNull().primaryKey().references(() => images.id, { onDelete: 'cascade' }),
   modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
-})
+  sortOrder: integer().notNull(),
+}, t => [
+  index().on(t.modelId), // Для быстрого поиска по товару
+])
 
 export type ImageToModelDb = typeof imageToModel.$inferSelect
 

@@ -1,44 +1,57 @@
 <script setup lang="ts">
-import type { UnwrapRef } from 'vue'
-import { ModelCard } from '~/src/shared/ui/blocks/model-card'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import { useCategories } from '~/src/shared/models/queries'
-import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
-
-const { categories, status, refresh } = useCategories()
-
-export type Categories = UnwrapRef<typeof categories>
-export type Model = Categories[0]['models'][0]
+import { OrbitControls } from '@tresjs/cientos'
 </script>
 
 <template>
   <main class="container">
-    <PageHeading>Каталог</PageHeading>
-    <ContentLoader v-if="status === 'pending'" />
-    <ContentLoaderError
-      v-else-if="status === 'error'"
-      @refresh="refresh"
-    />
-    <div
-      v-else
-      class="flex flex-col gap-y-8 @container/content"
-    >
-      <div
-        v-for="category in categories"
-        :key="category.id"
-        class="flex flex-col gap-y-4 mt-4"
+    <div class="w-full h-[600px]">
+      <TresCanvas
+        shadows
+        alpha
+        preset="realistic"
       >
-        <h3 class="text-subheading">
-          {{ category.name }}
-        </h3>
-        <div class="grid grid-cols-3 @max-5xl/content:grid-cols-2 gap-(--container-pad) @max-sm/content:gap-4 @max-xs/content:gap-2">
-          <ModelCard
-            v-for="model in category.models"
-            :key="model.id"
-            :model="model"
+        <!-- <TresPerspectiveCamera :args="[45, 1, 0.1, 1000]" /> -->
+        <TresPerspectiveCamera />
+        <OrbitControls />
+        <TresAmbientLight :intensity="0.5" />
+        <!-- <TresMesh>
+          <TresTorusGeometry :args="[1, 0.5, 16, 32]" />
+          <TresMeshBasicMaterial color="orange" />
+        </TresMesh> -->
+        <TresDirectionalLight
+          :position="[4, 4, 2]"
+          cast-shadow
+        />
+        <TresAxesHelper :scale="2" />
+        <Suspense>
+          <FBXModel
+            path="/table.fbx"
+            :scale="0.001"
+            cast-shadow
+            :rotation="[0, 90, 0]"
+            receive-shadow
           />
-        </div>
-      </div>
+        </Suspense>
+
+        <Suspense>
+          <Text3D font="/Montserrat_Regular.json">
+            Revit-модели, созданные архитекторами для архитекторов
+            <TresMeshPhysicalMaterial color="gray" />
+          </Text3D>
+        </Suspense>
+        <Plane
+          :scale="10"
+          receive-shadow
+          :position="[0, -1, 0]"
+        >
+          <TresMeshPhysicalMaterial
+            color="orange"
+            receive-shadow
+          />
+        </Plane>
+      </TresCanvas>
     </div>
+
+    3
   </main>
 </template>

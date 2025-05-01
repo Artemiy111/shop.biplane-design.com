@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     '@pinia/colada-nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt',
-
+    '@tresjs/nuxt',
   ],
   devtools: { enabled: true },
   app: { head: { htmlAttrs: { lang: 'ru' } } },
@@ -53,5 +53,9 @@ export default defineNuxtConfig({
         semi: false,
       },
     },
+  },
+
+  tres: {
+    devtools: true,
   },
 })
