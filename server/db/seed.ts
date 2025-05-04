@@ -277,5 +277,6 @@ const seed = async () => {
   })
 }
 
-seed()
+await seed()
 logger.success('Seed is done')
+await db.$client.end()

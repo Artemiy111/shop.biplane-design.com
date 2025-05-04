@@ -97,6 +97,7 @@ export const models = pgTable('models', {
   revitVersion: text({ enum: ['2023'] }),
   price: decimal({ mode: 'number' }).notNull(),
   discountId: text().references(() => discounts.id),
+  // show: boolean().notNull().default(true),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow(),
 }, t => [index().on(t.categoryId)])

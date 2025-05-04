@@ -12,6 +12,11 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@tresjs/nuxt',
   ],
+
+  // imports: {
+  //   scan: false,
+  // },
+
   devtools: { enabled: true },
   app: { head: { htmlAttrs: { lang: 'ru' } } },
   css: ['./app/src/shared/assets/main.css'],

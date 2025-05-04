@@ -14,7 +14,7 @@
 services:
   postgres:
     image: postgres:17
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
@@ -105,50 +105,9 @@ networks:
 
 volumes:
   postgres_data:
-    # driver: local
-    # driver_opts:
-    #   o: bind
-    #   type: none
-    #   device: "./.data/postgres"
-
   pgadmin_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/pgadmin"
-
   rabbitmq_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/rabbitmq"
-
   tempo_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/tempo"
-
   loki_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/loki"
-
   prometheus_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/prometheus"
-
   grafana_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "./.data/grafana"

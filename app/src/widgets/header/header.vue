@@ -106,7 +106,7 @@ const rightItems = computed<
         to="/"
       >
         <Logo />
-        <span class="max-sm:hidden">Biplane-Design</span>
+        <span class="max-sm:hidden">Biplane-Design Shop</span>
       </NuxtLink>
 
       <UNavigationMenu

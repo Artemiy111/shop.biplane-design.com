@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HeartIcon, ShoppingBagIcon, ShoppingCart } from 'lucide-vue-next'
+import { HeartIcon, ShoppingBagIcon } from 'lucide-vue-next'
 import type { CategoryModel } from '~/src/shared/models/queries'
 import { imageUrl } from '~/src/shared/lib/image'
 import { cn } from '~/src/shared/lib/cn'
@@ -24,14 +24,14 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
 
 <template>
   <div
-    class="relative group h-full @container/slider"
+    class="relative group h-full @container/slider bg-black/1"
   >
     <NuxtImg
       v-for="(image, index) in images"
       :key="image.id"
       :src="image.url || imageUrl(image)"
       :alt="model.name"
-      :class="[currentImage === index || images.length === 1 ? 'block' : 'hidden']"
+      :class="[currentImage === index || images.length === 1 ? 'block mix-blend-multiply' : 'hidden']"
     />
     <div
       v-if="actionsEnabled"
