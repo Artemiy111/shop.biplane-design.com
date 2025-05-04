@@ -1,1 +1,1 @@
-export { default as ModelsPage } from './models-page.vue'
+export { default as AdminModelsPage } from './models-page.vue'
