@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { CheckIcon } from 'lucide-vue-next'
-import { ModelCard } from '~/src/shared/ui/blocks/model-card'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { useCartItems } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
