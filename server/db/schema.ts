@@ -4,7 +4,7 @@ import { userRoles } from '../../app/src/shared/config/constants/user'
 import { mimeTypesImages, mimeTypesRevit } from '../../app/src/shared/config/constants/mime-types'
 import { paymentProviders, orderStatuses, refundStatuses, revitVersions } from '../../app/src/shared/config/constants'
 
-export const users = pgTable('users', {
+export const usersT = pgTable('users', {
   id: text().primaryKey().$default(makeId),
   name: text().notNull(),
   email: text().notNull().unique(),
@@ -19,9 +19,9 @@ export const users = pgTable('users', {
   banExpires: timestamp(),
 })
 
-export type UserDb = typeof users.$inferSelect
+export type UserDb = typeof usersT.$inferSelect
 
-export const sessions = pgTable('sessions', {
+export const sessionsT = pgTable('sessions', {
   id: text().primaryKey().$default(makeId),
   expiresAt: timestamp().notNull(),
   token: text().notNull().unique(),
@@ -29,15 +29,15 @@ export const sessions = pgTable('sessions', {
   updatedAt: timestamp().notNull(),
   ipAddress: text(),
   userAgent: text(),
-  userId: text().notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: text().notNull().references(() => usersT.id, { onDelete: 'cascade' }),
   impersonatedBy: text('impersonated_by'),
 }, t => [index().on(t.userId), index().on(t.token)])
 
-export type SessionDb = typeof sessions.$inferSelect
+export type SessionDb = typeof sessionsT.$inferSelect
 
-export const accounts = pgTable('accounts', {
+export const accountsT = pgTable('accounts', {
   id: text().primaryKey().$default(makeId),
-  userId: text().notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: text().notNull().references(() => usersT.id, { onDelete: 'cascade' }),
   accountId: text().notNull(),
   providerId: text().notNull(),
   accessToken: text(),
@@ -51,9 +51,9 @@ export const accounts = pgTable('accounts', {
   updatedAt: timestamp().notNull(),
 }, t => [index().on(t.userId)])
 
-export type AccountDb = typeof accounts.$inferSelect
+export type AccountDb = typeof accountsT.$inferSelect
 
-export const verifications = pgTable('verifications', {
+export const verificationsT = pgTable('verifications', {
   id: text().primaryKey().$default(makeId),
   identifier: text().notNull(),
   value: text().notNull(),
@@ -62,59 +62,60 @@ export const verifications = pgTable('verifications', {
   updatedAt: timestamp(),
 }, t => [index().on(t.identifier)])
 
-export type VerificationDb = typeof verifications.$inferSelect
+export type VerificationDb = typeof verificationsT.$inferSelect
 
-export const categories = pgTable('categories', {
+export const categoriesT = pgTable('categories', {
   id: text().primaryKey().$default(makeId),
   name: text().notNull().unique(),
   slug: text().notNull().unique(),
   description: text(),
 })
 
-export type CategoryDb = typeof categories.$inferSelect
+export type CategoryDb = typeof categoriesT.$inferSelect
 
-export const sets = pgTable('sets', {
+export const setsT = pgTable('sets', {
   id: text().primaryKey().$default(makeId),
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
   price: decimal({ mode: 'number' }).notNull(),
-  discountId: text().references(() => discounts.id),
-  imageId: text().references(() => images.id),
+  discountId: text().references(() => discountsT.id),
+  imageId: text().references(() => imagesT.id),
   createdAt: timestamp().defaultNow(),
 })
 
-export type SetDb = typeof sets.$inferSelect
+export type SetDb = typeof setsT.$inferSelect
 
-export const models = pgTable('models', {
+export const modelsT = pgTable('models', {
   id: text().primaryKey().$default(makeId),
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
-  categoryId: text().notNull().references(() => categories.id, { onDelete: 'set null' }),
+  categoryId: text().notNull().references(() => categoriesT.id, { onDelete: 'set null' }),
   // fileFormat: text(),
   // fileSize: integer(),
-  revitVersion: text({ enum: revitVersions }),
+  revitVersion: text({ enum: revitVersions }).notNull(),
   price: decimal({ mode: 'number' }).notNull(),
-  discountId: text().references(() => discounts.id),
+  discountId: text().references(() => discountsT.id),
   // show: boolean().notNull().default(true),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow(),
 }, t => [index().on(t.categoryId)])
 
-export type ModelDb = typeof models.$inferSelect
+export type ModelDb = typeof modelsT.$inferSelect
+export type ModelDbUpdate = ModelDb
 
-export const modelsToSets = pgTable('models_to_sets', {
-  modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
-  setId: text().notNull().references(() => sets.id, { onDelete: 'cascade' }),
+export const modelsToSetsT = pgTable('models_to_sets', {
+  modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
+  setId: text().notNull().references(() => setsT.id, { onDelete: 'cascade' }),
 }, t => [primaryKey({ columns: [t.modelId, t.setId] })])
 
-export type ModelsToSetsDb = typeof modelsToSets.$inferSelect
+export type ModelsToSetsDb = typeof modelsToSetsT.$inferSelect
 
-export const images = pgTable('images', {
+export const imagesT = pgTable('images', {
   id: text().primaryKey().$default(makeId),
   mimeType: text({ enum: mimeTypesImages }).notNull(),
-  originalFilename: text(),
+  originalFilename: text().notNull(),
   url: text(),
   alt: text(),
   size: integer(),
@@ -123,11 +124,11 @@ export const images = pgTable('images', {
   createdAt: timestamp().defaultNow(),
 })
 
-export type ImageDb = typeof images.$inferSelect
+export type ImageDb = typeof imagesT.$inferSelect
 
-export const imagesOptimized = pgTable('images_optimized', {
+export const imagesOptimizedT = pgTable('images_optimized', {
   id: text().primaryKey().$default(makeId),
-  imageId: text().notNull().references(() => images.id, { onDelete: 'cascade' }),
+  imageId: text().notNull().references(() => imagesT.id, { onDelete: 'cascade' }),
   mimeType: text({ enum: ['image/webp', 'image/avif'] }).notNull(),
   size: integer().notNull(),
   width: integer().notNull(),
@@ -135,31 +136,32 @@ export const imagesOptimized = pgTable('images_optimized', {
   createdAt: timestamp().defaultNow(),
 }, t => [index().on(t.imageId)])
 
-export type ImageOptimizedDb = typeof imagesOptimized.$inferSelect
+export type ImageOptimizedDb = typeof imagesOptimizedT.$inferSelect
 
-export const imageToModel = pgTable('image_to_model', {
-  imageId: text().notNull().primaryKey().references(() => images.id, { onDelete: 'cascade' }),
-  modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
+export const imageToModelT = pgTable('image_to_model', {
+  imageId: text().notNull().primaryKey().references(() => imagesT.id, { onDelete: 'cascade' }),
+  modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
   sortOrder: integer().notNull(),
 }, t => [
   index().on(t.modelId), // Для быстрого поиска по товару
 ])
 
-export type ImageToModelDb = typeof imageToModel.$inferSelect
+export type ImageToModelDb = typeof imageToModelT.$inferSelect
 
 const mimeTypeFiles = [...mimeTypesRevit, 'application/zip', 'application/octet-stream'] as const
 
-export const files = pgTable('files', {
+export const filesT = pgTable('files', {
   id: text().primaryKey().$default(makeId),
-  modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
+  originalFilename: text().notNull(),
+  modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
   mimeType: text({ enum: mimeTypeFiles }).notNull(),
   size: integer().notNull(),
   createdAt: timestamp().defaultNow(),
 })
 
-export type FileDb = typeof files.$inferSelect
+export type FileDb = typeof filesT.$inferSelect
 
-export const discounts = pgTable('discounts', {
+export const discountsT = pgTable('discounts', {
   id: text().primaryKey().$default(makeId),
   label: text(),
   discountPercentage: decimal({ mode: 'number' }).notNull(),
@@ -167,9 +169,9 @@ export const discounts = pgTable('discounts', {
   endDate: timestamp(),
 })
 
-export type DiscountDb = typeof discounts.$inferSelect
+export type DiscountDb = typeof discountsT.$inferSelect
 
-export const promocodes = pgTable('promocodes', {
+export const promocodesT = pgTable('promocodes', {
   id: text().primaryKey().$default(makeId),
   code: text().notNull().unique(),
   discountPercentage: decimal({ mode: 'number' }).notNull(),
@@ -179,15 +181,15 @@ export const promocodes = pgTable('promocodes', {
   usedCount: integer().default(0),
 })
 
-export type PromocodeDb = typeof promocodes.$inferSelect
+export type PromocodeDb = typeof promocodesT.$inferSelect
 
-export const orders = pgTable('orders', {
+export const ordersT = pgTable('orders', {
   id: text().primaryKey().$default(makeId),
-  userId: text().notNull().references(() => users.id, { onDelete: 'restrict' }),
+  userId: text().notNull().references(() => usersT.id, { onDelete: 'restrict' }),
   totalPrice: decimal({ mode: 'number' }).notNull(),
   totalPriceBeforeDiscount: decimal({ mode: 'number' }).notNull(),
 
-  promocodeId: text().references(() => promocodes.id),
+  promocodeId: text().references(() => promocodesT.id),
   createdAt: timestamp().notNull().defaultNow(),
 
   paymentProvider: text({ enum: paymentProviders }).notNull().default('tbank'),
@@ -196,41 +198,41 @@ export const orders = pgTable('orders', {
   paymentUrl: text(),
 }, t => [index().on(t.userId)])
 
-export type OrderDb = typeof orders.$inferSelect
+export type OrderDb = typeof ordersT.$inferSelect
 
-export const orderItems = pgTable('order_items', {
+export const orderItemsT = pgTable('order_items', {
   id: text().primaryKey().$default(makeId),
-  orderId: text().notNull().references(() => orders.id, { onDelete: 'restrict' }),
-  modelId: text().references(() => models.id),
-  setId: text().references(() => sets.id),
+  orderId: text().notNull().references(() => ordersT.id, { onDelete: 'restrict' }),
+  modelId: text().references(() => modelsT.id),
+  setId: text().references(() => setsT.id),
   price: decimal({ mode: 'number' }).notNull(),
   priceBeforeDiscount: decimal({ mode: 'number' }).notNull(),
-  discountId: text().references(() => discounts.id),
+  discountId: text().references(() => discountsT.id),
 }, t => [index().on(t.orderId)])
 
-export type OrderItemDb = typeof orderItems.$inferSelect
+export type OrderItemDb = typeof orderItemsT.$inferSelect
 
-export const favorites = pgTable('favorites', {
-  userId: text().notNull().references(() => users.id, { onDelete: 'cascade' }),
-  modelId: text().notNull().references(() => models.id, { onDelete: 'cascade' }),
+export const favoritesT = pgTable('favorites', {
+  userId: text().notNull().references(() => usersT.id, { onDelete: 'cascade' }),
+  modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
   addedAt: timestamp().defaultNow(),
 })
 
-export type FavoriteDb = typeof favorites.$inferSelect
+export type FavoriteDb = typeof favoritesT.$inferSelect
 
-export const cartItems = pgTable('cart_items', {
+export const cartItemsT = pgTable('cart_items', {
   id: text().primaryKey().$default(makeId),
-  userId: text().notNull().references(() => users.id, { onDelete: 'cascade' }),
-  modelId: text().references(() => models.id, { onDelete: 'cascade' }),
-  setId: text().references(() => sets.id, { onDelete: 'cascade' }),
+  userId: text().notNull().references(() => usersT.id, { onDelete: 'cascade' }),
+  modelId: text().references(() => modelsT.id, { onDelete: 'cascade' }),
+  setId: text().references(() => setsT.id, { onDelete: 'cascade' }),
   addedAt: timestamp().defaultNow(),
 }, t => [index().on(t.userId, t.modelId), index().on(t.userId, t.setId)])
 
-export type CartItemDb = typeof cartItems.$inferSelect
+export type CartItemDb = typeof cartItemsT.$inferSelect
 
-export const refunds = pgTable('refunds', {
+export const refundsT = pgTable('refunds', {
   id: text().primaryKey().$default(makeId),
-  orderId: text().notNull().references(() => orders.id, { onDelete: 'restrict' }),
+  orderId: text().notNull().references(() => ordersT.id, { onDelete: 'restrict' }),
   refundedAmount: decimal(),
   reason: text(),
   status: text({ enum: refundStatuses }).default('pending'),
@@ -238,10 +240,10 @@ export const refunds = pgTable('refunds', {
   resolvedAt: timestamp(),
 }, t => [index().on(t.orderId)])
 
-export type RefundDb = typeof refunds.$inferSelect
+export type RefundDb = typeof refundsT.$inferSelect
 
-export const refundItems = pgTable('refund_items', {
+export const refundItemsT = pgTable('refund_items', {
   id: text().primaryKey().$default(makeId),
-  refundId: text().notNull().references(() => refunds.id, { onDelete: 'restrict' }),
-  orderItemId: text().notNull().references(() => orderItems.id, { onDelete: 'restrict' }),
+  refundId: text().notNull().references(() => refundsT.id, { onDelete: 'restrict' }),
+  orderItemId: text().notNull().references(() => orderItemsT.id, { onDelete: 'restrict' }),
 }, t => [index().on(t.refundId, t.orderItemId)])

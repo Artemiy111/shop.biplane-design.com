@@ -7,7 +7,7 @@ export const publicRouter = router({
   getCategories: publicProcedure
     .query(async ({ ctx }) => {
       const { user } = ctx
-      const categories_ = await db.query.categories.findMany({
+      const categories_ = await db.query.categoriesT.findMany({
         with: {
           models: { with: modelPrequery(user?.id) },
         },
@@ -44,7 +44,7 @@ export const publicRouter = router({
     .input(z.object({ slug: z.string() }))
     .query(async ({ ctx, input }) => {
       const { user } = ctx
-      const model_ = await db.query.models.findFirst({
+      const model_ = await db.query.modelsT.findFirst({
         where: {
           slug: input.slug,
         },

@@ -86,7 +86,7 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
           type="submit"
           color="neutral"
           loading-auto
-          class="w-fit mt-4"
+          class="w-fit mt-5"
           :disabled="!!form?.errors.length "
         >
           Зарегистрироваться

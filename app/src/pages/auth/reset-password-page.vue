@@ -84,7 +84,7 @@ const onSubmit = async (event: FormSubmitEvent<ResetPasswordSchema>) => {
         <UButton
           type="submit"
           color="neutral"
-          class="w-fit mt-4"
+          class="w-fit mt-5"
           loading-auto
           :disabled="!!form?.errors.length "
         >

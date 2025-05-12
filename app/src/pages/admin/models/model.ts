@@ -6,7 +6,7 @@ export const useAdminModelsPreview = defineQuery(() => {
   const authUtils = useAuthUtils()
   const { data: _models, state: _, ...rest } = useQuery({
     key: ['admin', 'models'],
-    query: async () => await useApi().admin.getModelsPreview.query(),
+    query: async () => await useApi().admin.models.getModelsPreview.query(),
     enabled: () => authUtils.isAdmin,
   })
   const models = computed(() => _models.value || [])

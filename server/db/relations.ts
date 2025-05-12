@@ -2,68 +2,68 @@ import { defineRelations } from 'drizzle-orm'
 import * as schema from './schema'
 
 export const relations = defineRelations(schema, r => ({
-  users: {
-    accounts: r.many.accounts(),
-    sessions: r.many.sessions(),
-    favorites: r.many.favorites(),
-    cartItems: r.many.cartItems(),
-    orders: r.many.orders(),
+  usersT: {
+    accounts: r.many.accountsT(),
+    sessions: r.many.sessionsT(),
+    favorites: r.many.favoritesT(),
+    cartItems: r.many.cartItemsT(),
+    orders: r.many.ordersT(),
     // promocodes: r.many.promocodes(),
     // models: r.many.models(),
   },
-  sessions: {
-    user: r.one.users({
-      from: r.sessions.userId,
-      to: r.users.id,
+  sessionsT: {
+    user: r.one.usersT({
+      from: r.sessionsT.userId,
+      to: r.usersT.id,
       optional: false,
     }),
   },
-  accounts: {
-    user: r.one.users({
-      from: r.accounts.userId,
-      to: r.users.id,
+  accountsT: {
+    user: r.one.usersT({
+      from: r.accountsT.userId,
+      to: r.usersT.id,
       optional: false,
     }),
   },
-  categories: {
-    models: r.many.models(),
+  categoriesT: {
+    models: r.many.modelsT(),
     // discounts: r.many.discounts({
     //   from: r.categories.id.through(r.models.categoryId),
     //   to: r.discounts.id.through(r.models.discountId),
     // }),
   },
-  sets: {
-    cartItems: r.many.cartItems(),
-    orderItems: r.many.orderItems(),
-    models: r.many.models(),
-    discount: r.one.discounts({
-      from: r.sets.discountId,
-      to: r.discounts.id,
+  setsT: {
+    cartItems: r.many.cartItemsT(),
+    orderItems: r.many.orderItemsT(),
+    models: r.many.modelsT(),
+    discount: r.one.discountsT({
+      from: r.setsT.discountId,
+      to: r.discountsT.id,
       optional: true,
     }),
   },
-  models: {
-    category: r.one.categories({
-      from: r.models.categoryId,
-      to: r.categories.id,
+  modelsT: {
+    category: r.one.categoriesT({
+      from: r.modelsT.categoryId,
+      to: r.categoriesT.id,
       optional: false,
     }),
-    images: r.many.images({
-      from: r.models.id.through(r.imageToModel.modelId),
-      to: r.images.id.through(r.imageToModel.imageId),
+    images: r.many.imagesT({
+      from: r.modelsT.id.through(r.imageToModelT.modelId),
+      to: r.imagesT.id.through(r.imageToModelT.imageId),
     }),
-    files: r.many.files(),
-    sets: r.many.sets({
-      from: r.models.id.through(r.modelsToSets.modelId),
-      to: r.sets.id.through(r.modelsToSets.setId),
+    files: r.many.filesT(),
+    sets: r.many.setsT({
+      from: r.modelsT.id.through(r.modelsToSetsT.modelId),
+      to: r.setsT.id.through(r.modelsToSetsT.setId),
     }),
-    discount: r.one.discounts({
-      from: r.models.discountId,
-      to: r.discounts.id,
+    discount: r.one.discountsT({
+      from: r.modelsT.discountId,
+      to: r.discountsT.id,
       optional: true,
     }),
-    favorites: r.many.favorites(),
-    cartItems: r.many.cartItems(),
+    favorites: r.many.favoritesT(),
+    cartItems: r.many.cartItemsT(),
     // imagesToModel: r.many.imageToModel(),
     // users: r.many.users({
     //   from: r.models.id.through(r.favorites.modelId),
@@ -71,105 +71,105 @@ export const relations = defineRelations(schema, r => ({
     // }),
     // orderItems: r.many.orderItems(),
   },
-  images: {
-    optimized: r.many.imagesOptimized(),
-    model: r.one.models({
-      from: r.images.id.through(r.imageToModel.imageId),
-      to: r.models.id.through(r.imageToModel.modelId),
+  imagesT: {
+    optimized: r.many.imagesOptimizedT(),
+    model: r.one.modelsT({
+      from: r.imagesT.id.through(r.imageToModelT.imageId),
+      to: r.modelsT.id.through(r.imageToModelT.modelId),
       optional: false,
     }),
   },
-  imagesOptimized: {
-    original: r.one.images({
-      from: r.imagesOptimized.imageId,
-      to: r.images.id,
+  imagesOptimizedT: {
+    original: r.one.imagesT({
+      from: r.imagesOptimizedT.imageId,
+      to: r.imagesT.id,
       optional: false,
     }),
   },
-  files: {
-    model: r.one.models({
-      from: r.files.modelId,
-      to: r.models.id,
+  filesT: {
+    model: r.one.modelsT({
+      from: r.filesT.modelId,
+      to: r.modelsT.id,
       optional: false,
     }),
   },
-  discounts: {
+  discountsT: {
     // sets: r.many.sets(),
     // models: r.many.models(),
-    images: r.many.images({
-      from: r.discounts.id.through(r.sets.discountId),
-      to: r.images.id.through(r.sets.imageId),
+    images: r.many.imagesT({
+      from: r.discountsT.id.through(r.setsT.discountId),
+      to: r.imagesT.id.through(r.setsT.imageId),
     }),
   },
-  promocodes: {
-    users: r.many.users({
-      from: r.promocodes.id.through(r.orders.promocodeId),
-      to: r.users.id.through(r.orders.userId),
+  promocodesT: {
+    users: r.many.usersT({
+      from: r.promocodesT.id.through(r.ordersT.promocodeId),
+      to: r.usersT.id.through(r.ordersT.userId),
     }),
   },
-  favorites: {
-    user: r.one.users({
-      from: r.favorites.userId,
-      to: r.users.id,
+  favoritesT: {
+    user: r.one.usersT({
+      from: r.favoritesT.userId,
+      to: r.usersT.id,
       optional: false,
     }),
-    model: r.one.models({
-      from: r.favorites.modelId,
-      to: r.models.id,
-      optional: false,
-    }),
-  },
-  cartItems: {
-    model: r.one.models({
-      from: r.cartItems.modelId,
-      to: r.models.id,
-      optional: true,
-    }),
-    set: r.one.sets({
-      from: r.cartItems.setId,
-      to: r.sets.id,
-      optional: true,
-    }),
-    user: r.one.users({
-      from: r.cartItems.userId,
-      to: r.users.id,
+    model: r.one.modelsT({
+      from: r.favoritesT.modelId,
+      to: r.modelsT.id,
       optional: false,
     }),
   },
-  orders: {
-    user: r.one.users({
-      from: r.orders.userId,
-      to: r.users.id,
+  cartItemsT: {
+    model: r.one.modelsT({
+      from: r.cartItemsT.modelId,
+      to: r.modelsT.id,
+      optional: true,
+    }),
+    set: r.one.setsT({
+      from: r.cartItemsT.setId,
+      to: r.setsT.id,
+      optional: true,
+    }),
+    user: r.one.usersT({
+      from: r.cartItemsT.userId,
+      to: r.usersT.id,
       optional: false,
     }),
-    items: r.many.orderItems(),
-    promocode: r.one.promocodes({
-      from: r.orders.promocodeId,
-      to: r.promocodes.id,
+  },
+  ordersT: {
+    user: r.one.usersT({
+      from: r.ordersT.userId,
+      to: r.usersT.id,
+      optional: false,
+    }),
+    items: r.many.orderItemsT(),
+    promocode: r.one.promocodesT({
+      from: r.ordersT.promocodeId,
+      to: r.promocodesT.id,
       optional: true,
     }),
   },
-  orderItems: {
-    order: r.one.orders({
-      from: r.orderItems.orderId,
-      to: r.orders.id,
+  orderItemsT: {
+    order: r.one.ordersT({
+      from: r.orderItemsT.orderId,
+      to: r.ordersT.id,
       optional: false,
     }),
-    model: r.one.models({
-      from: r.orderItems.modelId,
-      to: r.models.id,
+    model: r.one.modelsT({
+      from: r.orderItemsT.modelId,
+      to: r.modelsT.id,
       optional: true,
     }),
-    set: r.one.sets({
-      from: r.orderItems.setId,
-      to: r.sets.id,
+    set: r.one.setsT({
+      from: r.orderItemsT.setId,
+      to: r.setsT.id,
       optional: true,
     }),
   },
-  refunds: {
-    order: r.one.orders({
-      from: r.refunds.orderId,
-      to: r.orders.id,
+  refundsT: {
+    order: r.one.ordersT({
+      from: r.refundsT.orderId,
+      to: r.ordersT.id,
       optional: false,
     }),
   },

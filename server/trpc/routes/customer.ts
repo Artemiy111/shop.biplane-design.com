@@ -5,17 +5,17 @@ import { router, customerProcedure } from '~~/server/trpc'
 import { getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { db } from '~~/server/db'
 import type { OrderItemDb } from '~~/server/db/schema'
-import { favorites, orders, cartItems } from '~~/server/db/schema'
+import { favoritesT, ordersT, cartItemsT } from '~~/server/db/schema'
 
 export const customerRouter = router({
   getFavorites: customerProcedure.query(async ({ ctx: { user } }) => {
-    const models_ = await db.query.models.findMany({
+    const models = await db.query.modelsT.findMany({
       where: {
-        RAW: t => sql`EXISTS (SELECT 1 FROM ${favorites} WHERE ${favorites.userId} = ${user.id} AND ${favorites.modelId} = ${t.id})`.mapWith(Boolean),
+        RAW: t => sql`EXISTS (SELECT 1 FROM ${favoritesT} WHERE ${favoritesT.userId} = ${user.id} AND ${favoritesT.modelId} = ${t.id})`.mapWith(Boolean),
       },
       with: modelPrequery(user.id),
     })
-    return models_.map(model => ({
+    return models.map(model => ({
       ...model,
       isFavorite: true,
       isInCart: model.cartItems?.length > 0,
@@ -24,12 +24,12 @@ export const customerRouter = router({
 
   getFavoritesCount: customerProcedure.query(async ({ ctx: { user } }) => {
     return (
-      await db.select({ count: count() }).from(favorites).where(eq(favorites.userId, user.id))
+      await db.select({ count: count() }).from(favoritesT).where(eq(favoritesT.userId, user.id))
     )[0].count
   }),
 
   getOrders: customerProcedure.query(async ({ ctx: { user } }) => {
-    return await db.query.orders.findMany({
+    return await db.query.ordersT.findMany({
       where: {
         userId: user.id,
       },
@@ -45,7 +45,7 @@ export const customerRouter = router({
   }),
 
   getCartItems: customerProcedure.query(async ({ ctx: { user } }) => {
-    const cartItems = await db.query.cartItems.findMany({
+    const cartItems = await db.query.cartItemsT.findMany({
       where: {
         userId: user.id,
       },
@@ -70,7 +70,7 @@ export const customerRouter = router({
 
   getCartItemsCount: customerProcedure.query(async ({ ctx: { user } }) => {
     return (
-      await db.select({ count: count() }).from(cartItems).where(eq(cartItems.userId, user.id))
+      await db.select({ count: count() }).from(cartItemsT).where(eq(cartItemsT.userId, user.id))
     )[0].count
   }),
 
@@ -81,16 +81,16 @@ export const customerRouter = router({
         const isFavorite = (
           await db
             .select({ count: count() })
-            .from(favorites)
-            .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
+            .from(favoritesT)
+            .where(and(eq(favoritesT.userId, user.id), eq(favoritesT.modelId, input.modelId)))
             .limit(1)
         )[0].count > 0
 
         if (isFavorite)
           await tx
-            .delete(favorites)
-            .where(and(eq(favorites.userId, user.id), eq(favorites.modelId, input.modelId)))
-        else await tx.insert(favorites).values({ userId: user.id, modelId: input.modelId })
+            .delete(favoritesT)
+            .where(and(eq(favoritesT.userId, user.id), eq(favoritesT.modelId, input.modelId)))
+        else await tx.insert(favoritesT).values({ userId: user.id, modelId: input.modelId })
       })
     }),
 
@@ -102,16 +102,16 @@ export const customerRouter = router({
           const isInCart = (
             await db
               .select({ count: count() })
-              .from(cartItems)
-              .where(and(eq(cartItems.userId, user.id), eq(cartItems.modelId, input.modelId)))
+              .from(cartItemsT)
+              .where(and(eq(cartItemsT.userId, user.id), eq(cartItemsT.modelId, input.modelId)))
               .limit(1)
           )[0].count > 0
 
           if (isInCart)
             await tx
-              .delete(cartItems)
-              .where(and(eq(cartItems.userId, user.id), eq(cartItems.modelId, input.modelId)))
-          else await tx.insert(cartItems).values({ userId: user.id, modelId: input.modelId })
+              .delete(cartItemsT)
+              .where(and(eq(cartItemsT.userId, user.id), eq(cartItemsT.modelId, input.modelId)))
+          else await tx.insert(cartItemsT).values({ userId: user.id, modelId: input.modelId })
 
           return
         }
@@ -121,16 +121,16 @@ export const customerRouter = router({
         const isInCart = (
           await db
             .select({ count: count() })
-            .from(cartItems)
-            .where(and(eq(cartItems.userId, user.id), eq(cartItems.setId, input.setId)))
+            .from(cartItemsT)
+            .where(and(eq(cartItemsT.userId, user.id), eq(cartItemsT.setId, input.setId)))
             .limit(1)
         )[0].count > 0
 
         if (isInCart)
           await tx
-            .delete(cartItems)
-            .where(and(eq(cartItems.userId, user.id), eq(cartItems.setId, input.setId)))
-        else await tx.insert(cartItems).values({ userId: user.id, setId: input.setId })
+            .delete(cartItemsT)
+            .where(and(eq(cartItemsT.userId, user.id), eq(cartItemsT.setId, input.setId)))
+        else await tx.insert(cartItemsT).values({ userId: user.id, setId: input.setId })
       })
     }),
 
@@ -138,7 +138,7 @@ export const customerRouter = router({
     .input(z.object({ promocodeCode: z.string().nullable() }))
     .mutation(async ({ input: { promocodeCode }, ctx: { user } }) => {
       db.transaction(async (tx) => {
-        const cart = await tx.query.cartItems.findMany({
+        const cart = await tx.query.cartItemsT.findMany({
           where: {
             userId: user.id,
           },
@@ -174,7 +174,7 @@ export const customerRouter = router({
         })
 
         const promocode = promocodeCode
-          ? (await tx.query.promocodes.findFirst({
+          ? (await tx.query.promocodesT.findFirst({
               where: {
                 code: promocodeCode,
               },
@@ -194,7 +194,7 @@ export const customerRouter = router({
 
         // TODO подключить оплату через банковскую систему
 
-        await tx.insert(orders).values({
+        await tx.insert(ordersT).values({
           userId: user.id,
           totalPrice,
           totalPriceBeforeDiscount,
@@ -205,7 +205,7 @@ export const customerRouter = router({
           paymentId: null,
         })
 
-        await tx.delete(cartItems).where(eq(cartItems.userId, user.id))
+        await tx.delete(cartItemsT).where(eq(cartItemsT.userId, user.id))
       })
     }),
 

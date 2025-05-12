@@ -25,6 +25,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
+    security_opt:
+      - label=disable 
 
   # rabbitmq:
   #   image: rabbitmq:4-management

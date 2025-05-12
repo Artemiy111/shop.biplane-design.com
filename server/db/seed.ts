@@ -10,20 +10,20 @@ import {
   type CategoryDb,
   type PromocodeDb,
   type ModelsToSetsDb,
-  categories,
-  models,
-  images,
-  imageToModel,
-  files,
-  discounts,
-  promocodes,
-  sets,
-  modelsToSets,
+  categoriesT,
+  modelsT,
+  imagesT,
+  imageToModelT,
+  filesT,
+  discountsT,
+  promocodesT,
+  setsT,
+  modelsToSetsT,
 } from './schema'
 
 import { db } from '.'
 
-export const _categories: CategoryDb[] = [
+export const categories: CategoryDb[] = [
   {
     id: '1',
     name: 'Мебель',
@@ -86,7 +86,7 @@ export const _categories: CategoryDb[] = [
   },
 ]
 
-export const _models: ModelDb[] = [
+export const models: ModelDb[] = [
   {
     id: '1',
     categoryId: '1',
@@ -113,7 +113,7 @@ export const _models: ModelDb[] = [
   },
 ]
 
-export const _sets: SetDb[] = [
+export const sets: SetDb[] = [
   {
     id: '1',
     name: 'Набор моделей столов',
@@ -126,7 +126,7 @@ export const _sets: SetDb[] = [
   },
 ]
 
-export const _modelsToSets: ModelsToSetsDb[] = [
+export const modelsToSets: ModelsToSetsDb[] = [
   {
     setId: '1',
     modelId: '1',
@@ -137,7 +137,7 @@ export const _modelsToSets: ModelsToSetsDb[] = [
   },
 ]
 
-export const _images: ImageDb[] = [
+export const images: ImageDb[] = [
   {
     id: '1',
     mimeType: 'image/jpeg',
@@ -147,7 +147,7 @@ export const _images: ImageDb[] = [
     height: null,
     size: null,
     alt: null,
-    originalFilename: null,
+    originalFilename: 'moroso-dining-set-tulp-chair-vol-table-round-3d-model-005c1aed8e',
   },
   {
     id: '2',
@@ -158,7 +158,7 @@ export const _images: ImageDb[] = [
     height: null,
     size: null,
     alt: null,
-    originalFilename: null,
+    originalFilename: 'camps-bay-set-oak-3d-model-max-obj-fbx-mat',
   },
   {
     id: '3',
@@ -169,7 +169,7 @@ export const _images: ImageDb[] = [
     height: null,
     size: null,
     alt: null,
-    originalFilename: null,
+    originalFilename: 'camps-bay-set-oak-3d-model-max-obj-fbx-mat',
   },
   {
     id: '4',
@@ -180,11 +180,11 @@ export const _images: ImageDb[] = [
     height: null,
     size: null,
     alt: null,
-    originalFilename: null,
+    originalFilename: 'camps-bay-set-oak-3d-model-max-obj-fbx-mat',
   },
 ]
 
-export const _imagesToModels: ImageToModelDb[] = [
+export const imagesToModels: ImageToModelDb[] = [
   {
     imageId: '1',
     modelId: '1',
@@ -207,13 +207,14 @@ export const _imagesToModels: ImageToModelDb[] = [
   },
 ]
 
-export const _files: FileDb[] = [
+export const files: FileDb[] = [
   {
     id: '1',
     modelId: '1',
     mimeType: 'application/revit',
     size: 10000,
     createdAt: new Date(),
+    originalFilename: 'Модель',
   },
   {
     id: '2',
@@ -221,10 +222,11 @@ export const _files: FileDb[] = [
     mimeType: 'application/revit',
     size: 20000,
     createdAt: new Date(),
+    originalFilename: 'Модель текстурированная',
   },
 ]
 
-export const _discounts: DiscountDb[] = [
+export const discounts: DiscountDb[] = [
   {
     id: '1',
     label: 'Пасха 2025',
@@ -234,7 +236,7 @@ export const _discounts: DiscountDb[] = [
   },
 ]
 
-export const _promocodes: PromocodeDb[] = [
+export const promocodes: PromocodeDb[] = [
   {
     id: '1',
     code: 'PROMOCODE',
@@ -248,16 +250,16 @@ export const _promocodes: PromocodeDb[] = [
 
 const seed = async () => {
   await db.transaction(async (tx) => {
-    await tx.insert(discounts).values(_discounts)
-    await tx.insert(promocodes).values(_promocodes)
+    await tx.insert(discountsT).values(discounts)
+    await tx.insert(promocodesT).values(promocodes)
 
-    await tx.insert(categories).values(_categories)
-    await tx.insert(models).values(_models)
-    await tx.insert(sets).values(_sets)
-    await tx.insert(modelsToSets).values(_modelsToSets)
-    await tx.insert(images).values(_images)
-    await tx.insert(imageToModel).values(_imagesToModels)
-    await tx.insert(files).values(_files)
+    await tx.insert(categoriesT).values(categories)
+    await tx.insert(modelsT).values(models)
+    await tx.insert(setsT).values(sets)
+    await tx.insert(modelsToSetsT).values(modelsToSets)
+    await tx.insert(imagesT).values(images)
+    await tx.insert(imageToModelT).values(imagesToModels)
+    await tx.insert(filesT).values(files)
 
     const _admin = await auth.api.createUser({ body: {
       email: 'admin@admin.com',

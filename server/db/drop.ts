@@ -3,23 +3,23 @@ import { db } from '.'
 
 const drop = async () => {
   await db.transaction(async (tx) => {
-    await tx.delete(schema.users)
-    await tx.delete(schema.accounts)
-    await tx.delete(schema.sessions)
-    await tx.delete(schema.verifications)
+    await tx.delete(schema.usersT)
+    await tx.delete(schema.accountsT)
+    await tx.delete(schema.sessionsT)
+    await tx.delete(schema.verificationsT)
 
-    await tx.delete(schema.files)
-    await tx.delete(schema.imageToModel)
-    await tx.delete(schema.images)
+    await tx.delete(schema.filesT)
+    await tx.delete(schema.imageToModelT)
+    await tx.delete(schema.imagesT)
 
-    await tx.delete(schema.sets)
-    await tx.delete(schema.modelsToSets)
-    await tx.delete(schema.models)
-    await tx.delete(schema.categories)
+    await tx.delete(schema.setsT)
+    await tx.delete(schema.modelsToSetsT)
+    await tx.delete(schema.modelsT)
+    await tx.delete(schema.categoriesT)
 
-    await tx.delete(schema.discounts)
-    await tx.delete(schema.promocodes)
-    await tx.delete(schema.orders)
+    await tx.delete(schema.discountsT)
+    await tx.delete(schema.promocodesT)
+    await tx.delete(schema.ordersT)
   })
 }
 

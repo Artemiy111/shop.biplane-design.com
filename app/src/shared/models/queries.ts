@@ -14,10 +14,19 @@ export const useCategories = defineQuery(() => {
 export type Category = UnwrapRef<ReturnType<typeof useCategories>['categories']>[number]
 export type CategoryModel = Category['models'][number]
 
+export const useCategoriesSimple = defineQuery(() => {
+  const { data: _categories, state: _, ...rest } = useQuery({
+    key: ['categories', 'simple'],
+    query: async () => await useApi().admin.getCategoriesSimple.query(),
+  })
+  const categories = computed(() => _categories.value || [])
+  return { categories, ...rest }
+})
+
 export const useModelBySlug = defineQuery(() => {
   const modelSlug = ref<string | null>(null)
   const { data: model, state: _, ...rest } = useQuery({
-    key: () => ['categories', 'models', { slug: modelSlug.value }],
+    key: () => ['models', { slug: modelSlug.value }],
     query: async () => await useApi().public.getModelBySlug.query({ slug: modelSlug.value! }),
     enabled: () => !!modelSlug.value,
   })
