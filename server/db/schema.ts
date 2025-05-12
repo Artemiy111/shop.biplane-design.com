@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey 
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
 import { mimeTypesImages, mimeTypesRevit } from '../../app/src/shared/config/constants/mime-types'
-import { paymentProviders, orderStatuses, refundStatuses } from '../../app/src/shared/config/constants'
+import { paymentProviders, orderStatuses, refundStatuses, revitVersions } from '../../app/src/shared/config/constants'
 
 export const users = pgTable('users', {
   id: text().primaryKey().$default(makeId),
@@ -94,7 +94,7 @@ export const models = pgTable('models', {
   categoryId: text().notNull().references(() => categories.id, { onDelete: 'set null' }),
   // fileFormat: text(),
   // fileSize: integer(),
-  revitVersion: text({ enum: ['2023'] }),
+  revitVersion: text({ enum: revitVersions }),
   price: decimal({ mode: 'number' }).notNull(),
   discountId: text().references(() => discounts.id),
   // show: boolean().notNull().default(true),
