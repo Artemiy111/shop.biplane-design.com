@@ -13,6 +13,14 @@ export default defineNuxtConfig({
     '@tresjs/nuxt',
   ],
 
+  pages: {
+    pattern: ['**/*.vue', '!**/ui/**'],
+  },
+
+  components: {
+    dirs: [],
+  },
+
   // imports: {
   //   scan: false,
   // },

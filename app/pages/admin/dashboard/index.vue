@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { DashboardPage } from '~/src/pages/admin/dashboard'
 
+definePageMeta({
+  path: '/admin',
+  middleware: ['admin'],
+})
+
 const title = 'Админка'
 const description = 'Очевидно только для админов'
 
@@ -9,10 +14,6 @@ useSeoMeta({
   description,
   ogTitle: title,
   ogDescription: description,
-})
-
-definePageMeta({
-  middleware: ['admin'],
 })
 </script>
 
