@@ -27,3 +27,5 @@ export const minMaxNumber = (min: number, max: number) => requiredNumber.min(min
 
 export const emailSchema = z.email(errorMessages.email)
 export const passwordSchema = minMaxString(8, 100)
+
+export const idSchema = z.cuid2({ error: 'Неверный Id' })

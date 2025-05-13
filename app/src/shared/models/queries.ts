@@ -1,4 +1,5 @@
 import type { UnwrapRef } from 'vue'
+import type { ReadonlyRefOrGetter } from '@vueuse/core'
 import { useAuthUtils } from './auth-utils'
 import { useApi } from '~/src/shared/api'
 
@@ -23,17 +24,25 @@ export const useCategoriesSimple = defineQuery(() => {
   return { categories, ...rest }
 })
 
-export const useModelBySlug = defineQuery(() => {
-  const modelSlug = ref<string | null>(null)
+export const useModelBySlug = (slug: ReadonlyRefOrGetter<string>) => {
   const { data: model, state: _, ...rest } = useQuery({
-    key: () => ['models', { slug: modelSlug.value }],
-    query: async () => await useApi().public.getModelBySlug.query({ slug: modelSlug.value! }),
-    enabled: () => !!modelSlug.value,
+    key: () => ['models', { slug: isRef(slug) ? slug.value : slug() }],
+    query: async () => await useApi().public.getModelBySlug.query({ slug: isRef(slug) ? slug.value : slug() }),
+    enabled: () => !!(isRef(slug) ? slug.value : slug()),
   })
-  return { model, modelSlug, ...rest }
-})
+  return { model, ...rest }
+}
 
 export type Model = Exclude<UnwrapRef<ReturnType<typeof useModelBySlug>['model']>, null | undefined>
+
+export const useDiscounts = defineQuery(() => {
+  const { data: _discounts, state: _, ...rest } = useQuery({
+    key: ['discounts'],
+    query: async () => await useApi().admin.discounts.getDiscounts.query(),
+  })
+  const discounts = computed(() => _discounts.value || [])
+  return { discounts, ...rest }
+})
 
 export const useFavoritesCount = defineQuery(() => {
   const authUtils = useAuthUtils()

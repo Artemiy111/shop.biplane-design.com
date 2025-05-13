@@ -19,8 +19,8 @@ const editState = ref<UpdateFileSchema>({
   originalFilename: file.originalFilename,
 })
 
-const { updateFile } = useUpdateModelFileMutation(toRef(() => modelSlug))
-const { deleteFile } = useDeleteModelFileMutation(toRef(() => modelSlug))
+const { updateFile } = useUpdateModelFileMutation(() => modelSlug)
+const { deleteFile } = useDeleteModelFileMutation(() => modelSlug)
 
 const onEditSubmit = async (event: FormSubmitEvent<UpdateFileSchema>) => {
   await updateFile(event.data)

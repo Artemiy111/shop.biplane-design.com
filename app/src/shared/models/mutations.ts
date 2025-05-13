@@ -1,3 +1,4 @@
+import type { ReadonlyRefOrGetter } from '@vueuse/core'
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
 import type { UpdateFileSchema, UpdateModelSchema } from '~/src/shared/config/validation/db'
 import { useApi } from '~/src/shared/api'
@@ -58,7 +59,7 @@ export const useToggleIsInCartMutation = defineMutation(() => {
   }
 })
 
-export const useUpdateModelMutation = (slug: Ref<string>) => {
+export const useUpdateModelMutation = (slug: ReadonlyRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
 
@@ -73,7 +74,7 @@ export const useUpdateModelMutation = (slug: Ref<string>) => {
     },
     onSettled: async (_, __, _vars) => {
       const qc = useQueryCache()
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
     },
   })
 
@@ -83,7 +84,7 @@ export const useUpdateModelMutation = (slug: Ref<string>) => {
   }
 }
 
-export const useUpdateModelFileMutation = (slug: Ref<string>) => {
+export const useUpdateModelFileMutation = (slug: ReadonlyRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
 
@@ -98,7 +99,7 @@ export const useUpdateModelFileMutation = (slug: Ref<string>) => {
     },
     onSettled: async (_, __, _vars) => {
       const qc = useQueryCache()
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
     },
   })
 
@@ -108,7 +109,7 @@ export const useUpdateModelFileMutation = (slug: Ref<string>) => {
   }
 }
 
-export const useDeleteModelFileMutation = (slug: Ref<string>) => {
+export const useDeleteModelFileMutation = (slug: ReadonlyRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
 
@@ -123,12 +124,37 @@ export const useDeleteModelFileMutation = (slug: Ref<string>) => {
     },
     onSettled: async (_, __, _vars) => {
       const qc = useQueryCache()
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
     },
   })
 
   return {
     deleteFile: mutateAsync,
+    ...rest,
+  }
+}
+
+export const useSelectModelDiscountMutation = (slug: ReadonlyRefOrGetter<string>) => {
+  const toast = useToast()
+  const authUtils = useAuthUtils()
+
+  const { mutateAsync, ...rest } = useMutation({
+    mutation: async (discountId: string | null) => {
+      if (!authUtils.isAdmin) return
+
+      await useApi().admin.models.selectDiscount.mutate({ slug: isRef(slug) ? slug.value : slug(), discountId })
+    },
+    onError: () => {
+      toast.add({ color: 'error', title: 'Не удалось изменить скидку' })
+    },
+    onSettled: async () => {
+      const qc = useQueryCache()
+      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
+    },
+  })
+
+  return {
+    selectDiscount: mutateAsync,
     ...rest,
   }
 }

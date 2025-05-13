@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey, date } from 'drizzle-orm/pg-core'
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
 import { mimeTypesImages, mimeTypesRevit } from '../../app/src/shared/config/constants/mime-types'
@@ -81,7 +81,7 @@ export const setsT = pgTable('sets', {
   price: decimal({ mode: 'number' }).notNull(),
   discountId: text().references(() => discountsT.id),
   imageId: text().references(() => imagesT.id),
-  createdAt: timestamp().defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow(),
 })
 
 export type SetDb = typeof setsT.$inferSelect
@@ -96,10 +96,10 @@ export const modelsT = pgTable('models', {
   // fileSize: integer(),
   revitVersion: text({ enum: revitVersions }).notNull(),
   price: decimal({ mode: 'number' }).notNull(),
-  discountId: text().references(() => discountsT.id),
+  discountId: text().references(() => discountsT.id, { onUpdate: 'cascade', onDelete: 'set null' }),
   // show: boolean().notNull().default(true),
-  createdAt: timestamp().defaultNow(),
-  updatedAt: timestamp().defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow(),
+  updatedAt: timestamp({ mode: 'string' }).defaultNow(),
 }, t => [index().on(t.categoryId)])
 
 export type ModelDb = typeof modelsT.$inferSelect
@@ -121,7 +121,7 @@ export const imagesT = pgTable('images', {
   size: integer(),
   width: integer(),
   height: integer(),
-  createdAt: timestamp().defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow(),
 })
 
 export type ImageDb = typeof imagesT.$inferSelect
@@ -133,7 +133,7 @@ export const imagesOptimizedT = pgTable('images_optimized', {
   size: integer().notNull(),
   width: integer().notNull(),
   height: integer().notNull(),
-  createdAt: timestamp().defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow(),
 }, t => [index().on(t.imageId)])
 
 export type ImageOptimizedDb = typeof imagesOptimizedT.$inferSelect
@@ -156,7 +156,7 @@ export const filesT = pgTable('files', {
   modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
   mimeType: text({ enum: mimeTypeFiles }).notNull(),
   size: integer().notNull(),
-  createdAt: timestamp().defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow(),
 })
 
 export type FileDb = typeof filesT.$inferSelect
@@ -165,8 +165,8 @@ export const discountsT = pgTable('discounts', {
   id: text().primaryKey().$default(makeId),
   label: text(),
   discountPercentage: decimal({ mode: 'number' }).notNull(),
-  startDate: timestamp(),
-  endDate: timestamp(),
+  startDate: date({ mode: 'string' }),
+  endDate: date({ mode: 'string' }),
 })
 
 export type DiscountDb = typeof discountsT.$inferSelect
@@ -175,8 +175,8 @@ export const promocodesT = pgTable('promocodes', {
   id: text().primaryKey().$default(makeId),
   code: text().notNull().unique(),
   discountPercentage: decimal({ mode: 'number' }).notNull(),
-  startDate: timestamp(),
-  endDate: timestamp(),
+  startDate: date({ mode: 'string' }),
+  endDate: date({ mode: 'string' }),
   maxUsage: integer(),
   usedCount: integer().default(0),
 })
@@ -215,7 +215,7 @@ export type OrderItemDb = typeof orderItemsT.$inferSelect
 export const favoritesT = pgTable('favorites', {
   userId: text().notNull().references(() => usersT.id, { onDelete: 'cascade' }),
   modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
-  addedAt: timestamp().defaultNow(),
+  addedAt: timestamp({ mode: 'string' }).defaultNow(),
 })
 
 export type FavoriteDb = typeof favoritesT.$inferSelect
@@ -225,7 +225,7 @@ export const cartItemsT = pgTable('cart_items', {
   userId: text().notNull().references(() => usersT.id, { onDelete: 'cascade' }),
   modelId: text().references(() => modelsT.id, { onDelete: 'cascade' }),
   setId: text().references(() => setsT.id, { onDelete: 'cascade' }),
-  addedAt: timestamp().defaultNow(),
+  addedAt: timestamp({ mode: 'string' }).defaultNow(),
 }, t => [index().on(t.userId, t.modelId), index().on(t.userId, t.setId)])
 
 export type CartItemDb = typeof cartItemsT.$inferSelect
@@ -236,8 +236,8 @@ export const refundsT = pgTable('refunds', {
   refundedAmount: decimal(),
   reason: text(),
   status: text({ enum: refundStatuses }).default('pending'),
-  requestedAt: timestamp().defaultNow(),
-  resolvedAt: timestamp(),
+  requestedAt: timestamp({ mode: 'string' }).defaultNow(),
+  resolvedAt: timestamp({ mode: 'string' }),
 }, t => [index().on(t.orderId)])
 
 export type RefundDb = typeof refundsT.$inferSelect
