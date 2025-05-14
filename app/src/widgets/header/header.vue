@@ -32,6 +32,7 @@ const centerItems = computed(() => {
     base.push({
       to: '/admin',
       label: 'Админка',
+      value: 'admin',
       children: [
         {
           to: '/admin/models',
@@ -112,8 +113,9 @@ const rightItems = computed<
       <UNavigationMenu
         color="neutral"
         variant="link"
+        fullscreen
         :items="centerItems"
-        :ui="{ link: 'text-base' }"
+        content-orientation="vertical"
       />
 
       <div
