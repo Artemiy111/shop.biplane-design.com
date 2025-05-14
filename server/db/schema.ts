@@ -121,10 +121,11 @@ export const imagesT = pgTable('images', {
   size: integer(),
   width: integer(),
   height: integer(),
-  createdAt: timestamp({ mode: 'string' }).defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 })
 
 export type ImageDb = typeof imagesT.$inferSelect
+export type ImageDbWithOptimized = ImageDb & { optimized: ImageOptimizedDb[] }
 
 export const imagesOptimizedT = pgTable('images_optimized', {
   id: text().primaryKey().$default(makeId),
@@ -133,7 +134,7 @@ export const imagesOptimizedT = pgTable('images_optimized', {
   size: integer().notNull(),
   width: integer().notNull(),
   height: integer().notNull(),
-  createdAt: timestamp({ mode: 'string' }).defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 }, t => [index().on(t.imageId)])
 
 export type ImageOptimizedDb = typeof imagesOptimizedT.$inferSelect

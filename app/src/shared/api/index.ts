@@ -1,4 +1,5 @@
-import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
+import { createTRPCNuxtClient, httpBatchLink, httpLink } from 'trpc-nuxt/client'
+import { splitLink, isNonJsonSerializable } from '@trpc/client'
 
 import type { AppRouter } from '~~/server/trpc/routes'
 
@@ -9,8 +10,16 @@ export const useApi = () => {
     const url = useRequestURL()
     const client = createTRPCNuxtClient<AppRouter>({
       links: [
-        httpBatchLink({
-          url: `${url.protocol}//${url.host}/api/trpc`,
+        splitLink({
+          condition: (op) => {
+            return isNonJsonSerializable(op.input)
+          },
+          true: httpLink({
+            url: `${url.protocol}//${url.host}/api/trpc`,
+          }),
+          false: httpBatchLink({
+            url: `${url.protocol}//${url.host}/api/trpc`,
+          }),
         }),
       ],
     })

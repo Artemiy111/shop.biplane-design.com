@@ -14,6 +14,9 @@ export const customerRouter = router({
         RAW: t => sql`EXISTS (SELECT 1 FROM ${favoritesT} WHERE ${favoritesT.userId} = ${user.id} AND ${favoritesT.modelId} = ${t.id})`.mapWith(Boolean),
       },
       with: modelPrequery(user.id),
+      orderBy: {
+        // TODO порядок в порядке добавления в избранное
+      },
     })
     return models.map(model => ({
       ...model,
@@ -41,6 +44,9 @@ export const customerRouter = router({
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
   }),
 
@@ -57,6 +63,9 @@ export const customerRouter = router({
             models: { with: modelPrequery(user.id) },
           },
         },
+      },
+      orderBy: {
+        addedAt: 'asc',
       },
     })
     return cartItems

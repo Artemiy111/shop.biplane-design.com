@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { zfd } from 'zod-form-data'
 import { revitVersions } from '~/src/shared/config/constants'
-import { errorMessages, idSchema, minMaxNumber, minMaxString } from '~/src/shared/config/validation/base'
+import { idSchema, minMaxNumber, minMaxString } from '~/src/shared/config/validation/base'
 
 export const createModelSchema = z.object({
   categoryId: idSchema,
@@ -48,3 +49,14 @@ export const updateDiscountSchema = createDiscountSchema.extend({
 
 export type CreateDiscountSchema = z.infer<typeof createDiscountSchema>
 export type UpdateDiscountSchema = z.infer<typeof updateDiscountSchema>
+
+export const uploadImageSchema = zfd.formData({ image: zfd.file(), modelId: zfd.text(idSchema) })
+
+export const updateImageSchema = z.object({
+  id: idSchema,
+  originalFilename: minMaxString(2, 128),
+  alt: minMaxString(0, 128).nullable(),
+})
+
+export type UploadImageSchema = z.infer<typeof uploadImageSchema>
+export type UpdateImageSchema = z.infer<typeof updateImageSchema>

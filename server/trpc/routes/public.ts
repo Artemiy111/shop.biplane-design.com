@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { TRPCError } from '@trpc/server'
 import { router, publicProcedure } from '~~/server/trpc'
 import { modelPrequery } from '~~/server/trpc/query-templates'
 import { db } from '~~/server/db'
@@ -54,13 +55,13 @@ export const publicRouter = router({
         },
       })
 
-      const model = model_
-        ? ({
-            ...model_,
-            isFavorite: model_.favorites?.length > 0,
-            isInCart: model_.cartItems?.length > 0,
-          })
-        : null
+      if (!model_) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      const model = {
+        ...model_,
+        isFavorite: model_.favorites?.length > 0,
+        isInCart: model_.cartItems?.length > 0,
+      }
 
       return model
     }),

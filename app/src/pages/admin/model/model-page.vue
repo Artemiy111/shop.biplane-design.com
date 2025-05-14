@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui'
 import { parseDate, type DateValue } from '@internationalized/date'
-import ChangeFileButton from './ui/change-file-button.vue'
+import { EllipsisVerticalIcon } from 'lucide-vue-next'
+import FilesTableActions from './ui/files-table-actions.vue'
+import ImagesTableActions from './ui/images-table-actions.vue'
 import { revitVersions } from '~/src/shared/config/constants'
 import { updateModelSchema, type UpdateModelSchema } from '~/src/shared/config/validation/db'
-import { useSelectModelDiscountMutation, useUpdateModelMutation } from '~/src/shared/models/mutations'
+import { useSelectModelDiscountMutation, useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
 import { useCategoriesSimple, useDiscounts, useModelBySlug } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import type { FileDb } from '~~/server/db/schema'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
+import { ModelCard } from '~/src/shared/ui/blocks/model-card'
+import { imageUrl } from '~/src/shared/lib/image'
 
 const { slug } = defineProps<{
   slug: string
@@ -158,13 +162,91 @@ const discountsTable: TableColumn<DiscountDate>[] = [
     accessorKey: 'isActive',
     header: 'Действует',
     cell: ({ row }) => row.original.isActive ? 'Да' : 'Нет',
-    enableSorting: true,
-    sortingFn: (a, b) => a.original.isActive && b.original.isActive ? 0 : a.original.isActive ? 1 : -1,
+    sortingFn: (a, b) => {
+      return a.original.isActive && b.original.isActive ? 0 : a.original.isActive ? -1 : 1
+    },
   },
   {
     id: 'actions',
   },
 ]
+
+const images = computed(() => model.value?.images || [])
+
+type ImageDbWithOptimized = Exclude<typeof model.value, undefined | null>['images'][0]
+
+const imagesTable: TableColumn<ImageDbWithOptimized>[] = [
+  {
+    accessorKey: 'id',
+    header: 'Id',
+    cell: ({ row }) => row.original.id,
+  },
+  {
+    id: 'img',
+    header: 'Картинка',
+  },
+  {
+    accessorKey: 'originalFilename',
+    header: 'Имя файла',
+    cell: ({ row }) => row.original.originalFilename,
+  },
+  {
+    accessorKey: 'alt',
+    header: 'Подпись',
+    cell: ({ row }) => row.original.alt,
+  },
+  {
+    accessorKey: 'mimeType',
+    header: 'Mime Тип',
+    cell: ({ row }) => row.original.mimeType,
+  },
+  {
+    accessorKey: 'width',
+    header: 'Ширина',
+    cell: ({ row }) => row.original.width,
+  },
+  {
+    accessorKey: 'height',
+    header: 'Высота',
+    cell: ({ row }) => row.original.height,
+  },
+  {
+    accessorKey: 'size',
+    header: 'Размер/Б',
+    cell: ({ row }) => row.original.size,
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Дата загрузки',
+    cell: ({ row }) => dateFormatter.format(new Date(row.original.createdAt)),
+  },
+  {
+    id: 'actions',
+  },
+]
+
+const { uploadImage } = useUploadModelImageMutation(model)
+
+const isUploading = ref(false)
+const filesString = ref('')
+const onUploadImage = async (event: Event) => {
+  isUploading.value = true
+  console.log(filesString.value)
+  const target = event.target as HTMLInputElement
+  const images = Array.from(target.files!)
+  if (!images.length || !model.value) return
+  const modelId = model.value.id
+
+  await Promise.allSettled(images.map(async (image) => {
+    const formData = new FormData()
+    formData.append('image', image)
+    formData.append('modelId', modelId)
+    console.log(formData)
+    await uploadImage(formData)
+  }))
+  isUploading.value = false
+  filesString.value = ''
+}
 </script>
 
 <template>
@@ -180,94 +262,104 @@ const discountsTable: TableColumn<DiscountDate>[] = [
     >
       <PageHeading>{{ model.name }}</PageHeading>
 
-      <div class="grid grid-cols-[400px_minmax(0,1fr)] gap-16 mt-6">
+      <div class="flex flex-col gap-y-12 mt-6">
+        <div class="grid grid-cols-[400px_minmax(0,1fr)] gap-16">
+          <section class="flex flex-col gap-y-4">
+            <h2 class="text-subheading">
+              Параметры
+            </h2>
+            <UForm
+              ref="form"
+              :state="state"
+              :schema="updateModelSchema"
+              class="flex flex-col gap-y-5"
+              @submit="onUpdateModel"
+            >
+              <UFormField
+                name="name"
+                label="Название"
+              >
+                <UInput
+                  v-model="state.name"
+                  class="w-full"
+                />
+              </UFormField>
+
+              <UFormField
+                name="slug"
+                label="Slug"
+              >
+                <UInput
+                  v-model="state.slug"
+                  class="w-full"
+                />
+              </UFormField>
+
+              <UFormField
+                name="description"
+                label="Описание"
+              >
+                <UTextarea
+                  v-model="state.description"
+                  class="w-full"
+                />
+              </UFormField>
+
+              <UFormField
+                name="price"
+                label="Цена"
+              >
+                <UInput
+                  v-model="state.price"
+                  type="number"
+                  class="w-full"
+                  :step="100"
+                  :min="0"
+                  :max="100_000"
+                />
+              </UFormField>
+
+              <UFormField
+                name="revitVersion"
+                label="Версия Revit"
+              >
+                <USelect
+                  v-model="state.revitVersion"
+                  :items="revitVersions as unknown as any[]"
+                  class="w-full"
+                />
+              </UFormField>
+
+              <UFormField
+                name="categoryId"
+                label="Категория"
+              >
+                <USelect
+                  v-model="state.categoryId"
+                  :items="categoriesSelect"
+                  class="w-full"
+                />
+              </UFormField>
+
+              <UButton
+                type="submit"
+                color="neutral"
+                loading-auto
+                class="w-fit mt-5"
+                :disabled="!!form?.errors.length"
+              >
+                Сохранить
+              </UButton>
+            </UForm>
+          </section>
+
+          <ModelCard
+            :model="model"
+            class="max-w-140"
+          />
+        </div>
+
         <section class="flex flex-col gap-y-4">
-          <h2 class="text-subheading">
-            Параметры
-          </h2>
-          <UForm
-            ref="form"
-            :state="state"
-            :schema="updateModelSchema"
-            class="flex flex-col gap-y-5"
-            @submit="onUpdateModel"
-          >
-            <UFormField
-              name="name"
-              label="Название"
-            >
-              <UInput
-                v-model="state.name"
-                class="w-full"
-              />
-            </UFormField>
-
-            <UFormField
-              name="slug"
-              label="Slug"
-            >
-              <UInput
-                v-model="state.slug"
-                class="w-full"
-              />
-            </UFormField>
-
-            <UFormField
-              name="description"
-              label="Описание"
-            >
-              <UTextarea
-                v-model="state.description"
-                class="w-full"
-              />
-            </UFormField>
-
-            <UFormField
-              name="price"
-              label="Цена"
-            >
-              <UInput
-                v-model="state.price"
-                type="number"
-                class="w-full"
-              />
-            </UFormField>
-
-            <UFormField
-              name="revitVersion"
-              label="Версия Revit"
-            >
-              <USelect
-                v-model="state.revitVersion"
-                :items="revitVersions as unknown as any[]"
-                class="w-full"
-              />
-            </UFormField>
-
-            <UFormField
-              name="categoryId"
-              label="Категория"
-            >
-              <USelect
-                v-model="state.categoryId"
-                :items="categoriesSelect"
-                class="w-full"
-              />
-            </UFormField>
-
-            <UButton
-              type="submit"
-              color="neutral"
-              loading-auto
-              class="w-fit mt-5"
-              :disabled="!!form?.errors.length"
-            >
-              Сохранить
-            </UButton>
-          </UForm>
-        </section>
-
-        <section class="">
           <h2 class="text-subheading">
             Файлы
           </h2>
@@ -278,7 +370,7 @@ const discountsTable: TableColumn<DiscountDate>[] = [
             class="overflow-x-auto"
           >
             <template #actions-cell="{ row }">
-              <ChangeFileButton
+              <FilesTableActions
                 :model-slug="model.slug"
                 :file="row.original as FileDb"
               />
@@ -286,7 +378,7 @@ const discountsTable: TableColumn<DiscountDate>[] = [
           </UTable>
         </section>
 
-        <section class="col-span-2">
+        <section class="col-span-2 flex flex-col gap-y-4">
           <div class="flex justify-between items-baseline gap-x-6">
             <div class="flex gap-x-4">
               <h2 class="text-subheading">
@@ -300,7 +392,7 @@ const discountsTable: TableColumn<DiscountDate>[] = [
                 size="sm"
                 @click="onSelectDiscount(null)"
               >
-                Убрать текущую
+                Убрать
               </UButton>
             </div>
             <UTabs
@@ -317,8 +409,7 @@ const discountsTable: TableColumn<DiscountDate>[] = [
             v-if="discountViewTab === 'table'"
             :data="discountDates"
             :columns="discountsTable"
-            class="mt-4"
-            :initial-state="{ sorting: [{ id: 'isActive', desc: false }] }"
+            :sorting="[{ id: 'isActive', desc: false }]"
           >
             <template #actions-cell="{ row }">
               <UButton
@@ -337,7 +428,7 @@ const discountsTable: TableColumn<DiscountDate>[] = [
           <UCalendar
             v-else
             :year-controls="false"
-            :ui="{ root: 'w-full mt-4', headCell: 'text-start', cell: '@container/cell grid justify-center', cellTrigger: 'w-[100cqw] m-0 h-10 p-2 rounded-lg' }"
+            :ui="{ root: 'w-full', headCell: 'text-start', cell: '@container/cell grid justify-center', cellTrigger: 'w-[100cqw] m-0 h-10 p-2 rounded-lg' }"
           >
             <template #day="{ day }">
               <UPopover>
@@ -385,6 +476,43 @@ const discountsTable: TableColumn<DiscountDate>[] = [
               </UPopover>
             </template>
           </UCalendar>
+        </section>
+
+        <section class="flex flex-col gap-y-4 col-span-2">
+          <h2 class="text-subheading">
+            Картинки
+          </h2>
+
+          <UInput
+            v-model="filesString"
+            type="file"
+            accept="image/*"
+            class="w-full"
+            multiple
+            :loading="isUploading"
+            @change="onUploadImage"
+          />
+
+          <UTable
+            :data="images"
+            :columns="imagesTable"
+          >
+            <template #img-cell="{ row }">
+              <div class="bg-black/1 ">
+                <NuxtImg
+                  class="w-40 mix-blend-multiply"
+                  :src="row.original.url ? row.original.url : imageUrl(row.original)"
+                  :alt="row.original.alt || ''"
+                />
+              </div>
+            </template>
+            <template #actions-cell="{ row }">
+              <ImagesTableActions
+                :model="model"
+                :image="row.original"
+              />
+            </template>
+          </UTable>
         </section>
       </div>
     </div>

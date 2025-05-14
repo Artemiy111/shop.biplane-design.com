@@ -16,9 +16,11 @@ export type Category = UnwrapRef<ReturnType<typeof useCategories>['categories']>
 export type CategoryModel = Category['models'][number]
 
 export const useCategoriesSimple = defineQuery(() => {
+  const authUtils = useAuthUtils()
   const { data: _categories, state: _, ...rest } = useQuery({
     key: ['categories', 'simple'],
     query: async () => await useApi().admin.getCategoriesSimple.query(),
+    enabled: () => authUtils.isAdmin,
   })
   const categories = computed(() => _categories.value || [])
   return { categories, ...rest }
@@ -36,9 +38,11 @@ export const useModelBySlug = (slug: ReadonlyRefOrGetter<string>) => {
 export type Model = Exclude<UnwrapRef<ReturnType<typeof useModelBySlug>['model']>, null | undefined>
 
 export const useDiscounts = defineQuery(() => {
+  const authUtils = useAuthUtils()
   const { data: _discounts, state: _, ...rest } = useQuery({
     key: ['discounts'],
     query: async () => await useApi().admin.discounts.getDiscounts.query(),
+    enabled: () => authUtils.isAdmin,
   })
   const discounts = computed(() => _discounts.value || [])
   return { discounts, ...rest }

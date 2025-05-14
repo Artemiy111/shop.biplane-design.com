@@ -3,7 +3,14 @@ export const modelPrequery = (userId?: string) => ({
   files: true,
   images: {
     with: {
-      optimized: true,
+      optimized: {
+        orderBy: {
+          mimeType: 'asc',
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   },
   ...(userId
@@ -34,8 +41,13 @@ export const setPrequery = {
     discount: true,
     image: {
       with: {
-        optimized: true,
+        optimized: {
+          orderBy: {
+            mimeType: 'asc',
+          },
+        },
       },
+
     },
   },
 } as const
