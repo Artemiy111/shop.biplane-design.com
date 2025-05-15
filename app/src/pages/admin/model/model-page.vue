@@ -1,31 +1,25 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui'
-import { parseDate, type DateValue } from '@internationalized/date'
-import { ArrowUpIcon, ArrowDownIcon, ChevronUpIcon, ChevronDownIcon } from 'lucide-vue-next'
-import { getGroupedRowModel, type GroupingOptions } from '@tanstack/vue-table'
+
 import FilesTableActions from './ui/files-table-actions.vue'
-import ImagesTableActions from './ui/images-table-actions.vue'
+import ImagesTable from './ui/images-table.vue'
+import DiscountsSection from './ui/discounts-section.vue'
 import { revitVersions } from '~/src/shared/config/constants'
 import { updateModelSchema, type UpdateModelSchema } from '~/src/shared/config/validation/db'
-import { useSelectModelDiscountMutation, useUpdateModelImageOrderMutation, useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
-import { useCategoriesSimple, useDiscounts, useModelBySlug } from '~/src/shared/models/queries'
+import { useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
+import { useCategoriesSimple, useModelBySlug } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import type { FileDb, ImageDbWithOptimized, ImageOptimizedDb } from '~~/server/db/schema'
+import type { FileDb } from '~~/server/db/schema'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { ModelCard } from '~/src/shared/ui/blocks/model-card'
-import { imageUrl } from '~/src/shared/lib/image'
+import { getReadableSize } from '~/src/shared/lib/get-readable-size'
 
-const { slug } = defineProps<{
+const props = defineProps<{
   slug: string
 }>()
 
-const isDiscountActive = (discount: { startDate: string | null, endDate: string | null }) => {
-  const today = new Date().toISOString().split('T')[0]!
-  if (!discount.startDate && !discount.endDate) return true
-  else if (discount.startDate && discount.endDate && discount.startDate <= today && today <= discount.endDate) return true
-  return false
-}
+const { slug } = toRefs(props)
 
 const { categories } = useCategoriesSimple()
 const categoriesSelect = computed(() => categories.value.map(category => ({
@@ -33,37 +27,16 @@ const categoriesSelect = computed(() => categories.value.map(category => ({
   value: category.id,
 })))
 
-const { discounts } = useDiscounts()
-const discountDates = computed(() => discounts.value.map((discount) => {
-  const start = discount.startDate ? parseDate(discount.startDate) : undefined
-  const end = discount.endDate ? parseDate(discount.endDate) : undefined
-  return {
-    ...discount,
-    start,
-    end,
-    isActive: isDiscountActive(discount),
-  }
-}).toSorted((a, b) => a.discountPercentage - b.discountPercentage))
+const { model, status, refresh } = useModelBySlug(slug)
 
-type DiscountDate = typeof discountDates.value[0]
+const { updateModel } = useUpdateModelMutation(slug)
 
-const { model, status, refresh } = useModelBySlug(toRef(() => slug))
-
-const getDayDiscounts = (day: DateValue) => {
-  return discountDates.value.filter((d) => {
-    if (!d.start && !d.end) return true
-    else if (d.start && d.end && d.start.compare(day) <= 0 && day.compare(d.end) <= 0) return true
-    return false
-  })
-}
-
-const { updateModel } = useUpdateModelMutation(() => slug)
-const form = useTemplateRef('form')
-const state = ref<Partial<UpdateModelSchema>>({})
+const updateModelForm = useTemplateRef('updateModelForm')
+const updateModelState = ref<Partial<UpdateModelSchema>>({})
 
 watchImmediate(model, () => {
   if (!model.value) return
-  state.value = {
+  updateModelState.value = {
     id: model.value.id,
     categoryId: model.value.categoryId,
     name: model.value.name,
@@ -78,204 +51,40 @@ watchImmediate(model, () => {
 const onUpdateModel = async (event: FormSubmitEvent<UpdateModelSchema>) => {
   try {
     await updateModel(event.data)
-    if (event.data.slug !== slug) navigateTo(`/admin/models/${event.data.slug}`)
+    if (event.data.slug !== slug.value) navigateTo(`/admin/models/${event.data.slug}`)
   }
   // eslint-disable-next-line no-empty
   catch (_) {}
 }
 
-const filesTable: TableColumn<FileDb>[] = [
-  {
-    accessorKey: 'id',
-    header: 'Id',
-    cell: ({ row }) => row.getValue('id'),
-  },
-  {
-    accessorKey: 'originalFilename',
-    header: 'Имя файла',
-    cell: ({ row }) => row.getValue('originalFilename'),
-  },
-  {
-    accessorKey: 'mimeType',
-    header: 'Mime Тип',
-    cell: ({ row }) => row.getValue('mimeType'),
-  },
-  {
-    accessorKey: 'size',
-    header: 'Размер в байтах',
-    cell: ({ row }) => row.getValue('size'),
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Дата загрузки',
-    cell: ({ row }) => dateFormatter.format(new Date(row.getValue<string>('createdAt'))),
-  },
-  {
-    id: 'actions',
-  },
-]
-
-const selectedDay = ref<DateValue | null>(null)
-const { selectDiscount } = useSelectModelDiscountMutation(() => slug)
-
-const onSelectDiscount = async (discountId: string | null) => {
-  try {
-    await selectDiscount(discountId)
-  }
-  finally {
-    selectedDay.value = null
-  }
-}
-
-const discountViewTab = ref<'table' | 'calendar'>('table')
-
-const discountsTable: TableColumn<DiscountDate>[] = [
-  {
-    accessorKey: 'id',
-    header: 'Id',
-    cell: ({ row }) => {
-      if (row.original.id === model.value?.discountId) row.toggleSelected(true)
-      else row.toggleSelected(false)
-      return row.original.id
-    },
-  },
-  {
-    accessorKey: 'discountPercentage',
-    header: '%',
-    cell: ({ row }) => `${row.getValue('discountPercentage')}%`,
-  },
-  {
-    accessorKey: 'label',
-    header: 'Название',
-    cell: ({ row }) => row.getValue('label'),
-  },
-  {
-    accessorFn: row => ({ startDate: row.startDate, endDate: row.endDate }),
-    header: 'Период действия',
-    cell: ({ row }) => {
-      const start = row.original.startDate
-      const end = row.original.endDate
-      if (!start && !end) return 'Бессрочно'
-      else if (start && end) return dateFormatter.formatRange(new Date(start), new Date(end))
-    },
-  },
-  {
-    accessorKey: 'isActive',
-    header: 'Действует',
-    cell: ({ row }) => row.original.isActive ? 'Да' : 'Нет',
-    sortingFn: (a, b) => {
-      return a.original.isActive && b.original.isActive ? 0 : a.original.isActive ? -1 : 1
-    },
-  },
-  {
-    id: 'actions',
-  },
-]
-
-// const imagesForTable = computed(() => model.value?.images
-//   ? model.value.images.flatMap((image) => {
-//       return [image, ...image.optimized.map(o => ({ ...o, original: image }))]
-//     })
-//   : [])
-
-const imagesForTable = computed(() => model.value?.images
-  ? model.value.images.flatMap((image) => {
-      return {
-        ...image,
-        optimized: image.optimized.map(o => ({ ...o, original: image })),
-      }
-    })
-  : [])
-
-type ImageForTableOriginal = typeof imagesForTable.value[number]
-type ImageForTable = ImageForTableOriginal | ImageForTableOriginal['optimized'][number]
-const isOriginal = (image: ImageForTable): image is ImageForTableOriginal => ('optimized' in image)
-// const isOptimized = (image: ImageForTable): ImageOptimizedDb => !('optimized' in image)
-
-const imagesTableRef = useTemplateRef('imagesTableRef')
-const getReadableSize = (bytes: number, locale: string = 'ru-RU') => {
-  if (bytes === 0) return '0 Б'
-
-  const units = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ']
-  const k = 1024
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  const size = bytes / Math.pow(k, i)
-
-  const formatted = new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(size)
-
-  return `${formatted} ${units[i]}`
-}
-
-const imageTableGroupingOptions = ref<GroupingOptions>({
-  getGroupedRowModel: getGroupedRowModel(),
-  groupedColumnMode: 'remove',
-
-})
-
-const imagesTableColumns: TableColumn<ImageForTable>[] = [
-  {
-    id: 'sortOrder',
-    header: '№',
-    // cell: ({ row }) => isOriginal(row.original) ? row.original.imageToModel.sortOrder : row.original.original.imageToModel.sortOrder,
-    enableHiding: false,
-  },
+const filesTableColumns: TableColumn<FileDb>[] = [
   {
     id: 'id',
-    accessorFn: row => isOriginal(row) ? row.id : row.original.id,
-    // accessorKey: 'id',
     header: 'Id',
     cell: ({ row }) => row.original.id,
   },
   {
-    id: 'img',
-    header: 'Картинка',
-  },
-  {
-    accessorKey: 'originalFilename',
+    id: 'originalFilename',
     header: 'Имя файла',
-    cell: ({ row }) => isOriginal(row.original) ? row.original.originalFilename : '',
+    cell: ({ row }) => row.original.originalFilename,
   },
   {
-    id: 'isGrouped',
-    header: 'Мини',
-  },
-  {
-    accessorKey: 'alt',
-    header: 'Подпись',
-    cell: ({ row }) => isOriginal(row.original) ? row.original.alt : '',
-  },
-  {
-    accessorKey: 'mimeType',
+    id: 'mimeType',
     header: 'Mime',
     cell: ({ row }) => row.original.mimeType,
   },
   {
-    accessorKey: 'width',
-    header: 'Ширина',
-    cell: ({ row }) => row.original.width,
-  },
-  {
-    accessorKey: 'height',
-    header: 'Высота',
-    cell: ({ row }) => row.original.height,
-  },
-  {
-    accessorKey: 'size',
+    id: 'size',
     header: 'Размер',
-    cell: ({ row }) => row.original.size ? getReadableSize(row.original.size) : '',
+    cell: ({ row }) => getReadableSize(row.original.size),
   },
   {
-    accessorKey: 'createdAt',
+    id: 'createdAt',
     header: 'Дата загрузки',
     cell: ({ row }) => dateFormatter.format(new Date(row.original.createdAt)),
   },
   {
-    header: '',
     id: 'actions',
-    enableHiding: false,
   },
 ]
 
@@ -302,15 +111,6 @@ const onUploadImage = async (event: Event) => {
   isUploading.value = false
   filesString.value = ''
 }
-
-const { updateImageOrder } = useUpdateModelImageOrderMutation(model)
-
-const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder: number) => {
-  try {
-    await updateImageOrder({ modelId: modelId, imageId, newSortOrder })
-  }
-  catch (_) {}
-}
 </script>
 
 <template>
@@ -333,8 +133,8 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
               Параметры
             </h2>
             <UForm
-              ref="form"
-              :state="state"
+              ref="updateModelForm"
+              :state="updateModelState"
               :schema="updateModelSchema"
               class="flex flex-col gap-y-5"
               @submit="onUpdateModel"
@@ -344,7 +144,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 label="Название"
               >
                 <UInput
-                  v-model="state.name"
+                  v-model="updateModelState.name"
                   class="w-full"
                 />
               </UFormField>
@@ -354,7 +154,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 label="Slug"
               >
                 <UInput
-                  v-model="state.slug"
+                  v-model="updateModelState.slug"
                   class="w-full"
                 />
               </UFormField>
@@ -364,7 +164,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 label="Описание"
               >
                 <UTextarea
-                  v-model="state.description"
+                  v-model="updateModelState.description"
                   class="w-full"
                 />
               </UFormField>
@@ -374,7 +174,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 label="Цена"
               >
                 <UInput
-                  v-model="state.price"
+                  v-model="updateModelState.price"
                   type="number"
                   class="w-full"
                   :step="100"
@@ -388,7 +188,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 label="Версия Revit"
               >
                 <USelect
-                  v-model="state.revitVersion"
+                  v-model="updateModelState.revitVersion"
                   :items="revitVersions as unknown as any[]"
                   class="w-full"
                 />
@@ -399,7 +199,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 label="Категория"
               >
                 <USelect
-                  v-model="state.categoryId"
+                  v-model="updateModelState.categoryId"
                   :items="categoriesSelect"
                   class="w-full"
                 />
@@ -410,7 +210,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
                 color="neutral"
                 loading-auto
                 class="w-fit mt-5"
-                :disabled="!!form?.errors.length"
+                :disabled="!!updateModelForm?.errors.length"
               >
                 Сохранить
               </UButton>
@@ -430,7 +230,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
 
           <UTable
             :data="model.files"
-            :columns="filesTable"
+            :columns="filesTableColumns"
             class="overflow-x-auto"
           >
             <template #actions-cell="{ row }">
@@ -442,105 +242,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
           </UTable>
         </section>
 
-        <section class="col-span-2 flex flex-col gap-y-4">
-          <div class="flex justify-between items-baseline gap-x-6">
-            <div class="flex gap-x-4">
-              <h2 class="text-subheading">
-                Скидки
-              </h2>
-              <UButton
-                v-if="model.discountId"
-                variant="soft"
-                color="neutral"
-                loading-auto
-                size="sm"
-                @click="onSelectDiscount(null)"
-              >
-                Убрать
-              </UButton>
-            </div>
-            <UTabs
-              v-model="discountViewTab"
-              color="neutral"
-              :ui="{
-                indicator: 'bg-(--ui-bg)',
-                trigger: 'data-[state=active]:text-(--ui-text)',
-              }"
-              :items="[{ icon: 'i-lucide-list', value: 'table' }, { icon: 'i-lucide-calendar', value: 'calendar' }]"
-            />
-          </div>
-          <UTable
-            v-if="discountViewTab === 'table'"
-            :data="discountDates"
-            :columns="discountsTable"
-            :sorting="[{ id: 'isActive', desc: false }]"
-          >
-            <template #actions-cell="{ row }">
-              <UButton
-                variant="soft"
-                color="neutral"
-                loading-auto
-                size="sm"
-                :disabled="!row.original.isActive"
-                @click="onSelectDiscount(row.original.id)"
-              >
-                Выбрать
-              </UButton>
-            </template>
-          </UTable>
-
-          <UCalendar
-            v-else
-            :year-controls="false"
-            :ui="{ root: 'w-full', headCell: 'text-start', cell: '@container/cell grid justify-center', cellTrigger: 'w-[100cqw] m-0 h-10 p-2 rounded-lg' }"
-          >
-            <template #day="{ day }">
-              <UPopover>
-                <div class="grid grid-cols-[24px_1fr] gap-x-2 w-full justify-start items-baseline">
-                  <span class="text-start">{{ day.day }}</span>
-                  <div class="flex gap-x-1">
-                    <div
-                      v-for="discount in getDayDiscounts(day)"
-                      :key="discount.id"
-                      class="text-xs"
-                    >
-                      {{ discount.discountPercentage }}%
-                    </div>
-                  </div>
-                </div>
-                <template #content>
-                  <div class="grid grid-cols-[repeat(4,max-content)] gap-x-4 gap-y-6 p-8">
-                    <div
-                      v-for="discount in getDayDiscounts(day)"
-                      :key="discount.id"
-                      class="grid grid-cols-subgrid col-span-4 w-fit items-center"
-                      :class="{ 'text-(--ui-text-dimmed)': !discount.isActive }"
-                    >
-                      <span>{{ discount.discountPercentage }}%</span>
-                      <span>{{ discount.label }}</span>
-                      <span v-if="!discount.startDate && !discount.endDate">
-                        Бессрочно
-                      </span>
-                      <span v-else-if="discount.startDate && discount.endDate">
-                        {{ dateFormatter.formatRange(new Date(discount.startDate), new Date(discount.endDate)) }}
-                      </span>
-                      <UButton
-                        variant="soft"
-                        size="sm"
-                        color="neutral"
-                        loading-auto
-                        :disabled="!discount.isActive"
-                        @click="onSelectDiscount(discount.id)"
-                      >
-                        Выбрать
-                      </UButton>
-                    </div>
-                  </div>
-                </template>
-              </UPopover>
-            </template>
-          </UCalendar>
-        </section>
+        <DiscountsSection :model="model" />
 
         <section class="flex flex-col gap-y-4 col-span-2">
           <h2 class="text-subheading">
@@ -559,124 +261,9 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
             @change="onUploadImage"
           />
 
-          <UDropdownMenu
-            :items="imagesTableRef?.tableApi?.getAllColumns().filter(column => column.getCanHide()).map(column => ({
-              label: column.columnDef.header as string,
-              type: 'checkbox' as const,
-              checked: column.getIsVisible(),
-              onUpdateChecked(checked: boolean) {
-                imagesTableRef?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
-              },
-              onSelect(e?: Event) {
-                e?.preventDefault()
-              },
-            }))"
-            :content="{ align: 'end' }"
-          >
-            <UButton
-              label="Колонки"
-              color="neutral"
-              variant="outline"
-              trailing-icon="i-lucide-chevron-down"
-              class="ml-auto"
-            />
-          </UDropdownMenu>
-
-          <UTable
-            ref="imagesTableRef"
-            :data="imagesForTable"
-            :get-sub-rows="(row) => {
-              if (isOriginal(row)) return row.optimized
-
-              return undefined
-            }"
-            :columns="imagesTableColumns"
-            class="border-(--ui-border) border-1 rounded-md "
-            :ui="{
-              td: 'empty:p-0',
-            }"
-          >
-            <template #sortOrder-cell="{ row }">
-              <div
-                v-if="isOriginal(row.original)"
-                class="flex items-center gap-x-2"
-              >
-                <UButton
-                  variant="ghost"
-                  color="neutral"
-                  square
-                  :disabled="row.original.imageToModel.sortOrder === 1"
-                  @click="onUpdateImageOrder(model.id, row.original.id, row.original.imageToModel.sortOrder - 1)"
-                >
-                  <ArrowUpIcon
-                    absolute-stroke-width
-                    :stroke-width="1.5"
-                    class="size-6"
-                  />
-                </UButton>
-
-                {{ row.original.imageToModel.sortOrder }}
-
-                <UButton
-                  variant="ghost"
-                  color="neutral"
-                  square
-                  :disabled="row.original.imageToModel.sortOrder === model.images.length"
-                  @click="onUpdateImageOrder(model.id, row.original.id, row.original.imageToModel.sortOrder + 1)"
-                >
-                  <ArrowDownIcon
-                    absolute-stroke-width
-                    :stroke-width="1.5"
-                    class="size-6"
-                  />
-                </UButton>
-              </div>
-            </template>
-
-            <template #img-cell="{ row }">
-              <div
-                v-if="isOriginal(row.original)"
-                class="bg-black/1 "
-              >
-                <NuxtImg
-                  class="w-40 mix-blend-multiply aspect-square"
-                  :src="row.original.url ? row.original.url : imageUrl(row.original)"
-                  :alt="row.original.alt || ''"
-                />
-              </div>
-            </template>
-
-            <template #isGrouped-cell="{ row }">
-              <UButton
-                v-if="isOriginal(row.original) && row.original.optimized.length > 1"
-                variant="ghost"
-                color="neutral"
-                square
-                @click="row.toggleExpanded()"
-              >
-                <ArrowDownIcon
-                  v-if="!row.getIsExpanded()"
-                  absolute-stroke-width
-                  :stroke-width="1.5"
-                  class="size-6"
-                />
-                <ArrowUpIcon
-                  v-else
-                  absolute-stroke-width
-                  :stroke-width="1.5"
-                  class="size-6"
-                />
-              </UButton>
-            </template>
-
-            <template #actions-cell="{ row }">
-              <ImagesTableActions
-                v-if="isOriginal(row.original)"
-                :model="model"
-                :image="row.original"
-              />
-            </template>
-          </UTable>
+          <ImagesTable
+            :model="model"
+          />
         </section>
       </div>
     </div>

@@ -11,60 +11,50 @@ const { models, status } = useAdminModelsPreview()
 
 const columns: TableColumn<AdminModelPreview>[] = [
   {
-    accessorKey: 'id',
+    id: 'id',
     header: 'Id',
-    cell: ({ row }) => row.getValue('id'),
+    cell: ({ row }) => h('div', { class: 'font-mono' }, row.original.id),
   },
   {
-    accessorKey: 'images',
+    id: 'image',
     header: 'Картинка',
-    cell: ({ row }) => {
-      const image = row.getValue<AdminModelPreview['images']>('images')[0]!
-      return h(NuxtImg, { src: image.url || imageUrl(image), class: 'max-h-20 h-auto w-auto' })
-    },
   },
   {
-    accessorKey: 'name',
+    id: 'name',
     header: 'Название',
-    cell: ({ row }) => {
-      const name = row.getValue<AdminModelPreview['name']>('name')
-      const slug = row.getValue<AdminModelPreview['slug']>('slug')
-      return h(ULink, { to: `/admin/models/${slug}` }, name)
-    },
+    cell: ({ row }) => h(ULink, { to: `/admin/models/${row.original.slug}` }, row.original.name),
   },
   {
-    accessorKey: 'slug',
+    id: 'slug',
     header: 'Slug',
-    cell: ({ row }) => row.getValue('slug'),
+    cell: ({ row }) => row.original.slug,
   },
   {
-    accessorKey: 'category',
+    id: 'category',
     header: 'Категория',
-    cell: ({ row }) => row.getValue<{ name: string }>('category').name,
+    cell: ({ row }) => row.original.category.name,
   },
   {
-    accessorKey: 'price',
+    id: 'price',
     header: 'Цена без скидки',
-    cell: ({ row }) => formatPrice(row.getValue<number>('price')),
+    cell: ({ row }) => formatPrice(row.original.price),
   },
   {
-    accessorKey: 'discount',
+    id: 'discount',
     header: 'Скидка',
-    cell: ({ row }) => row.getValue<AdminModelPreview['discount']>('discount')?.label,
+    cell: ({ row }) => row.original.discount?.label,
   },
   {
-    accessorKey: 'discount',
+    id: 'discount %',
     header: '%  ',
-    cell: ({ row }) =>
-      h('span', { class: 'text-primary font-semibold' },
-        row.getValue<AdminModelPreview['discount']>('discount')?.discountPercentage),
+    cell: ({ row }) => h('span', { class: 'text-primary font-semibold' }, row.original.discount?.discountPercentage),
   },
   {
-    accessorKey: 'price',
+    id: 'price',
     header: 'Цена',
     cell: ({ row }) => {
-      const price = row.getValue<number>('price')
-      const discountPercentage = row.getValue<AdminModelPreview['discount']>('discount')?.discountPercentage
+      const price = row.original.price
+      const discountPercentage = row.original.discount?.discountPercentage
       const priceAfterDiscount = discountPercentage ? getPriceAfterDiscount(price, discountPercentage) : price
       return formatPrice(priceAfterDiscount)
     },
@@ -82,7 +72,14 @@ const columns: TableColumn<AdminModelPreview>[] = [
         class="overflow-auto"
         :data="models"
         :columns
-      />
+      >
+        <template #image-cell="{ row }">
+          <NuxtImg
+            :src="row.original.images[0]!.url || imageUrl(row.original.images[0]!)"
+            class="max-w-30 h-auto w-auto aspect-square"
+          />
+        </template>
+      </UTable>
     </div>
   </main>
 </template>

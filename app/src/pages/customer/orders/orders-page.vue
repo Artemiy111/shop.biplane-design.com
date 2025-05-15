@@ -4,7 +4,7 @@ import { useApi } from '~/src/shared/api'
 const message = ref('')
 const toast = useToast()
 
-const { mutate, status, asyncStatus } = useMutation({
+const { mutate } = useMutation({
   mutation: () => useApi().customer.addToQueue.mutate({ message: message.value }),
   onError: (err) => {
     toast.add({ color: 'error', title: 'Не удалось добавить в очередь', description: err.message })

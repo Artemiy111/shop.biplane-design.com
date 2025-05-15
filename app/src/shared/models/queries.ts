@@ -34,7 +34,7 @@ export const useModelBySlug = (slug: Ref<string>) => {
   return { model, ...rest }
 }
 
-export type Model = Exclude<UnwrapRef<ReturnType<typeof useModelBySlug>['model']>, null | undefined>
+export type ModelDto = Exclude<UnwrapRef<ReturnType<typeof useModelBySlug>['model']>, null | undefined>
 
 export const useDiscounts = defineQuery(() => {
   const authUtils = useAuthUtils()

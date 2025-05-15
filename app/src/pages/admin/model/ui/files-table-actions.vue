@@ -5,30 +5,38 @@ import type { FileDb } from '~~/server/db/schema'
 import { updateFileSchema, type UpdateFileSchema } from '~/src/shared/config/validation/db'
 import { useUpdateModelFileMutation, useDeleteModelFileMutation } from '~/src/shared/models/mutations'
 
-const { file, modelSlug } = defineProps<{
+const props = defineProps<{
   modelSlug: string
   file: FileDb
 }>()
+
+const { modelSlug, file } = toRefs(props)
 
 const editForm = useTemplateRef('editForm')
 const isEditOpen = ref(false)
 const isDeleteOpen = ref(false)
 
 const editState = ref<UpdateFileSchema>({
-  id: file.id,
-  originalFilename: file.originalFilename,
+  id: file.value.id,
+  originalFilename: file.value.originalFilename,
+})
+watchDeep(file, () => {
+  editState.value = {
+    id: file.value.id,
+    originalFilename: file.value.originalFilename,
+  }
 })
 
-const { updateFile } = useUpdateModelFileMutation(() => modelSlug)
-const { deleteFile } = useDeleteModelFileMutation(() => modelSlug)
+const { updateFile } = useUpdateModelFileMutation(modelSlug)
+const { deleteFile } = useDeleteModelFileMutation(modelSlug)
 
-const onEditSubmit = async (event: FormSubmitEvent<UpdateFileSchema>) => {
+const onUpdateFile = async (event: FormSubmitEvent<UpdateFileSchema>) => {
   await updateFile(event.data)
   isEditOpen.value = false
 }
 
 const onDeleteFile = async () => {
-  await deleteFile(file.id)
+  await deleteFile(file.value.id)
   isDeleteOpen.value = false
 }
 </script>
@@ -68,7 +76,7 @@ const onDeleteFile = async () => {
               :state="editState"
               :schema="updateFileSchema"
               class="flex flex-col gap-y-5 m-8"
-              @submit="onEditSubmit"
+              @submit="onUpdateFile"
             >
               <UFormField
                 name="originalFilename"

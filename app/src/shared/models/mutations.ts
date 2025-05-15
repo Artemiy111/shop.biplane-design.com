@@ -1,6 +1,5 @@
-import type { ReadonlyRefOrGetter } from '@vueuse/core'
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
-import type { UpdateFileSchema, UpdateImageSchema, UpdateModelSchema, UploadImageSchema, UpdateImageOrderSchema } from '~/src/shared/config/validation/db'
+import type { UpdateFileSchema, UpdateImageSchema, UpdateModelSchema, UpdateImageOrderSchema } from '~/src/shared/config/validation/db'
 import { useApi } from '~/src/shared/api'
 
 export const useToggleIsFavoriteMutation = defineMutation(() => {
@@ -59,7 +58,7 @@ export const useToggleIsInCartMutation = defineMutation(() => {
   }
 })
 
-export const useUpdateModelMutation = (slug: ReadonlyRefOrGetter<string>) => {
+export const useUpdateModelMutation = (slug: Ref<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -74,7 +73,7 @@ export const useUpdateModelMutation = (slug: ReadonlyRefOrGetter<string>) => {
       toast.add({ color: 'error', title: 'Не удалось изменить модель' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
+      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
     },
   })
 
@@ -84,7 +83,7 @@ export const useUpdateModelMutation = (slug: ReadonlyRefOrGetter<string>) => {
   }
 }
 
-export const useUpdateModelFileMutation = (slug: ReadonlyRefOrGetter<string>) => {
+export const useUpdateModelFileMutation = (slug: Ref<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -99,7 +98,7 @@ export const useUpdateModelFileMutation = (slug: ReadonlyRefOrGetter<string>) =>
       toast.add({ color: 'error', title: 'Не удалось изменить файл' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
+      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
     },
   })
 
@@ -109,7 +108,7 @@ export const useUpdateModelFileMutation = (slug: ReadonlyRefOrGetter<string>) =>
   }
 }
 
-export const useDeleteModelFileMutation = (slug: ReadonlyRefOrGetter<string>) => {
+export const useDeleteModelFileMutation = (slug: Ref<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -124,7 +123,7 @@ export const useDeleteModelFileMutation = (slug: ReadonlyRefOrGetter<string>) =>
       toast.add({ color: 'error', title: 'Не удалось удалить файл' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
+      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
     },
   })
 
@@ -134,7 +133,7 @@ export const useDeleteModelFileMutation = (slug: ReadonlyRefOrGetter<string>) =>
   }
 }
 
-export const useSelectModelDiscountMutation = (slug: ReadonlyRefOrGetter<string>) => {
+export const useSelectModelDiscountMutation = (slug: Ref<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -143,13 +142,13 @@ export const useSelectModelDiscountMutation = (slug: ReadonlyRefOrGetter<string>
     mutation: async (discountId: string | null) => {
       if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
-      await useApi().admin.models.selectDiscount.mutate({ slug: isRef(slug) ? slug.value : slug(), discountId })
+      await useApi().admin.models.selectDiscount.mutate({ slug: slug.value, discountId })
     },
     onError: () => {
       toast.add({ color: 'error', title: 'Не удалось изменить скидку' })
     },
     onSettled: async () => {
-      await qc.invalidateQueries({ key: ['models', { slug: isRef(slug) ? slug.value : slug() }] })
+      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
     },
   })
 
@@ -165,10 +164,10 @@ export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefi
   const qc = useQueryCache()
 
   const { mutateAsync, ...rest } = useMutation({
-    mutation: async (formData: UploadImageSchema) => {
+    mutation: async (formData: FormData) => {
       if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
       console.log('uploadImage', formData)
-      await useApi().admin.images.uploadImage.mutate(formData)
+      await useApi().admin.images.uploadImage.mutate(formData as any)
       console.log('uploadImage done')
     },
     onError: () => {

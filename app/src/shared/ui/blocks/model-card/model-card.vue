@@ -2,15 +2,12 @@
 import { ImageOffIcon } from 'lucide-vue-next'
 import ImageSlider from './image-slider.vue'
 import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
-import { mimeToExt } from '~/src/shared/lib/image'
 import { useToggleIsFavoriteMutation, useToggleIsInCartMutation } from '~/src/shared/models/mutations'
 import type { CategoryModel } from '~/src/shared/models/queries'
-import { useIsTouchScreen } from '~/src/shared/models/device'
 
 const { model } = defineProps<{
   model: CategoryModel
 }>()
-const isTouchScreen = useIsTouchScreen()
 
 const { toggleIsFavorite } = useToggleIsFavoriteMutation()
 const { toggleIsInCart } = useToggleIsInCartMutation()

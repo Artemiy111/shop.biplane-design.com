@@ -33,7 +33,7 @@ watchDeep(image, () => {
 const { updateImage } = useUpdateModelImageMutation(model)
 const { deleteImage } = useDeleteModelImageMutation(model)
 
-const onEditSubmit = async (event: FormSubmitEvent<UpdateImageSchema>) => {
+const onUpdateImage = async (event: FormSubmitEvent<UpdateImageSchema>) => {
   await updateImage(event.data)
   isEditModalOpen.value = false
   console.log(isEditModalOpen.value)
@@ -87,7 +87,7 @@ const onDeleteImage = async () => {
               :state="editState"
               :schema="updateImageSchema"
               class="flex flex-col gap-y-5 m-8"
-              @submit="onEditSubmit"
+              @submit="onUpdateImage"
             >
               <UFormField
                 name="originalFilename"

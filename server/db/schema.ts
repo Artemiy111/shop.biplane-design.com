@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey, date, unique, check } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey, date, unique } from 'drizzle-orm/pg-core'
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
 import { mimeTypesImages, mimeTypesRevit, mimeTypesImagesOptimized } from '../../app/src/shared/config/constants/mime-types'
@@ -159,7 +159,7 @@ export const filesT = pgTable('files', {
   modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
   mimeType: text({ enum: mimeTypeFiles }).notNull(),
   size: integer().notNull(),
-  createdAt: timestamp({ mode: 'string' }).defaultNow(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 })
 
 export type FileDb = typeof filesT.$inferSelect
