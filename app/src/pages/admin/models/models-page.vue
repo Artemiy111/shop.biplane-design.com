@@ -6,6 +6,7 @@ import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { getPriceAfterDiscount, formatPrice } from '~/src/shared/lib/price'
 import { NuxtImg, ULink } from '#components'
 import { imageUrl } from '~/src/shared/lib/image'
+import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
 const { models, status } = useAdminModelsPreview()
 
@@ -13,7 +14,7 @@ const columns: TableColumn<AdminModelPreview>[] = [
   {
     id: 'id',
     header: 'Id',
-    cell: ({ row }) => h('div', { class: 'font-mono' }, row.original.id),
+    cell: ({ row }) => h(FancyId, { id: row.original.id }),
   },
   {
     id: 'image',

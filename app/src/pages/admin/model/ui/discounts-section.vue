@@ -4,6 +4,7 @@ import { parseDate, type DateValue } from '@internationalized/date'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { useSelectModelDiscountMutation } from '~/src/shared/models/mutations'
 import { useDiscounts, type ModelDto } from '~/src/shared/models/queries'
+import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
 const props = defineProps<{
   model: ModelDto
@@ -62,7 +63,7 @@ const discountsTable: TableColumn<DiscountDate>[] = [
     cell: ({ row }) => {
       if (row.original.id === model.value?.discountId) row.toggleSelected(true)
       else row.toggleSelected(false)
-      return row.original.id
+      return h(FancyId, { id: row.original.id })
     },
   },
   {

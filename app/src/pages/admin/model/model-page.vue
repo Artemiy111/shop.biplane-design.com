@@ -14,6 +14,7 @@ import type { FileDb } from '~~/server/db/schema'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { ModelCard } from '~/src/shared/ui/blocks/model-card'
 import { getReadableSize } from '~/src/shared/lib/get-readable-size'
+import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
 const props = defineProps<{
   slug: string
@@ -61,7 +62,7 @@ const filesTableColumns: TableColumn<FileDb>[] = [
   {
     id: 'id',
     header: 'Id',
-    cell: ({ row }) => row.original.id,
+    cell: ({ row }) => h(FancyId, { id: row.original.id }),
   },
   {
     id: 'originalFilename',

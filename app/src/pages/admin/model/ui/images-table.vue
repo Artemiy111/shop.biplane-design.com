@@ -7,6 +7,7 @@ import { useUpdateModelImageOrderMutation } from '~/src/shared/models/mutations'
 import type { ModelDto } from '~/src/shared/models/queries'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { getReadableSize } from '~/src/shared/lib/get-readable-size'
+import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
 const props = defineProps<{
   model: ModelDto
@@ -50,7 +51,10 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
     id: 'id',
     accessorFn: row => isOriginal(row) ? row.id : row.original.id,
     header: 'Id',
-    cell: ({ row }) => h('div', { class: 'font-mono' }, row.original.id),
+
+    cell: ({ row }) => {
+      return h(FancyId, { id: row.original.id })
+    },
   },
   {
     id: 'img',
