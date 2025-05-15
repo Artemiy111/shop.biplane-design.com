@@ -72,6 +72,11 @@ export const relations = defineRelations(schema, r => ({
     // orderItems: r.many.orderItems(),
   },
   imagesT: {
+    imageToModel: r.one.imageToModelT({
+      from: r.imagesT.id,
+      to: r.imageToModelT.imageId,
+      optional: false,
+    }),
     optimized: r.many.imagesOptimizedT(),
     model: r.one.modelsT({
       from: r.imagesT.id.through(r.imageToModelT.imageId),
