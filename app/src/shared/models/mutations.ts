@@ -1,6 +1,6 @@
 import type { ReadonlyRefOrGetter } from '@vueuse/core'
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
-import type { UpdateFileSchema, UpdateImageSchema, UpdateModelSchema, UploadImageSchema } from '~/src/shared/config/validation/db'
+import type { UpdateFileSchema, UpdateImageSchema, UpdateModelSchema, UploadImageSchema, UpdateImageOrderSchema } from '~/src/shared/config/validation/db'
 import { useApi } from '~/src/shared/api'
 
 export const useToggleIsFavoriteMutation = defineMutation(() => {
@@ -66,7 +66,7 @@ export const useUpdateModelMutation = (slug: ReadonlyRefOrGetter<string>) => {
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (data: UpdateModelSchema) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
       await useApi().admin.models.updateModel.mutate(data)
     },
@@ -91,7 +91,7 @@ export const useUpdateModelFileMutation = (slug: ReadonlyRefOrGetter<string>) =>
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (data: UpdateFileSchema) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
       await useApi().admin.files.updateFile.mutate(data)
     },
@@ -116,7 +116,7 @@ export const useDeleteModelFileMutation = (slug: ReadonlyRefOrGetter<string>) =>
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (id: string) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
       await useApi().admin.files.deleteFile.mutate({ id })
     },
@@ -141,7 +141,7 @@ export const useSelectModelDiscountMutation = (slug: ReadonlyRefOrGetter<string>
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (discountId: string | null) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
       await useApi().admin.models.selectDiscount.mutate({ slug: isRef(slug) ? slug.value : slug(), discountId })
     },
@@ -166,7 +166,7 @@ export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefi
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (formData: UploadImageSchema) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
       console.log('uploadImage', formData)
       await useApi().admin.images.uploadImage.mutate(formData)
       console.log('uploadImage done')
@@ -196,7 +196,7 @@ export const useUpdateModelImageMutation = (model: Ref<{ slug: string }>) => {
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (data: UpdateImageSchema) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
       await useApi().admin.images.updateImage.mutate(data)
     },
@@ -214,6 +214,32 @@ export const useUpdateModelImageMutation = (model: Ref<{ slug: string }>) => {
   }
 }
 
+export const useUpdateModelImageOrderMutation = (model: Ref<{ slug: string, id: string } | undefined>) => {
+  const toast = useToast()
+  const authUtils = useAuthUtils()
+  const qc = useQueryCache()
+
+  const { mutateAsync, ...rest } = useMutation({
+    mutation: async (data: UpdateImageOrderSchema) => {
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
+
+      await useApi().admin.images.updateImageOrder.mutate(data)
+    },
+    onError: () => {
+      toast.add({ color: 'error', title: 'Не удалось изменить порядок картинки' })
+    },
+    onSettled: async (_, __, _vars) => {
+      if (!model.value) return
+      await qc.invalidateQueries({ key: ['models', { slug: model.value.slug }] })
+    },
+  })
+
+  return {
+    updateImageOrder: mutateAsync,
+    ...rest,
+  }
+}
+
 export const useDeleteModelImageMutation = (model: Ref<{ id: string, slug: string }>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
@@ -221,9 +247,9 @@ export const useDeleteModelImageMutation = (model: Ref<{ id: string, slug: strin
 
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (id: string) => {
-      if (!authUtils.isAdmin) return
+      if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
-      await useApi().admin.images.deleteImage.mutate({ modelId: model.value.id, id })
+      await useApi().admin.images.deleteImage.mutate({ modelId: model.value.id, imageId: id })
     },
     onError: () => {
       toast.add({ color: 'error', title: 'Не удалось удалить картинку' })

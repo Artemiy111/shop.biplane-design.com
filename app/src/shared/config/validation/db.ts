@@ -58,5 +58,12 @@ export const updateImageSchema = z.object({
   alt: minMaxString(0, 128).nullable(),
 })
 
+export const updateImageOrderSchema = z.object({
+  modelId: idSchema,
+  imageId: idSchema,
+  newSortOrder: minMaxNumber(1, 100_000),
+})
+
 export type UploadImageSchema = z.infer<typeof uploadImageSchema>
 export type UpdateImageSchema = z.infer<typeof updateImageSchema>
+export type UpdateImageOrderSchema = z.infer<typeof updateImageOrderSchema>

@@ -6,7 +6,7 @@ import FilesTableActions from './ui/files-table-actions.vue'
 import ImagesTableActions from './ui/images-table-actions.vue'
 import { revitVersions } from '~/src/shared/config/constants'
 import { updateModelSchema, type UpdateModelSchema } from '~/src/shared/config/validation/db'
-import { useSelectModelDiscountMutation, useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
+import { useSelectModelDiscountMutation, useUpdateModelImageOrderMutation, useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
 import { useCategoriesSimple, useDiscounts, useModelBySlug } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
@@ -46,7 +46,7 @@ const discountDates = computed(() => discounts.value.map((discount) => {
 
 type DiscountDate = typeof discountDates.value[0]
 
-const { model, status, refresh } = useModelBySlug(() => slug)
+const { model, status, refresh } = useModelBySlug(toRef(() => slug))
 
 const getDayDiscounts = (day: DateValue) => {
   return discountDates.value.filter((d) => {
@@ -246,6 +246,15 @@ const onUploadImage = async (event: Event) => {
   }))
   isUploading.value = false
   filesString.value = ''
+}
+
+const { updateImageOrder } = useUpdateModelImageOrderMutation(model)
+
+const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder: number) => {
+  try {
+    await updateImageOrder({ modelId: modelId, imageId, newSortOrder })
+  }
+  catch (_) {}
 }
 </script>
 

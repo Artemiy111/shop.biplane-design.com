@@ -3,14 +3,13 @@ export const modelPrequery = (userId?: string) => ({
   files: true,
   images: {
     with: {
+      imageToModel: { columns: { sortOrder: true } },
       optimized: {
         orderBy: {
           mimeType: 'asc',
+          width: 'asc',
         },
       },
-    },
-    orderBy: {
-      createdAt: 'asc',
     },
   },
   ...(userId
@@ -41,9 +40,11 @@ export const setPrequery = {
     discount: true,
     image: {
       with: {
+        imageToModel: { columns: { sortOrder: true } },
         optimized: {
           orderBy: {
             mimeType: 'asc',
+            width: 'asc',
           },
         },
       },

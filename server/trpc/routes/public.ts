@@ -59,6 +59,7 @@ export const publicRouter = router({
 
       const model = {
         ...model_,
+        images: model_.images.toSorted((a, b) => a.imageToModel.sortOrder - b.imageToModel.sortOrder),
         isFavorite: model_.favorites?.length > 0,
         isInCart: model_.cartItems?.length > 0,
       }
