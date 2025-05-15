@@ -1,7 +1,7 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey, date } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey, date, unique, check } from 'drizzle-orm/pg-core'
 import { makeId } from '../../app/src/shared/lib/id'
 import { userRoles } from '../../app/src/shared/config/constants/user'
-import { mimeTypesImages, mimeTypesRevit } from '../../app/src/shared/config/constants/mime-types'
+import { mimeTypesImages, mimeTypesRevit, mimeTypesImagesOptimized } from '../../app/src/shared/config/constants/mime-types'
 import { paymentProviders, orderStatuses, refundStatuses, revitVersions } from '../../app/src/shared/config/constants'
 
 export const usersT = pgTable('users', {
@@ -125,12 +125,12 @@ export const imagesT = pgTable('images', {
 })
 
 export type ImageDb = typeof imagesT.$inferSelect
-export type ImageDbWithOptimized = ImageDb & { optimized: ImageOptimizedDb[] }
+export type ImageDbWithOptimized = ImageDb & { imageToModel: { sortOrder: number }, optimized: ImageOptimizedDb[] }
 
 export const imagesOptimizedT = pgTable('images_optimized', {
   id: text().primaryKey().$default(makeId),
   imageId: text().notNull().references(() => imagesT.id, { onDelete: 'cascade' }),
-  mimeType: text({ enum: ['image/webp', 'image/avif'] }).notNull(),
+  mimeType: text({ enum: mimeTypesImagesOptimized }).notNull(),
   size: integer().notNull(),
   width: integer().notNull(),
   height: integer().notNull(),
@@ -144,7 +144,9 @@ export const imageToModelT = pgTable('image_to_model', {
   modelId: text().notNull().references(() => modelsT.id, { onDelete: 'cascade' }),
   sortOrder: integer().notNull(),
 }, t => [
-  index().on(t.modelId), // Для быстрого поиска по товару
+  index().on(t.modelId),
+  unique().on(t.imageId, t.modelId),
+  unique('image_to_model_model_id_sort_order_unique').on(t.modelId, t.sortOrder),
 ])
 
 export type ImageToModelDb = typeof imageToModelT.$inferSelect
