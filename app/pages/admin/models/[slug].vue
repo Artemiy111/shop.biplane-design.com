@@ -2,6 +2,10 @@
 import { AdminModelPage } from '~/src/pages/admin/model'
 
 const slug = computed(() => useRoute('admin-models-slug').params.slug)
+
+definePageMeta({
+  middleware: ['admin'],
+})
 </script>
 
 <template>
