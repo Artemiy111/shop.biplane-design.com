@@ -31,6 +31,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
       :key="image.id"
       :src="image.url || imageUrl(image)"
       :alt="model.name"
+      class="aspect-square w-full object-contain"
       :class="[currentImage === index || images.length === 1 ? 'block mix-blend-multiply' : 'hidden']"
     />
     <div
