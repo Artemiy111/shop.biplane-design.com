@@ -14,10 +14,7 @@ const { isModel, isSet, slug } = defineProps<{
   slug: string
 }>()
 
-const { modelSlug, model, status, asyncStatus } = useModelBySlug()
-watchEffect(() => {
-  modelSlug.value = slug
-})
+const { model } = useModelBySlug(toRef(() => slug))
 
 const { toggleIsFavorite } = useToggleIsFavoriteMutation()
 const { toggleIsInCart } = useToggleIsInCartMutation()

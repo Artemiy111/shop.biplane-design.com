@@ -1,5 +1,4 @@
 import type { UnwrapRef } from 'vue'
-import type { ReadonlyRefOrGetter } from '@vueuse/core'
 import { useAuthUtils } from './auth-utils'
 import { useApi } from '~/src/shared/api'
 
@@ -26,11 +25,11 @@ export const useCategoriesSimple = defineQuery(() => {
   return { categories, ...rest }
 })
 
-export const useModelBySlug = (slug: ReadonlyRefOrGetter<string>) => {
+export const useModelBySlug = (slug: Ref<string>) => {
   const { data: model, state: _, ...rest } = useQuery({
-    key: () => ['models', { slug: isRef(slug) ? slug.value : slug() }],
-    query: async () => await useApi().public.getModelBySlug.query({ slug: isRef(slug) ? slug.value : slug() }),
-    enabled: () => !!(isRef(slug) ? slug.value : slug()),
+    key: () => ['models', { slug: slug.value }],
+    query: async () => await useApi().public.getModelBySlug.query({ slug: slug.value }),
+    enabled: () => !!slug.value,
   })
   return { model, ...rest }
 }
