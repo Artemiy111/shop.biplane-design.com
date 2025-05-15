@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ArrowUpIcon, ArrowDownIcon, ChevronUpIcon, ChevronDownIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, ArrowDownIcon, ChevronUpIcon, ChevronDownIcon, GripVerticalIcon } from 'lucide-vue-next'
 import type { TableColumn } from '@nuxt/ui'
+import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
+
 import ImagesTableActions from './images-table-actions.vue'
 import { imageUrl } from '~/src/shared/lib/image'
 import { useUpdateModelImageOrderMutation } from '~/src/shared/models/mutations'
@@ -37,13 +39,48 @@ const imagesForTable = computed(() => model.value.images
 type ImageForTableOriginal = typeof imagesForTable.value[number]
 type ImageForTable = ImageForTableOriginal | ImageForTableOriginal['optimized'][number]
 const isOriginal = (image: ImageForTable): image is ImageForTableOriginal => ('optimized' in image)
-// const isOptimized = (image: ImageForTable): ImageOptimizedDb => !('optimized' in image)
+
+useSortable('.sortable-body', imagesForTable, {
+  handle: '[data-sortable]',
+  animation: 150,
+  onUpdate: (e) => {
+    const el = e.item.querySelector('[data-sortable]') as HTMLElement
+    const id = el.getAttribute('data-sortable') as string
+    const oldIndex = e.oldIndex!
+    const newIndex = e.newIndex!
+    const currOrder = oldIndex + 1
+    const newOrder = newIndex + 1
+
+    onUpdateImageOrder(model.value.id, id, newOrder)
+    nextTick(() => {
+      const makeImages = () => {
+        const imgs = [...model.value.images]
+        if (newOrder === currOrder) return imgs
+        else if (newOrder > currOrder) {
+          imgs.forEach((img) => {
+            if (img.imageToModel.sortOrder > currOrder && img.imageToModel.sortOrder <= newOrder) img.imageToModel.sortOrder -= 1
+          })
+        }
+        else {
+          imgs.forEach((img) => {
+            if (img.imageToModel.sortOrder >= newOrder && img.imageToModel.sortOrder < currOrder) img.imageToModel.sortOrder += 1
+          })
+        }
+        imgs[oldIndex]!.imageToModel.sortOrder = newOrder
+        return imgs
+      }
+      const qc = useQueryCache()
+      qc.setQueryData(['models', { slug: model.value.slug }], { ...model.value, images: makeImages() })
+    })
+  },
+})
 
 const imagesTableRef = useTemplateRef('imagesTableRef')
 
 const imagesTableColumns: TableColumn<ImageForTable>[] = [
   {
     id: 'sortOrder',
+    accessorFn: row => isOriginal(row) ? row.imageToModel.sortOrder : row.original.imageToModel.sortOrder,
     header: '№',
     enableHiding: false,
   },
@@ -51,10 +88,7 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
     id: 'id',
     accessorFn: row => isOriginal(row) ? row.id : row.original.id,
     header: 'Id',
-
-    cell: ({ row }) => {
-      return h(FancyId, { id: row.original.id })
-    },
+    cell: ({ row }) => h(FancyId, { id: row.original.id }),
   },
   {
     id: 'img',
@@ -139,8 +173,10 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
       return undefined
     }"
     :columns="imagesTableColumns"
+    :sorting="[{ id: 'sortOrder', desc: false }]"
     class="border-(--ui-border) border-1 rounded-md "
     :ui="{
+      tbody: 'sortable-body',
       td: 'empty:p-0',
     }"
   >
@@ -148,8 +184,23 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
       <div
         v-if="isOriginal(row.original)"
         class="flex items-center gap-x-2"
+        :data-sortable="row.original.id"
       >
         <UButton
+          variant="ghost"
+          color="neutral"
+          square
+          class="text-(--ui-text-dimmed) hover:text-(--ui-text)"
+        >
+          <GripVerticalIcon
+            absolute-stroke-width
+            :stroke-width="1.5"
+            class="size-6"
+          />
+        </UButton>
+        {{ row.original.imageToModel.sortOrder }}
+
+        <!-- <UButton
           variant="ghost"
           color="neutral"
           square
@@ -177,7 +228,7 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
             :stroke-width="1.5"
             class="size-6"
           />
-        </UButton>
+        </UButton> -->
       </div>
     </template>
 

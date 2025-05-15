@@ -72,7 +72,6 @@ export const adminRouter = router({
     uploadImage: adminProcedure.input(data => uploadImageSchema.parse(data) as { modelId: string, image: File }).mutation(async ({ input }) => {
       try {
         await db.transaction(async (tx) => {
-        // TODO пофиксить гонку
           logger.info('uploadImage')
           const fileParts = input.image.name.split('.')
           const mimeType = input.image.type as ImageMimeType
