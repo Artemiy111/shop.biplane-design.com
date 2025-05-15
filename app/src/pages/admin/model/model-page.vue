@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui'
 import { parseDate, type DateValue } from '@internationalized/date'
-import { EllipsisVerticalIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, ArrowDownIcon, ChevronUpIcon, ChevronDownIcon } from 'lucide-vue-next'
+import { getGroupedRowModel, type GroupingOptions } from '@tanstack/vue-table'
 import FilesTableActions from './ui/files-table-actions.vue'
 import ImagesTableActions from './ui/images-table-actions.vue'
 import { revitVersions } from '~/src/shared/config/constants'
@@ -10,7 +11,7 @@ import { useSelectModelDiscountMutation, useUpdateModelImageOrderMutation, useUp
 import { useCategoriesSimple, useDiscounts, useModelBySlug } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import type { FileDb } from '~~/server/db/schema'
+import type { FileDb, ImageDbWithOptimized, ImageOptimizedDb } from '~~/server/db/schema'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { ModelCard } from '~/src/shared/ui/blocks/model-card'
 import { imageUrl } from '~/src/shared/lib/image'
@@ -171,13 +172,60 @@ const discountsTable: TableColumn<DiscountDate>[] = [
   },
 ]
 
-const images = computed(() => model.value?.images || [])
+// const imagesForTable = computed(() => model.value?.images
+//   ? model.value.images.flatMap((image) => {
+//       return [image, ...image.optimized.map(o => ({ ...o, original: image }))]
+//     })
+//   : [])
 
-type ImageDbWithOptimized = Exclude<typeof model.value, undefined | null>['images'][0]
+const imagesForTable = computed(() => model.value?.images
+  ? model.value.images.flatMap((image) => {
+      return {
+        ...image,
+        optimized: image.optimized.map(o => ({ ...o, original: image })),
+      }
+    })
+  : [])
 
-const imagesTable: TableColumn<ImageDbWithOptimized>[] = [
+type ImageForTableOriginal = typeof imagesForTable.value[number]
+type ImageForTable = ImageForTableOriginal | ImageForTableOriginal['optimized'][number]
+const isOriginal = (image: ImageForTable): image is ImageForTableOriginal => ('optimized' in image)
+// const isOptimized = (image: ImageForTable): ImageOptimizedDb => !('optimized' in image)
+
+const imagesTableRef = useTemplateRef('imagesTableRef')
+const getReadableSize = (bytes: number, locale: string = 'ru-RU') => {
+  if (bytes === 0) return '0 Б'
+
+  const units = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ']
+  const k = 1024
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  const size = bytes / Math.pow(k, i)
+
+  const formatted = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(size)
+
+  return `${formatted} ${units[i]}`
+}
+
+const imageTableGroupingOptions = ref<GroupingOptions>({
+  getGroupedRowModel: getGroupedRowModel(),
+  groupedColumnMode: 'remove',
+
+})
+
+const imagesTableColumns: TableColumn<ImageForTable>[] = [
   {
-    accessorKey: 'id',
+    id: 'sortOrder',
+    header: '№',
+    // cell: ({ row }) => isOriginal(row.original) ? row.original.imageToModel.sortOrder : row.original.original.imageToModel.sortOrder,
+    enableHiding: false,
+  },
+  {
+    id: 'id',
+    accessorFn: row => isOriginal(row) ? row.id : row.original.id,
+    // accessorKey: 'id',
     header: 'Id',
     cell: ({ row }) => row.original.id,
   },
@@ -188,16 +236,20 @@ const imagesTable: TableColumn<ImageDbWithOptimized>[] = [
   {
     accessorKey: 'originalFilename',
     header: 'Имя файла',
-    cell: ({ row }) => row.original.originalFilename,
+    cell: ({ row }) => isOriginal(row.original) ? row.original.originalFilename : '',
+  },
+  {
+    id: 'isGrouped',
+    header: 'Мини',
   },
   {
     accessorKey: 'alt',
     header: 'Подпись',
-    cell: ({ row }) => row.original.alt,
+    cell: ({ row }) => isOriginal(row.original) ? row.original.alt : '',
   },
   {
     accessorKey: 'mimeType',
-    header: 'Mime Тип',
+    header: 'Mime',
     cell: ({ row }) => row.original.mimeType,
   },
   {
@@ -212,8 +264,8 @@ const imagesTable: TableColumn<ImageDbWithOptimized>[] = [
   },
   {
     accessorKey: 'size',
-    header: 'Размер/Б',
-    cell: ({ row }) => row.original.size,
+    header: 'Размер',
+    cell: ({ row }) => row.original.size ? getReadableSize(row.original.size) : '',
   },
   {
     accessorKey: 'createdAt',
@@ -221,7 +273,9 @@ const imagesTable: TableColumn<ImageDbWithOptimized>[] = [
     cell: ({ row }) => dateFormatter.format(new Date(row.original.createdAt)),
   },
   {
+    header: '',
     id: 'actions',
+    enableHiding: false,
   },
 ]
 
@@ -229,6 +283,7 @@ const { uploadImage } = useUploadModelImageMutation(model)
 
 const isUploading = ref(false)
 const filesString = ref('')
+
 const onUploadImage = async (event: Event) => {
   isUploading.value = true
   console.log(filesString.value)
@@ -495,6 +550,8 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
           <UInput
             v-model="filesString"
             type="file"
+            variant="soft"
+            size="lg"
             accept="image/*"
             class="w-full"
             multiple
@@ -502,21 +559,119 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
             @change="onUploadImage"
           />
 
-          <UTable
-            :data="images"
-            :columns="imagesTable"
+          <UDropdownMenu
+            :items="imagesTableRef?.tableApi?.getAllColumns().filter(column => column.getCanHide()).map(column => ({
+              label: column.columnDef.header as string,
+              type: 'checkbox' as const,
+              checked: column.getIsVisible(),
+              onUpdateChecked(checked: boolean) {
+                imagesTableRef?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
+              },
+              onSelect(e?: Event) {
+                e?.preventDefault()
+              },
+            }))"
+            :content="{ align: 'end' }"
           >
+            <UButton
+              label="Колонки"
+              color="neutral"
+              variant="outline"
+              trailing-icon="i-lucide-chevron-down"
+              class="ml-auto"
+            />
+          </UDropdownMenu>
+
+          <UTable
+            ref="imagesTableRef"
+            :data="imagesForTable"
+            :get-sub-rows="(row) => {
+              if (isOriginal(row)) return row.optimized
+
+              return undefined
+            }"
+            :columns="imagesTableColumns"
+            class="border-(--ui-border) border-1 rounded-md "
+            :ui="{
+              td: 'empty:p-0',
+            }"
+          >
+            <template #sortOrder-cell="{ row }">
+              <div
+                v-if="isOriginal(row.original)"
+                class="flex items-center gap-x-2"
+              >
+                <UButton
+                  variant="ghost"
+                  color="neutral"
+                  square
+                  :disabled="row.original.imageToModel.sortOrder === 1"
+                  @click="onUpdateImageOrder(model.id, row.original.id, row.original.imageToModel.sortOrder - 1)"
+                >
+                  <ArrowUpIcon
+                    absolute-stroke-width
+                    :stroke-width="1.5"
+                    class="size-6"
+                  />
+                </UButton>
+
+                {{ row.original.imageToModel.sortOrder }}
+
+                <UButton
+                  variant="ghost"
+                  color="neutral"
+                  square
+                  :disabled="row.original.imageToModel.sortOrder === model.images.length"
+                  @click="onUpdateImageOrder(model.id, row.original.id, row.original.imageToModel.sortOrder + 1)"
+                >
+                  <ArrowDownIcon
+                    absolute-stroke-width
+                    :stroke-width="1.5"
+                    class="size-6"
+                  />
+                </UButton>
+              </div>
+            </template>
+
             <template #img-cell="{ row }">
-              <div class="bg-black/1 ">
+              <div
+                v-if="isOriginal(row.original)"
+                class="bg-black/1 "
+              >
                 <NuxtImg
-                  class="w-40 mix-blend-multiply"
+                  class="w-40 mix-blend-multiply aspect-square"
                   :src="row.original.url ? row.original.url : imageUrl(row.original)"
                   :alt="row.original.alt || ''"
                 />
               </div>
             </template>
+
+            <template #isGrouped-cell="{ row }">
+              <UButton
+                v-if="isOriginal(row.original) && row.original.optimized.length > 1"
+                variant="ghost"
+                color="neutral"
+                square
+                @click="row.toggleExpanded()"
+              >
+                <ArrowDownIcon
+                  v-if="!row.getIsExpanded()"
+                  absolute-stroke-width
+                  :stroke-width="1.5"
+                  class="size-6"
+                />
+                <ArrowUpIcon
+                  v-else
+                  absolute-stroke-width
+                  :stroke-width="1.5"
+                  class="size-6"
+                />
+              </UButton>
+            </template>
+
             <template #actions-cell="{ row }">
               <ImagesTableActions
+                v-if="isOriginal(row.original)"
                 :model="model"
                 :image="row.original"
               />

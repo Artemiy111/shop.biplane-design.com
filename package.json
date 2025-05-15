@@ -14,7 +14,7 @@
     "lint:style:fix": "stylelint '**/*.{css,vue}' --fix",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
+    "db:push": "drizzle-kit push && bun ./server/db/push.ts",
     "db:dropmigtaion": "drizzle-kit dropmigration",
     "db:seed": "bun ./server/db/seed.ts",
     "db:drop": "bun ./server/db/drop.ts",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EditIcon, TrashIcon, DownloadIcon, EllipsisVerticalIcon, LinkIcon } from 'lucide-vue-next'
+import { EditIcon, TrashIcon, EllipsisVerticalIcon, LinkIcon } from 'lucide-vue-next'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { ImageDbWithOptimized } from '~~/server/db/schema'
 import { updateImageSchema, type UpdateImageSchema } from '~/src/shared/config/validation/db'
