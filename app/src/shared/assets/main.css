@@ -18,6 +18,21 @@
   text-overflow: "..";
 }
 
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+// BUG почему-то не работает
+/* @utility scrollbar-* {
+  scrollbar-width: ---value('thin', 'auto', 'none');
+} */
+
+@utility truncate {
+  overflow: clip;
+  text-overflow: '..';
+  white-space: nowrap;
+}
+
 @theme {
   --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';

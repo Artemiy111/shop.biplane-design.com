@@ -1,6 +1,7 @@
-import { type ImageExt, type ImageMimeType, type RevitMimeType, mimeTypesImages, type RevitExt } from '~/src/shared/config/constants/mime-types'
+import { type ImageExt, type ImageMimeType, type RevitMimeType, mimeTypesImages, type RevitExt, type ImageOptimizedMimeType } from '~/src/shared/config/constants/mime-types'
 
 export const mimeToExt = (mime: ImageMimeType | RevitMimeType) => {
+  console.log(mime)
   if (mimeTypesImages.includes(mime as ImageMimeType)) return mime.split('/').pop()! as ImageExt
   return 'rvt' as RevitExt
 }
@@ -10,7 +11,10 @@ export const extToMime = (ext: ImageExt | RevitExt): ImageMimeType | RevitMimeTy
   return `image/${ext}` as ImageMimeType
 }
 
-export const imageUrl = (image: { id: string, mimeType: ImageMimeType }) => {
+export const imageUrl = (image: { id: string, mimeType: ImageMimeType } | { imageId: string, width: number, mimeType: ImageOptimizedMimeType }) => {
   const config = useRuntimeConfig()
-  return `https://${config.public.s3BucketEndpointUrl}/${config.public.s3Bucket}/images/original/${image.id}.${mimeToExt(image.mimeType)}`
+  const base = `https://${config.public.s3BucketEndpointUrl}/${config.public.s3Bucket}/images`
+
+  if ('imageId' in image) return `${base}/optimized/${image.imageId}/${image.width}.${mimeToExt(image.mimeType)}`
+  return `${base}/original/${image.id}.${mimeToExt(image.mimeType)}`
 }

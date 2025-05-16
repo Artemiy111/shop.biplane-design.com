@@ -77,7 +77,6 @@ export const adminRouter = router({
           const mimeType = input.image.type as ImageMimeType
           const ext = fileParts.at(-1)
           const originalFilename = fileParts.slice(0, -1).join('.')
-          const size = input.image.size
           const buffer = Buffer.from(await input.image.arrayBuffer())
           const metadata = await sharp(buffer).metadata()
           const id = makeId()
@@ -93,9 +92,11 @@ export const adminRouter = router({
               const data = sharp(buffer)
                 .resize({ width })
                 .toFormat(ext)
-              const metadata = await data.metadata()
-              const optimizedBuffer = await data.toBuffer()
+              // const metadata = await data.metadata()
+              const { data: optimizedBuffer, info: metadata } = await data.toBuffer({ resolveWithObject: true })
 
+              logger.info(`Optimized ${id} ${width}.${ext}`)
+              console.log(metadata)
               return {
                 imageId: id,
                 id: newId,
@@ -130,10 +131,10 @@ export const adminRouter = router({
           await tx.insert(imagesT).values({
             id,
             originalFilename,
-            size,
             mimeType,
             width: metadata.width,
             height: metadata.height,
+            size: metadata.size,
           })
 
           const [{ maxSortOrder }] = (await tx.select({ maxSortOrder: max(imageToModelT.sortOrder) }).from(imageToModelT).where(eq(imageToModelT.modelId, input.modelId)))
