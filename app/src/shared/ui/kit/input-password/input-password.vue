@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { InputProps, InputEmits } from '@nuxt/ui'
+import type { InputProps, InputEmits } from '@nuxt/ui/runtime/components/Input.vue.d.ts'
 import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
 
 const props = defineProps<Omit<InputProps, 'type'>>()
