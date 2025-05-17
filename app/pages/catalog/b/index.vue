@@ -1,5 +1,5 @@
 <script setup lang="ts">
 definePageMeta({
-  redirect: '/catalog/c/furniture',
+  redirect: '/catalog/b/boconcept',
 })
 </script>

@@ -11,14 +11,14 @@ import {
 } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
-import { useCartItemsCount, useFavoritesCount } from '~/src/shared/models/queries'
+import { useCartItems, useFavoriteModels } from '~/src/shared/models/queries'
 import { Logo } from '~/src/shared/ui/kit/logo'
 
 const colorMode = useColorMode()
 const authUtils = useAuthUtils()
 
-const { favoritesCount } = useFavoritesCount()
-const { cartItemsCount } = useCartItemsCount()
+const { favoritesCount } = useFavoriteModels()
+const { cartItemsCount } = useCartItems()
 
 const centerItems = computed(() => {
   const base: NavigationMenuItem[] = [

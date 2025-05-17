@@ -19,8 +19,8 @@ export const useToggleIsFavoriteMutation = defineMutation(() => {
       toast.add({ color: 'error', title: 'Не удалось добавить в избранное' })
     },
     onSettled: async () => {
-      await qc.invalidateQueries({ key: ['categories'] })
-      await qc.invalidateQueries({ key: ['favorites', 'count'] })
+      await qc.invalidateQueries({ key: ['models'] })
+      await qc.invalidateQueries({ key: ['favorites'] })
     },
   })
 
@@ -47,8 +47,8 @@ export const useToggleIsInCartMutation = defineMutation(() => {
       toast.add({ color: 'error', title: 'Не удалось добавить в корзину' })
     },
     onSettled: async () => {
-      await qc.invalidateQueries({ key: ['categories'] })
-      await qc.invalidateQueries({ key: ['cart-items', 'count'] })
+      await qc.invalidateQueries({ key: ['models'] })
+      await qc.invalidateQueries({ key: ['cart-items'] })
     },
   })
 
@@ -167,7 +167,7 @@ export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefi
     mutation: async (formData: FormData) => {
       if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
       console.log('uploadImage', formData)
-      await useApi().admin.images.uploadImage.mutate(formData as any)
+      await useApi().admin.images.uploadImage.mutate(formData as unknown as { modelId: string, image: File })
       console.log('uploadImage done')
     },
     onError: () => {

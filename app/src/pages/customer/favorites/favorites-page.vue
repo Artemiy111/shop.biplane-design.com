@@ -38,7 +38,7 @@ const { favoriteModels, status, refresh } = useFavoriteModels()
               class="w-fit mt-6"
               color="neutral"
               variant="soft"
-              to="/"
+              to="/catalog"
             >
               В каталог
             </UButton>

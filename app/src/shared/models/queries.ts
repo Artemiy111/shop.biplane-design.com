@@ -2,18 +2,6 @@ import type { UnwrapRef } from 'vue'
 import { useAuthUtils } from './auth-utils'
 import { useApi } from '~/src/shared/api'
 
-export const useCategories = defineQuery(() => {
-  const { data: _categories, state: _, ...rest } = useQuery({
-    key: ['categories'],
-    query: async () => await useApi().public.getCategories.query(),
-  })
-  const categories = computed(() => _categories.value || [])
-  return { categories, ...rest }
-})
-
-export type Category = UnwrapRef<ReturnType<typeof useCategories>['categories']>[number]
-export type CategoryModel = Category['models'][number]
-
 export const useCategoriesSimple = defineQuery(() => {
   const authUtils = useAuthUtils()
   const { data: _categories, state: _, ...rest } = useQuery({
@@ -24,6 +12,16 @@ export const useCategoriesSimple = defineQuery(() => {
   const categories = computed(() => _categories.value || [])
   return { categories, ...rest }
 })
+
+export const useModels = () => {
+  const { data, state: _, ...rest } = useQuery({
+    key: ['models'],
+    query: async () => await useApi().public.getModels.query(),
+  })
+  const models = computed(() => data.value?.models || [])
+  const categories = computed(() => data.value?.categories || [])
+  return { models, categories, ...rest }
+}
 
 export const useModelBySlug = (slug: Ref<string>) => {
   const { data: model, state: _, ...rest } = useQuery({
@@ -47,16 +45,6 @@ export const useDiscounts = defineQuery(() => {
   return { discounts, ...rest }
 })
 
-export const useFavoritesCount = defineQuery(() => {
-  const authUtils = useAuthUtils()
-
-  const { data: favoritesCount, state: _, ...rest } = useQuery({
-    key: () => ['favorites', 'count', { userId: authUtils.user?.id }],
-    query: () => authUtils.isCustomer ? useApi().customer.getFavoritesCount.query() : Promise.resolve(0),
-  })
-  return { favoritesCount, ...rest }
-})
-
 export const useFavoriteModels = defineQuery(() => {
   const authUtils = useAuthUtils()
   const { data, state: _, ...rest } = useQuery({
@@ -65,17 +53,8 @@ export const useFavoriteModels = defineQuery(() => {
     enabled: () => authUtils.isCustomer,
   })
   const favoriteModels = computed(() => data.value || [])
-  return { favoriteModels, ...rest }
-})
-
-export const useCartItemsCount = defineQuery(() => {
-  const authUtils = useAuthUtils()
-
-  const { data: cartItemsCount, state: _, ...rest } = useQuery({
-    key: () => ['cart-items', 'count', { userId: authUtils.user?.id }],
-    query: () => authUtils.isCustomer ? useApi().customer.getCartItemsCount.query() : Promise.resolve(0),
-  })
-  return { cartItemsCount, ...rest }
+  const favoritesCount = computed(() => favoriteModels.value.length || undefined)
+  return { favoriteModels, favoritesCount, ...rest }
 })
 
 export const useCartItems = defineQuery(() => {
@@ -86,5 +65,6 @@ export const useCartItems = defineQuery(() => {
     enabled: () => authUtils.isCustomer,
   })
   const cartItems = computed(() => data.value || [])
-  return { cartItems, ...rest }
+  const cartItemsCount = computed(() => cartItems.value.length || undefined)
+  return { cartItems, cartItemsCount, ...rest }
 })

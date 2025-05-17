@@ -82,7 +82,7 @@ const { cartItems, status, refresh } = useCartItems()
                 class="w-fit mt-6"
                 color="neutral"
                 variant="soft"
-                to="/"
+                to="/catalog"
               >
                 В каталог
               </UButton>

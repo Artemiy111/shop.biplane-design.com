@@ -8,7 +8,7 @@ const { as = 'h1', size = 'heading' } = defineProps<{
 <template>
   <component
     :is="as"
-    class="mt-6 mb-4"
+    class="mt-6 mb-4 font-semibold"
     :class="size === 'heading' ? 'text-heading' : 'text-subheading'"
   >
     <slot />
