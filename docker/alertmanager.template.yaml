@@ -4,8 +4,8 @@ global:
 receivers:
   - name: 'telegram'
     telegram_configs:
-      - bot_token: '7849022071:AAGs2d3wd8wKFmGTty4QBSn-3zS7OVkhSVE'
-        chat_id: 1645750656
+      - bot_token: '${TELEGRAM_BOT_TOKEN}'
+        chat_id: ${TELEGRAM_CHAT_ID}
         api_url: 'https://api.telegram.org'
         message: '{{ template "telegram.default.message" . }}'
         # message: |

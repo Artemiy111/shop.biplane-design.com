@@ -131,11 +131,22 @@ services:
 
   alertmanager:
     image: prom/alertmanager:latest
+    # build:
+      # context: ./docker
+      # dockerfile: ./alertmanager.dockerfile
     command:
+      # - sh -c 'envsubst < /etc/alertmanager/alertmanager.template.yaml > /etc/alertmanager/alertmanager.yaml && alertmanager --config.file=/etc/alertmanager/alertmanager.yaml'
+    # - '/bin/sh'
+    # - '-c'
+    # - 'envsubst < /etc/alertmanager/alertmanager.template.yaml > /etc/alertmanager/alertmanager.yaml && alertmanager --config.file=/etc/alertmanager/alertmanager.yaml'
+      # - -c
+      # - "envsubst < /etc/alertmanager/alertmanager.template.yml > /etc/alertmanager/config.yml && /bin/alertmanager --config.file=/etc/alertmanager/config.yml"
       - --config.file=/etc/alertmanager/alertmanager.yml
     ports:
       - "9093:9093"
+    # env_file: .env
     volumes:
+      # - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
       - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
     depends_on:
       - prometheus
@@ -143,7 +154,6 @@ services:
       - app
     security_opt:
       - label=disable
-    privileged: true
   grafana:
     image: grafana/grafana:latest
     volumes:
