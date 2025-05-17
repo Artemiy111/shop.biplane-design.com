@@ -1,34 +1,37 @@
 receivers:
   otlp:
     protocols:
-      grpc: {}
-      http: {}
+      grpc:
+      http:
 
 processors:
-  batch: {}
+  batch:
 
 exporters:
-  logging:
-    logLevel: debug
+  debug:
+    verbosity: detailed
   prometheus:
-    endpoint: "prometheus:9090"
+    endpoint: "0.0.0.0:9090"
   loki:
     endpoint: "http://loki:3100/loki/api/v1/push"
-  tempo:
-    endpoint: "tempo:9093"
-    insecure: true
+  otlp/tempo:
+    endpoint: "tempo:4320"
+    tls:
+      insecure: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [tempo]
+      exporters: [otlp/tempo, debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus]
+      # prometheusremotewrite:
+      #   endpoint: "http://prometheus:9090/api/v1/write"
+      exporters: [prometheus, debug] # prometheus сам скрейпит коллектор
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [loki]
+      exporters: [loki, debug]

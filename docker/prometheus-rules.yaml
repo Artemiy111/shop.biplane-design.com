@@ -1,0 +1,59 @@
+# groups:
+# - name: NodeExporterAlerts
+#   rules:
+#   - alert: CPUHighUsage
+#     expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 10 # Условие: idle CPU < 80% за 5 минут (т.е. использование > 20%)
+#     for: 1m
+#     labels:
+#       severity: warning # (можно использовать critical, major, minor, warning, info)
+#     annotations:
+#       summary: "Высокая загрузка CPU на узле {{ $labels.instance }}"
+#       description: "Использование CPU на узле {{ $labels.instance }} составляет {{ $value }}%"
+
+#   - alert: FilesystemNearlyFull
+#     expr: node_filesystem_avail_bytes{fstype!="squashfs",mountpoint="/"} / node_filesystem_size_bytes{fstype!="squashfs",mountpoint="/"} * 100 < 10
+#     for: 5m
+#     labels:
+#       severity: critical
+#     annotations:
+#       summary: "Свободное место на {{ $labels.mountpoint }} на узле {{ $labels.instance }} меньше 10%"
+#       description: "Осталось {{ $value | humanizePercentage }} свободного места на {{ $labels.mountpoint }}"
+
+#   - alert: HighMemoryUsage
+#     expr: node_memory_MemAvailable_bytes < 500 * 1024 * 1024
+#     for: 5m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: "Низкий уровень доступной памяти на узле {{ $labels.instance }}"
+#       description: "Доступно только {{ $value | humanize1024Bytes }} памяти"
+
+#   - alert: HighNetworkTraffic
+#     expr: sum by (instance, device) (rate(node_network_transmit_bytes_total{device!~"lo|veth.*"}[5m])) > 10 * 1024 * 1024 # > 10 MB/s
+#     for: 5m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: "Высокий исходящий сетевой трафик на {{ $labels.instance }} интерфейс {{ $labels.device }}"
+#       description: "Скорость исходящего трафика составляет {{ $value | humanizeBytes }}/s"
+
+#   - alert: FilesystemIsReadOnly
+#     expr: node_filesystem_readonly == 1
+#     for: 1m
+#     labels:
+#       severity: critical
+#     annotations:
+#       summary: "Файловая система {{ $labels.mountpoint }} на узле {{ $labels.instance }} стала доступна только для чтения"
+#       description: "Произошла ошибка, файловая система перешла в режим только для чтения."
+
+
+groups:
+- name: test-rules
+  rules:
+  - alert: TestAlert
+    expr: up == 1
+    for: 5s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Test alert"

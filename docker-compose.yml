@@ -9,7 +9,7 @@
 #   volumes:
 #     - pgadmin_data:/var/lib/pgadmin
 #   networks:
-#     - app-network
+#     - app
 
 services:
   postgres:
@@ -24,85 +24,148 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - app
     security_opt:
       - label=disable 
 
-  # rabbitmq:
-  #   image: rabbitmq:4-management
-  #   ports:
-  #     - "15672:15672"
-  #     - "5672:5672"
-  #   volumes:
-  #     - rabbitmq_data:/var/lib/rabbitmq
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    security_opt:
+      - label=disable 
 
-  # otel-collector:
-  #   image: otel/opentelemetry-collector
-  #   command: --config=/etc/otel-config.yaml
-  #   volumes:
-  #     - ./docker/otel-config.yaml:/etc/otel-config.yaml
-  #   ports:
-  #     - "4317:4317"
-  #     - "4318:4318"
-  #   depends_on:
-  #     - tempo
-  #     - loki
-  #     - prometheus
-  #   networks:
-  #     - app-network
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    entrypoint: ["/otelcol-contrib"]
+    command: ["--config=/etc/otel-config.yaml"]
+    volumes:
+      - ./docker/otel-config.yaml:/etc/otel-config.yaml
+    ports:
+      - "4317:4317"  # OTLP gRPC
+      - "4318:4318"  # OTLP HTTP
+      - "8889:8889"  # Metrics
+    depends_on:
+      - tempo
+        # condition: service_healthy
+      - loki
+        # condition: service_healthy
+      - prometheus
+        # condition: service_healthy
+    networks:
+      - app
+    security_opt:
+      - label=disable
 
-  # tempo:
-  #   image: grafana/tempo:latest
-  #   command: -config.file=/etc/tempo.yaml
-  #   volumes:
-  #     - ./docker/tempo.yaml:/etc/tempo.yaml
-  #     - tempo_data:/tmp/tempo
-  #   ports:
-  #     - "3200:3200"
-  #     - "9093:9093"
-  #   networks:
-  #     - app-network
+  tempo:
+    image: grafana/tempo:latest
+    command: -config.file=/etc/tempo.yaml
+    volumes:
+      - ./docker/tempo.yaml:/etc/tempo.yaml
+      - tempo_data:/tmp/tempo
+    ports:
+      - "3200:3200"   # HTTP
+      - "4320:4320"    # OTLP gRPC
+      - "9095:9095"
+      # - "9093:9093"    # gRPC для внутренней коммуникации
+    networks:
+      - app
+    security_opt:
+      - label=disable 
 
-  # loki:
-  #   image: grafana/loki:latest
-  #   # command: -config.file=/etc/loki/local-config.yaml -validation.allow-structured-metadata=false
-  #   volumes:
-  #     - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
-  #     - loki_data:/tmp/loki
-  #   ports:
-  #     - "3100:3100"
-  #   networks:
-  #     - app-network
+  loki:
+    image: grafana/loki:latest
+    # command: -config.file=/etc/loki/local-config.yaml -validation.allow-structured-metadata=false
+    volumes:
+      - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
+      - loki_data:/var/lib/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - app
+    security_opt:
+      - label=disable
 
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   volumes:
-  #     - ./docker/prometheus.yaml:/etc/prometheus/prometheus.yml
-  #     - prometheus_data:/prometheus
-  #   ports:
-  #     - "9090:9090"
-  #   networks:
-  #     - app-network
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./docker/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus-rules.yaml:/etc/prometheus/prometheus-rules.yaml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - app
+    security_opt:
+      - label=disable
 
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   volumes:
-  #     - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-  #     - grafana_data:/var/lib/grafana
-  #   ports:
-  #     - "3001:3000"
-  #   depends_on:
-  #     - tempo
-  #     - loki
-  #     - prometheus
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=admin
-  #     - GF_SECURITY_ADMIN_PASSWORD=admin
-  #   networks:
-  #     - app-network
+  node-exporter:
+      image: quay.io/prometheus/node-exporter:latest
+      ports:
+        - "9100:9100"
+      command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/host/root'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+      - '--no-collector.wifi'
+      - '--no-collector.hwmon'
+      volumes:
+        - /proc:/host/proc:ro
+        - /sys:/host/sys:ro
+        - /:/host/root:ro
+        - /etc/os-release:/etc/os-release:ro
+        - /etc/hostname:/etc/host_hostname:ro
+      networks: 
+        - app
+      security_opt:
+        - label=disable
+        - seccomp=unconfined
+      privileged: true
+      environment:
+      - "PODMAN_USERNS=keep-id"
+      # restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+    depends_on:
+      - prometheus
+    networks:
+      - app
+    security_opt:
+      - label=disable
+    privileged: true
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - tempo
+      - loki
+      - prometheus
+      - alertmanager
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - app
+    security_opt:
+      - label=disable 
       
 networks:
-  app-network:
+  app:
     driver: bridge
 
 volumes:

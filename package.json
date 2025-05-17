@@ -20,7 +20,8 @@
     "db:drop": "bun ./server/db/drop.ts",
     "db:create": "docker exec -it biplane-shop-postgres-1 psql -U postgres -c \"CREATE DATABASE biplane_shop;\"",
     "db:destroy": "docker exec -it biplane-shop-postgres-1 psql -U postgres -c \"DROP DATABASE IF EXISTS biplane_shop;\"",
-    "db:init": "bun run db:destroy && bun run db:create && bun run db:push && bun run db:seed"
+    "db:init": "bun run db:destroy && bun run db:create && bun run db:push && bun run db:seed",
+    "db:studio": "drizzle-kit studio --verbose",
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.43",

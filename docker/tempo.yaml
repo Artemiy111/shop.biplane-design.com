@@ -6,10 +6,11 @@ distributor:
     otlp:
       protocols:
         grpc:
+          endpoint: "0.0.0.0:4320"
         http:
 
 storage:
   trace:
     backend: local
     local:
-      path: /tmp/tempo
+      path: /tmp/tempo/blocks

@@ -1,0 +1,35 @@
+global:
+  resolve_timeout: 5m
+
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token: '7849022071:AAGs2d3wd8wKFmGTty4QBSn-3zS7OVkhSVE'
+        chat_id: 1645750656
+        api_url: 'https://api.telegram.org'
+        message: '{{ template "telegram.default.message" . }}'
+        # message: |
+        #   *Alert:* {{ .CommonLabels.alertname }}
+        #   *Severity:* {{ .CommonLabels.severity }}
+        #   *Summary:* {{ .CommonAnnotations.summary }}
+        #   *Description:* {{ .CommonAnnotations.description }}
+        #   *Details:*
+        #   {{ range .Alerts }}
+        #     Labels:
+        #     {{ range .Labels.SortedPairs }} - {{ .Name }}: {{ .Value }}
+        #     {{ end }}
+        #     Annotations:
+        #     {{ range .Annotations.SortedPairs }} - {{ .Name }}: {{ .Value }}
+        #     {{ end }}
+        #     Source: {{ .Source }}
+        #     Starts At: {{ .StartsAt }}
+        #   {{ end }}
+        # parse_mode: 'MarkdownV2'
+        parse_mode: "HTML"
+
+route:
+  group_by: ['alertname', 'cluster', 'service'] # Группировать алерты по этим меткам
+  group_wait: 10s # Время ожидания перед первой отправкой группы алертов
+  group_interval: 1m # Интервал между отправками новых алертов в группе
+  repeat_interval: 4h # Интервал повторной отправки сработавших алертов
+  receiver: 'telegram'
