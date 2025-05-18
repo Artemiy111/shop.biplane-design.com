@@ -68,3 +68,27 @@ export const useCartItems = defineQuery(() => {
   const cartItemsCount = computed(() => cartItems.value.length || undefined)
   return { cartItems, cartItemsCount, ...rest }
 })
+
+export const useOptimizedImagesSubscription = (modelSlug: Ref<string>) => {
+  const qc = useQueryCache()
+  const toast = useToast()
+  const status = ref<'pending' | 'started' | 'stoped'>('pending')
+  const subscription = useApi().admin.images.onImagesOptimized.subscribe(undefined, {
+    onStarted: () => {
+      status.value = 'started'
+    },
+    onError: (error) => {
+      if (error.message === 'An error was suppressed during disposal.') return
+      toast.add({ color: 'error', title: `Ошибка обработки картинок: ${error.message}` })
+    },
+    onData: (data) => {
+      toast.add({ color: 'info', title: `Картинка обработана: ${data.imageId}` })
+      qc.invalidateQueries({ key: ['models', { slug: modelSlug.value }] })
+    },
+    onStopped() {
+      status.value = 'stoped'
+    },
+  })
+
+  return { optimizedImagesSubscription: subscription, status }
+}

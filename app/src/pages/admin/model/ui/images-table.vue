@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, GripVerticalIcon, LinkIcon, LoaderCircleIcon, RefreshCwIcon, RefreshCwOffIcon } from 'lucide-vue-next'
 import type { TableColumn } from '@nuxt/ui'
 import { useSortable } from '@vueuse/integrations/useSortable'
 
@@ -13,6 +13,7 @@ import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
 const props = defineProps<{
   model: ModelDto
+  optimizedSubStatus: 'pending' | 'started' | 'stoped'
 }>()
 
 const { model } = toRefs(props)
@@ -103,7 +104,7 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
     header: 'Имя файла',
   },
   {
-    id: 'isGrouped',
+    id: 'optimized',
     enableHiding: false,
   },
   {
@@ -239,7 +240,36 @@ const columnPinning = ref({
       </div>
     </template>
 
-    <template #isGrouped-cell="{ row }">
+    <template #optimized-header="{ row }">
+      <div class="w-full grid justify-center">
+        <UIcon
+          :name="props.optimizedSubStatus === 'pending' ? 'i-lucide-loader-circle' : props.optimizedSubStatus === 'started' ? 'i-lucide-check' : 'i-lucide-refresh-cw-off'"
+          class="size-5"
+          :class="[props.optimizedSubStatus === 'pending' && 'animate-spin']"
+          :color="props.optimizedSubStatus === 'pending' ? 'text-dimmed' : 'text-red-100'"
+        />
+        <!-- <LoaderCircleIcon
+          v-if="props.optimizedSubStatus === 'pending'"
+          absolute-stroke-width
+          :stroke-width="1.5"
+          class="size-5"
+        />
+        <RefreshCwIcon
+          v-else-if="props.optimizedSubStatus === 'started'"
+          absolute-stroke-width
+          :stroke-width="1.5"
+          class="size-5"
+        />
+        <RefreshCwOffIcon
+          v-else
+          absolute-stroke-width
+          :stroke-width="1.5"
+          class="size-5"
+        /> -->
+      </div>
+    </template>
+
+    <template #optimized-cell="{ row }">
       <UButton
         v-if="isOriginal(row.original) && row.original.optimized.length > 1"
         variant="ghost"

@@ -36,11 +36,9 @@ const { deleteImage } = useDeleteModelImageMutation(model)
 const onUpdateImage = async (event: FormSubmitEvent<UpdateImageSchema>) => {
   await updateImage(event.data)
   isEditModalOpen.value = false
-  console.log(isEditModalOpen.value)
 }
 
 // const closeEditModal = (value: boolean) => {
-//   console.log(value)
 //   isEditModalOpen.value = value
 // }
 

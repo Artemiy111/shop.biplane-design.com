@@ -50,7 +50,7 @@ export const updateDiscountSchema = createDiscountSchema.extend({
 export type CreateDiscountSchema = z.infer<typeof createDiscountSchema>
 export type UpdateDiscountSchema = z.infer<typeof updateDiscountSchema>
 
-export const uploadImageSchema = zfd.formData({ image: zfd.file(), modelId: zfd.text(idSchema) })
+export const uploadImageSchema = zfd.formData({ image: zfd.file(), modelId: zfd.text(idSchema), modelSlug: zfd.text() })
 
 export const updateImageSchema = z.object({
   id: idSchema,

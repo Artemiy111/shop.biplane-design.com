@@ -21,7 +21,6 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
     rememberMe: true,
   }, {
     onError: (ctx) => {
-      console.log(ctx)
       if (ctx.error.code === 'INVALID_EMAIL_OR_PASSWORD') {
         toast.add({ color: 'error', title: 'Неверный email или пароль' })
       }

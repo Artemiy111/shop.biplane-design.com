@@ -7,7 +7,7 @@ import DiscountsSection from './ui/discounts-section.vue'
 import { revitVersions } from '~/src/shared/config/constants'
 import { updateModelSchema, type UpdateModelSchema } from '~/src/shared/config/validation/db'
 import { useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
-import { useCategoriesSimple, useModelBySlug } from '~/src/shared/models/queries'
+import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import type { FileDb } from '~~/server/db/schema'
@@ -90,23 +90,24 @@ const filesTableColumns: TableColumn<FileDb>[] = [
 ]
 
 const { uploadImage } = useUploadModelImageMutation(model)
+const { optimizedImagesSubscription, status: subStatus } = useOptimizedImagesSubscription(slug)
+onUnmounted(() => optimizedImagesSubscription.unsubscribe())
 
 const isUploading = ref(false)
 const filesString = ref('')
 
 const onUploadImage = async (event: Event) => {
   isUploading.value = true
-  console.log(filesString.value)
   const target = event.target as HTMLInputElement
   const images = Array.from(target.files!)
   if (!images.length || !model.value) return
-  const modelId = model.value.id
+  const m = model.value
 
   await Promise.allSettled(images.map(async (image) => {
     const formData = new FormData()
     formData.append('image', image)
-    formData.append('modelId', modelId)
-    console.log(formData)
+    formData.append('modelId', m.id)
+    formData.append('modelSlug', m.slug)
     await uploadImage(formData)
   }))
   isUploading.value = false
@@ -264,6 +265,7 @@ const onUploadImage = async (event: Event) => {
 
           <ImagesTable
             :model="model"
+            :optimized-sub-status="subStatus"
           />
         </section>
       </div>

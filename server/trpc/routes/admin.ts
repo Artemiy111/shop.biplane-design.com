@@ -1,18 +1,22 @@
+import { on } from 'events'
 import { eq, max, and, sql, lte, gt, gte, lt } from 'drizzle-orm'
 import { z } from 'zod'
 import sharp from 'sharp'
+import { Mutex } from 'redis-semaphore'
 import { idSchema, requiredString } from '~/src/shared/config/validation/base'
 
 import { updateModelSchema, createModelSchema, updateFileSchema, createDiscountSchema, updateDiscountSchema, updateImageSchema, uploadImageSchema, updateImageOrderSchema } from '~/src/shared/config/validation/db'
 import { db } from '~~/server/db'
-import { discountsT, filesT, imagesOptimizedT, imagesT, imageToModelT, modelsT } from '~~/server/db/schema'
+import { discountsT, filesT, imagesT, imageToModelT, modelsT } from '~~/server/db/schema'
 import { logger } from '~~/server/lib/logger'
 import { router, adminProcedure } from '~~/server/trpc'
 import { minio } from '~~/server/lib/minio'
 import { env } from '~~/server/lib/env'
 import { makeId } from '~/src/shared/lib/id'
-import type { ImageMimeType, ImageOptimizedMimeType } from '~/src/shared/config/constants/mime-types'
-import { extToMime } from '~/src/shared/lib/image'
+import type { ImageMimeType } from '~/src/shared/config/constants/mime-types'
+import { redis } from '~~/server/lib/redis'
+import { imageOptimizationQueue } from '~~/server/services/image-optimization-queue'
+import { ee } from '~~/server/lib/ee'
 
 export const adminRouter = router({
   getCategoriesSimple: adminProcedure.query(async () => {
@@ -69,65 +73,26 @@ export const adminRouter = router({
   }),
 
   images: router({
-    uploadImage: adminProcedure.input(data => uploadImageSchema.parse(data) as { modelId: string, image: File }).mutation(async ({ input }) => {
+    uploadImage: adminProcedure.input(data => uploadImageSchema.parse(data) as { modelId: string, modelSlug: string, image: File }).mutation(async ({ input }) => {
+      const lockKey = `lock:${input.modelId}:images-order`
+      const mutex = new Mutex(redis, lockKey)
+
       try {
+        const fileParts = input.image.name.split('.')
+        const mimeType = input.image.type as ImageMimeType
+        const ext = fileParts.at(-1)
+        const originalFilename = fileParts.slice(0, -1).join('.')
+        const buffer = Buffer.from(await input.image.arrayBuffer())
+        const metadata = await sharp(buffer).metadata()
+        const id = makeId()
+
+        await mutex.acquire()
+        logger.info(`Acquired lock ${mutex.isAcquired} ${lockKey} ${id}`)
+        const [{ maxSortOrder }] = await db.select({ maxSortOrder: max(imageToModelT.sortOrder) })
+          .from(imageToModelT).where(eq(imageToModelT.modelId, input.modelId))
+        const sortOrder = Number(maxSortOrder) + 1
+        logger.warn(`Sort order: ${sortOrder}`)
         await db.transaction(async (tx) => {
-          logger.info('uploadImage')
-          const fileParts = input.image.name.split('.')
-          const mimeType = input.image.type as ImageMimeType
-          const ext = fileParts.at(-1)
-          const originalFilename = fileParts.slice(0, -1).join('.')
-          const buffer = Buffer.from(await input.image.arrayBuffer())
-          const metadata = await sharp(buffer).metadata()
-          const id = makeId()
-
-          const generateOptimizedImages = async (id: string, buffer: Buffer) => {
-            const optimizedExts = ['avif', 'webp'] as const
-            const optimizedWidths = [400, 800, 1200]
-
-            const optimizedS3 = (await Promise.all(optimizedExts.map(ext => Promise.all(optimizedWidths.map(async (width) => {
-              const newId = makeId()
-              const s3Filename = `${width}.${ext}`
-              const s3Path = `images/optimized/${id}/${s3Filename}`
-              const data = sharp(buffer)
-                .resize({ width })
-                .toFormat(ext)
-              // const metadata = await data.metadata()
-              const { data: optimizedBuffer, info: metadata } = await data.toBuffer({ resolveWithObject: true })
-
-              logger.info(`Optimized ${id} ${width}.${ext}`)
-              console.log(metadata)
-              return {
-                imageId: id,
-                id: newId,
-                s3Path,
-                metadata,
-                width: metadata.width!,
-                height: metadata.height!,
-                size: metadata.size!,
-                ext,
-                mimeType: extToMime(ext) as ImageOptimizedMimeType,
-                buffer: optimizedBuffer,
-              }
-            }))))).flat()
-
-            const optimizedDb = optimizedS3.map(({ imageId, id, width, height, size, mimeType }) => ({
-              imageId: imageId,
-              id,
-              width,
-              height,
-              size,
-              mimeType,
-            }))
-
-            return {
-              optimizedS3,
-              optimizedDb,
-            }
-          }
-
-          const optimizedPromise = generateOptimizedImages(id, buffer)
-
           await tx.insert(imagesT).values({
             id,
             originalFilename,
@@ -137,35 +102,43 @@ export const adminRouter = router({
             size: metadata.size,
           })
 
-          const [{ maxSortOrder }] = (await tx.select({ maxSortOrder: max(imageToModelT.sortOrder) }).from(imageToModelT).where(eq(imageToModelT.modelId, input.modelId)))
-          const sortOrder = maxSortOrder ? maxSortOrder + 1 : 1
-
           await tx.insert(imageToModelT).values({
             modelId: input.modelId,
             imageId: id,
             sortOrder,
           })
 
-          const { optimizedS3, optimizedDb } = await optimizedPromise
-
-          await tx.insert(imagesOptimizedT).values(optimizedDb)
-
           const s3Filename = `${id}.${ext}`
           const s3Path = `images/original/${s3Filename}`
-
-          logger.info('uploadImage to s3')
           await minio.putObject(env.S3_BUCKET, s3Path, buffer, undefined, { 'content-type': mimeType })
+        })
+        await mutex.release()
+        logger.info(`Released lock ${mutex.isAcquired} ${lockKey} ${id}`)
 
-          Promise.all(optimizedS3.map(async ({ s3Path, buffer, width, ext, mimeType }) => {
-            logger.info(`uploadImage to s3 optimized ${width} ${ext}`)
-            await minio.putObject(env.S3_BUCKET, s3Path, buffer, size, { 'content-type': mimeType })
-          }))
-          logger.info('uploadImage to s3 done')
-        }, { isolationLevel: 'serializable' })
+        imageOptimizationQueue.add('image-optimization', { model: { id: input.modelId, slug: input.modelSlug }, imageId: id, buffer: buffer.toString('base64') })
       }
       catch (e) {
-        logger.error('uploadImage error', e)
         console.log(e)
+        throw e
+      }
+      finally {
+        await mutex.release()
+      }
+    }),
+
+    onImagesOptimized: adminProcedure.subscription(async function* (opts) {
+      logger.info('Subscribing to optimized images')
+
+      // const asyncIterator = queueEventsToAsyncIterator(imageOptimizationEvents, 'completed', opts.signal)
+
+      // for await (const event of asyncIterator) {
+      //   yield event.returnvalue // или как нужно
+      // }
+
+      for await (const [data_] of on(ee, 'optimized', { signal: opts.signal })) {
+        logger.info(`GOT event: ${data_.imageId}`)
+        const data = data_ as { model: { id: string, slug: string }, imageId: string }
+        yield data
       }
     }),
 
@@ -201,7 +174,7 @@ export const adminRouter = router({
             eq(imageToModelT.modelId, input.modelId),
             eq(imageToModelT.imageId, input.imageId),
           ))
-      }, { isolationLevel: 'serializable', deferrable: true })
+      }, { isolationLevel: 'read uncommitted', deferrable: true })
     }),
     deleteImage: adminProcedure.input(z.object({ modelId: idSchema, imageId: idSchema })).mutation(async ({ input }) => {
       await db.transaction(async (tx) => {

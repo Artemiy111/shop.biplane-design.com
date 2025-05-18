@@ -1,5 +1,7 @@
 # shop.biplane-design.com
 
+BUGS:
+- иконка темы в хедере исчезает
 
 TODO:
 - [ ] добавить plauseble, grafana

@@ -166,9 +166,7 @@ export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefi
   const { mutateAsync, ...rest } = useMutation({
     mutation: async (formData: FormData) => {
       if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
-      console.log('uploadImage', formData)
-      await useApi().admin.images.uploadImage.mutate(formData as unknown as { modelId: string, image: File })
-      console.log('uploadImage done')
+      await useApi().admin.images.uploadImage.mutate(formData as unknown as { modelId: string, modelSlug: string, image: File })
     },
     onError: () => {
       toast.add({ color: 'error', title: 'Не удалось загрузить картинку' })

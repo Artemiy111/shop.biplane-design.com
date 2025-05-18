@@ -16,6 +16,6 @@ pool.on('error', (err) => {
   logger.error('Postgres connection error', err)
 })
 
-export const db = drizzle({ client: pool, casing: 'snake_case', relations, logger: true })
+export const db = drizzle({ client: pool, casing: 'snake_case', relations, logger: false })
 
 export type Db = typeof db

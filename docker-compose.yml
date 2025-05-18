@@ -26,7 +26,19 @@ services:
     networks:
       - app
     security_opt:
-      - label=disable 
+      - label=disable
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app
+    security_opt:
+      - label=disable
+    # command: redis-server --save "" --appendonly no
 
   rabbitmq:
     image: rabbitmq:4-management
@@ -181,6 +193,7 @@ networks:
 volumes:
   postgres_data:
   pgadmin_data:
+  redis_data:
   rabbitmq_data:
   tempo_data:
   loki_data:
