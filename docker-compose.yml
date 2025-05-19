@@ -62,11 +62,8 @@ services:
       - "8889:8889"  # Metrics
     depends_on:
       - tempo
-        # condition: service_healthy
       - loki
-        # condition: service_healthy
       - prometheus
-        # condition: service_healthy
     networks:
       - app
     security_opt:
@@ -80,9 +77,8 @@ services:
       - tempo_data:/tmp/tempo
     ports:
       - "3200:3200"   # HTTP
-      - "4320:4320"    # OTLP gRPC
+      - "4320:4320"   # OTLP gRPC
       - "9095:9095"
-      # - "9093:9093"    # gRPC для внутренней коммуникации
     networks:
       - app
     security_opt:
@@ -90,7 +86,6 @@ services:
 
   loki:
     image: grafana/loki:latest
-    # command: -config.file=/etc/loki/local-config.yaml -validation.allow-structured-metadata=false
     volumes:
       - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
       - loki_data:/var/lib/loki
@@ -143,22 +138,11 @@ services:
 
   alertmanager:
     image: prom/alertmanager:latest
-    # build:
-      # context: ./docker
-      # dockerfile: ./alertmanager.dockerfile
     command:
-      # - sh -c 'envsubst < /etc/alertmanager/alertmanager.template.yaml > /etc/alertmanager/alertmanager.yaml && alertmanager --config.file=/etc/alertmanager/alertmanager.yaml'
-    # - '/bin/sh'
-    # - '-c'
-    # - 'envsubst < /etc/alertmanager/alertmanager.template.yaml > /etc/alertmanager/alertmanager.yaml && alertmanager --config.file=/etc/alertmanager/alertmanager.yaml'
-      # - -c
-      # - "envsubst < /etc/alertmanager/alertmanager.template.yml > /etc/alertmanager/config.yml && /bin/alertmanager --config.file=/etc/alertmanager/config.yml"
       - --config.file=/etc/alertmanager/alertmanager.yml
     ports:
       - "9093:9093"
-    # env_file: .env
     volumes:
-      # - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
       - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
     depends_on:
       - prometheus
