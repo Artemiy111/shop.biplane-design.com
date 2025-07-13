@@ -40,7 +40,8 @@ export default defineNuxtConfig({
   },
 
   dir: {
-    pages: 'routes',
+    pages: '_routes',
+    middleware: '_middleware',
   },
 
   alias: {
