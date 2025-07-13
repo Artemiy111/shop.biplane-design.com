@@ -12,8 +12,7 @@ import {
 import type { LucideProps } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 
-import { useAuthUtils } from '~/shared/models/auth-utils'
-import { useCartItems, useFavoriteModels } from '~/shared/models/queries'
+import { useAuthUtils, useCartItems, useFavoriteModels } from '~/shared/model'
 import { Logo } from '~/shared/ui/kit'
 
 const colorMode = useColorMode()

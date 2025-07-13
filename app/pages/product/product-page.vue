@@ -2,11 +2,8 @@
 import type { BreadcrumbItem } from '@nuxt/ui'
 import { HeartIcon, LoaderCircleIcon } from 'lucide-vue-next'
 
-import { cn } from '~/shared/lib/cn'
-import { imageUrl } from '~/shared/lib/image'
-import { formatPrice, getPriceAfterDiscount } from '~/shared/lib/price'
-import { useToggleIsFavorite, useToggleIsInCart } from '~/shared/models/mutations'
-import { useModelBySlug } from '~/shared/models/queries'
+import { cn, formatPrice, getPriceAfterDiscount, imageUrl } from '~/shared/lib'
+import { useModelBySlug, useToggleIsFavorite, useToggleIsInCart } from '~/shared/model'
 import { PageHeadingSkeleton } from '~/shared/ui/blocks'
 
 const { isModel, isSet, slug } = defineProps<{

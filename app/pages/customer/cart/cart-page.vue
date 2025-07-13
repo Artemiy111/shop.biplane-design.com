@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { imageUrl } from '~/shared/lib/image'
-import { formatPrice, getPriceAfterDiscount } from '~/shared/lib/price'
-import { useCartItems } from '~/shared/models/queries'
+import { formatPrice, getPriceAfterDiscount, imageUrl } from '~/shared/lib'
+import { useCartItems } from '~/shared/model'
 import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui/blocks'
 
 const { cartItems, status, refresh } = useCartItems()

@@ -1,4 +1,4 @@
-import { authClient } from '~/shared/lib/auth-client'
+import { authClient } from '~/shared/lib'
 // import { useAuthUtils } from '~/shared/models/auth-utils'
 
 export default defineNuxtRouteMiddleware(async () => {

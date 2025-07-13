@@ -3,11 +3,9 @@ import type { TableColumn } from '@nuxt/ui'
 import { useSortable } from '@vueuse/integrations/useSortable'
 import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
 
-import { dateFormatter } from '~/shared/lib/date-formatter'
-import { getReadableSize } from '~/shared/lib/get-readable-size'
-import { imageUrl, mimeToExt } from '~/shared/lib/image'
-import { useUpdateModelImageOrder } from '~/shared/models/mutations'
-import type { ModelDto } from '~/shared/models/queries'
+import { dateFormatter, formatBytes, imageUrl, mimeToExt } from '~/shared/lib'
+import { useUpdateModelImageOrder } from '~/shared/model'
+import type { ModelDto } from '~/shared/model'
 import { FancyId } from '~/shared/ui/kit'
 
 import ImagesTableActions from './images-table-actions.vue'
@@ -131,7 +129,7 @@ const imagesTableColumns: TableColumn<ImageForTable>[] = [
   {
     accessorKey: 'size',
     header: 'Размер',
-    cell: ({ row }) => row.original.size ? getReadableSize(row.original.size) : '',
+    cell: ({ row }) => row.original.size ? formatBytes(row.original.size) : '',
   },
   {
     accessorKey: 'createdAt',

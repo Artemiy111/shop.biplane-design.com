@@ -1,4 +1,8 @@
-export const getReadableSize = (bytes: number, locale: string = 'ru-RU') => {
+import { DateFormatter } from '@internationalized/date'
+
+export const dateFormatter = new DateFormatter('ru-RU', { dateStyle: 'long' })
+
+export const formatBytes = (bytes: number, locale: string = 'ru-RU') => {
   if (bytes === 0) return '0 Б'
 
   const units = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ']
@@ -12,4 +16,8 @@ export const getReadableSize = (bytes: number, locale: string = 'ru-RU') => {
   }).format(size)
 
   return `${formatted} ${units[i]}`
+}
+
+export const formatPrice = (price: number, withCurrency = true) => {
+  return `${price.toLocaleString('ru-RU')}${withCurrency ? ' ₽' : ''}`
 }

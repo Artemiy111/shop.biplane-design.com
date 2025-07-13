@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFavoriteModels } from '~/shared/models/queries'
+import { useFavoriteModels } from '~/shared/model'
 import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui/blocks'
 
 const { favoriteModels, status, refresh } = useFavoriteModels()

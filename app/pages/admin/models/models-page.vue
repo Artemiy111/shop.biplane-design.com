@@ -2,8 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 import { NuxtImg, ULink } from '#components'
 
-import { imageUrl } from '~/shared/lib/image'
-import { formatPrice, getPriceAfterDiscount } from '~/shared/lib/price'
+import { formatPrice, getPriceAfterDiscount, imageUrl } from '~/shared/lib'
 import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui/blocks'
 import { FancyId } from '~/shared/ui/kit'
 

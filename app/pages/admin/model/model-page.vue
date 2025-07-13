@@ -2,12 +2,10 @@
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui'
 
 import { revitVersions } from '~/shared/config/constants'
-import { updateModelSchema } from '~/shared/config/validation/db'
-import type { UpdateModelSchema } from '~/shared/config/validation/db'
-import { dateFormatter } from '~/shared/lib/date-formatter'
-import { getReadableSize } from '~/shared/lib/get-readable-size'
-import { useUpdateModel, useUploadModelImage } from '~/shared/models/mutations'
-import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription } from '~/shared/models/queries'
+import { updateModelSchema } from '~/shared/config/validation'
+import type { UpdateModelSchema } from '~/shared/config/validation'
+import { dateFormatter, formatBytes } from '~/shared/lib'
+import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription, useUpdateModel, useUploadModelImage } from '~/shared/model'
 import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui/blocks'
 import { FancyId } from '~/shared/ui/kit'
 
@@ -78,7 +76,7 @@ const filesTableColumns: TableColumn<FileDb>[] = [
   {
     id: 'size',
     header: 'Размер',
-    cell: ({ row }) => getReadableSize(row.original.size),
+    cell: ({ row }) => formatBytes(row.original.size),
   },
   {
     id: 'createdAt',

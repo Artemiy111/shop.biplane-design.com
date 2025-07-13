@@ -6,8 +6,17 @@ import sharp from 'sharp'
 import { z } from 'zod'
 
 import type { ImageMimeType } from '~/shared/config/constants/mime-types'
+import {
+  createDiscountSchema,
+  createModelSchema,
+  updateDiscountSchema,
+  updateFileSchema,
+  updateImageOrderSchema,
+  updateImageSchema,
+  updateModelSchema,
+  uploadImageSchema,
+} from '~/shared/config/validation'
 import { idSchema, requiredString } from '~/shared/config/validation/base'
-import { createDiscountSchema, createModelSchema, updateDiscountSchema, updateFileSchema, updateImageOrderSchema, updateImageSchema, updateModelSchema, uploadImageSchema } from '~/shared/config/validation/db'
 import { makeId } from '~/shared/lib/id'
 
 import { db } from '~server/db'

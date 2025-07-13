@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useModels } from '~/shared/models/queries'
+import { useModels } from '~/shared/model'
 import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui/blocks'
 
 const props = defineProps<{

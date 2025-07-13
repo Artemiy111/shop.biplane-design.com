@@ -1,7 +1,7 @@
 import type { UnwrapRef } from 'vue'
 
 import { useApi } from '~/shared/api'
-import { useAuthUtils } from '~/shared/models/auth-utils'
+import { useAuthUtils } from '~/shared/model'
 
 export const useAdminModelsPreview = defineQuery(() => {
   const authUtils = useAuthUtils()

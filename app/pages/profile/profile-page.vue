@@ -4,9 +4,8 @@ import { BadgeCheckIcon } from 'lucide-vue-next'
 import { z } from 'zod'
 
 import { emailSchema, minMaxString, passwordSchema } from '~/shared/config/validation/base'
-import { authClient, useAuthUtils } from '~/shared/models/auth-utils'
-import { ContentLoader, ContentLoaderError } from '~/shared/ui/blocks/content-loader'
-import { PageHeading } from '~/shared/ui/blocks'
+import { authClient, useAuthUtils } from '~/shared/model'
+import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui/blocks'
 import { InputPassword } from '~/shared/ui/kit'
 
 const authUtils = useAuthUtils()

@@ -2,7 +2,8 @@ import { z } from 'zod'
 import { zfd } from 'zod-form-data'
 
 import { revitVersions } from '~/shared/config/constants'
-import { idSchema, minMaxNumber, minMaxString } from '~/shared/config/validation/base'
+
+import { idSchema, minMaxNumber, minMaxString } from './base'
 
 export const createModelSchema = z.object({
   categoryId: idSchema,

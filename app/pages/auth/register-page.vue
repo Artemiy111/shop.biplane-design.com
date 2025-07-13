@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 
-import { authClient } from '~/shared/models/auth-utils'
-import { PageHeading } from '~/shared/ui/blocks'
+import { authClient } from '~/shared/model'
+import { PageHeading } from '~/shared/ui'
 import { InputPassword } from '~/shared/ui/kit'
 
-import { registerSchema } from './config/shema'
-import type { RegisterSchema } from './config/shema'
+import { registerSchema } from './config/schema'
+import type { RegisterSchema } from './config/schema'
 
 const toast = useToast()
 
