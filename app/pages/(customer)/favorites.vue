@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FavoritesPage } from '~/src/pages/customer/favorites'
+import { FavoritesPage } from '~pages/customer/favorites'
 
 definePageMeta({
   middleware: ['customer'],

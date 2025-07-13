@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { authClient, useAuthUtils } from '~/src/shared/models/auth-utils'
+import { authClient, useAuthUtils } from '~shared/models/auth-utils'
 
 const user = useAuthUtils().useUser()
 const { mutate } = useMutation({

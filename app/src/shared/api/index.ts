@@ -1,7 +1,7 @@
 import { httpSubscriptionLink, isNonJsonSerializable, splitLink } from '@trpc/client'
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from 'trpc-nuxt/client'
 
-import type { AppRouter } from '~~/server/trpc/routes'
+import type { AppRouter } from '~server/trpc/routes'
 
 const trpc = ref<unknown | null>(null)
 

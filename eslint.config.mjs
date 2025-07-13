@@ -48,38 +48,38 @@ export default withNuxt(
         customGroups: [
           {
             groupName: 'shared',
-            elementNamePattern: '^~/src/shared/',
+            elementNamePattern: '^~shared/',
           },
           {
             groupName: 'entities',
-            elementNamePattern: '^~/src/entities/',
+            elementNamePattern: '^~entities/',
           },
           {
             groupName: 'features',
-            elementNamePattern: '^~/src/features/',
+            elementNamePattern: '^~features/',
           },
           {
             groupName: 'widgets',
-            elementNamePattern: '^~/src/widgets/',
+            elementNamePattern: '^~widgets/',
           },
           {
             groupName: 'pages',
-            elementNamePattern: '^~/src/pages/',
+            elementNamePattern: '^~pages/',
           },
           {
             groupName: 'layouts',
-            elementNamePattern: '^~/src/layouts/',
+            elementNamePattern: '^~layouts/',
           },
           {
             groupName: 'app',
-            elementNamePattern: '^~/src/app/',
+            elementNamePattern: '^~app/',
           },
           {
             groupName: 'server',
-            elementNamePattern: '^~~/server/',
+            elementNamePattern: '^~server/',
           },
         ],
-        internalPattern: ['^~/.+', '^~~/src/.+'],
+        internalPattern: ['^~/.+', '^~~/.+'],
         newlinesBetween: 'always',
       }],
       'perfectionist/sort-named-imports': [

@@ -2,11 +2,11 @@
 import type { TableColumn } from '@nuxt/ui'
 import { NuxtImg, ULink } from '#components'
 
-import { imageUrl } from '~/src/shared/lib/image'
-import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
-import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import { FancyId } from '~/src/shared/ui/kit/fancy-id'
+import { imageUrl } from '~shared/lib/image'
+import { formatPrice, getPriceAfterDiscount } from '~shared/lib/price'
+import { ContentLoader, ContentLoaderError } from '~shared/ui/blocks/content-loader'
+import { PageHeading } from '~shared/ui/blocks/page-heading'
+import { FancyId } from '~shared/ui/kit/fancy-id'
 
 import { useAdminModelsPreview } from './model'
 import type { AdminModelPreview } from './model'

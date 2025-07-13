@@ -3,12 +3,12 @@ import type { TableColumn } from '@nuxt/ui'
 import { useSortable } from '@vueuse/integrations/useSortable'
 import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
 
-import { dateFormatter } from '~/src/shared/lib/date-formatter'
-import { getReadableSize } from '~/src/shared/lib/get-readable-size'
-import { imageUrl, mimeToExt } from '~/src/shared/lib/image'
-import { useUpdateModelImageOrder } from '~/src/shared/models/mutations'
-import type { ModelDto } from '~/src/shared/models/queries'
-import { FancyId } from '~/src/shared/ui/kit/fancy-id'
+import { dateFormatter } from '~shared/lib/date-formatter'
+import { getReadableSize } from '~shared/lib/get-readable-size'
+import { imageUrl, mimeToExt } from '~shared/lib/image'
+import { useUpdateModelImageOrder } from '~shared/models/mutations'
+import type { ModelDto } from '~shared/models/queries'
+import { FancyId } from '~shared/ui/kit/fancy-id'
 
 import ImagesTableActions from './images-table-actions.vue'
 

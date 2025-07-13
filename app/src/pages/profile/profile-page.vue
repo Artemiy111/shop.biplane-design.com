@@ -3,11 +3,11 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 import { BadgeCheckIcon } from 'lucide-vue-next'
 import { z } from 'zod'
 
-import { emailSchema, minMaxString, passwordSchema } from '~/src/shared/config/validation/base'
-import { authClient, useAuthUtils } from '~/src/shared/models/auth-utils'
-import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import { InputPassword } from '~/src/shared/ui/kit'
+import { emailSchema, minMaxString, passwordSchema } from '~shared/config/validation/base'
+import { authClient, useAuthUtils } from '~shared/models/auth-utils'
+import { ContentLoader, ContentLoaderError } from '~shared/ui/blocks/content-loader'
+import { PageHeading } from '~shared/ui/blocks/page-heading'
+import { InputPassword } from '~shared/ui/kit'
 
 const authUtils = useAuthUtils()
 const user = authUtils.useUser()

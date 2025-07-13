@@ -12,9 +12,9 @@ import {
 import type { LucideProps } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 
-import { useAuthUtils } from '~/src/shared/models/auth-utils'
-import { useCartItems, useFavoriteModels } from '~/src/shared/models/queries'
-import { Logo } from '~/src/shared/ui/kit/logo'
+import { useAuthUtils } from '~shared/models/auth-utils'
+import { useCartItems, useFavoriteModels } from '~shared/models/queries'
+import { Logo } from '~shared/ui/kit/logo'
 
 const colorMode = useColorMode()
 const authUtils = useAuthUtils()

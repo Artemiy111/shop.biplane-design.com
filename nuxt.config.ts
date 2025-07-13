@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath, URL } from 'node:url'
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -40,6 +42,16 @@ export default defineNuxtConfig({
       s3BucketEndpointUrl: process.env.S3_BUCKET_ENDPOINT_URL,
     },
   },
+  alias: {
+    '~app': fileURLToPath(new URL('./app/src/app', import.meta.url)),
+    '~layouts': fileURLToPath(new URL('./app/src/layouts', import.meta.url)),
+    '~pages': fileURLToPath(new URL('./app/src/pages', import.meta.url)),
+    '~widgets': fileURLToPath(new URL('./app/src/widgets', import.meta.url)),
+    '~features': fileURLToPath(new URL('./app/src/features', import.meta.url)),
+    '~entities': fileURLToPath(new URL('./app/src/entities', import.meta.url)),
+    '~shared': fileURLToPath(new URL('./app/src/shared', import.meta.url)),
+    '~server': fileURLToPath(new URL('./server', import.meta.url)),
+  },
   build: {
     transpile: ['trpc-nuxt'],
   },
@@ -55,6 +67,16 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-11-01',
+
+  vite: {
+
+  },
+
+  typescript: {
+    tsConfig: {
+
+    },
+  },
   telemetry: { enabled: false },
 
   eslint: {

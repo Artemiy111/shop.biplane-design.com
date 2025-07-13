@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApi } from '~/src/shared/api'
+import { useApi } from '~shared/api'
 
 const message = ref('')
 const toast = useToast()

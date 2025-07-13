@@ -1,4 +1,4 @@
-import { authClient } from '~/src/shared/lib/auth-client'
+import { authClient } from '~shared/lib/auth-client'
 
 export { authClient }
 

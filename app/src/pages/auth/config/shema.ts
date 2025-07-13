@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { emailSchema, errorMessages, minMaxString, passwordSchema, requiredString } from '~/src/shared/config/validation/base'
+import { emailSchema, errorMessages, minMaxString, passwordSchema, requiredString } from '~shared/config/validation/base'
 
 export const loginSchema = z.object({
   email: emailSchema,

@@ -3,11 +3,11 @@ import { parseDate } from '@internationalized/date'
 import type { DateValue } from '@internationalized/date'
 import type { TableColumn } from '@nuxt/ui'
 
-import { dateFormatter } from '~/src/shared/lib/date-formatter'
-import { useSelectModelDiscount } from '~/src/shared/models/mutations'
-import { useDiscounts } from '~/src/shared/models/queries'
-import type { ModelDto } from '~/src/shared/models/queries'
-import { FancyId } from '~/src/shared/ui/kit/fancy-id'
+import { dateFormatter } from '~shared/lib/date-formatter'
+import { useSelectModelDiscount } from '~shared/models/mutations'
+import { useDiscounts } from '~shared/models/queries'
+import type { ModelDto } from '~shared/models/queries'
+import { FancyId } from '~shared/ui/kit/fancy-id'
 
 const props = defineProps<{
   model: ModelDto

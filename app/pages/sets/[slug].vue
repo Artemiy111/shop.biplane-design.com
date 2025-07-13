@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProductPage } from '~/src/pages/product'
+import { ProductPage } from '~pages/product'
 
 const route = useRoute('sets-slug')
 const slug = computed(() => route.params.slug)

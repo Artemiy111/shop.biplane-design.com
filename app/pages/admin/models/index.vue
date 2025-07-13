@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ModelsPage from '~/src/pages/admin/models/models-page.vue'
+import ModelsPage from '~pages/admin/models/models-page.vue'
 
 definePageMeta({
   middleware: ['admin'],

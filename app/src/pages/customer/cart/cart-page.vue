@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { imageUrl } from '~/src/shared/lib/image'
-import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
-import { useCartItems } from '~/src/shared/models/queries'
-import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
+import { imageUrl } from '~shared/lib/image'
+import { formatPrice, getPriceAfterDiscount } from '~shared/lib/price'
+import { useCartItems } from '~shared/models/queries'
+import { ContentLoader, ContentLoaderError } from '~shared/ui/blocks/content-loader'
+import { PageHeading } from '~shared/ui/blocks/page-heading'
 
 const { cartItems, status, refresh } = useCartItems()
 </script>

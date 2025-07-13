@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 
-import { authClient } from '~/src/shared/models/auth-utils'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
+import { authClient } from '~shared/models/auth-utils'
+import { PageHeading } from '~shared/ui/blocks/page-heading'
 
 import { forgetPasswordSchema } from './config/shema'
 import type { ForgetPasswordSchema } from './config/shema'

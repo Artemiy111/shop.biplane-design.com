@@ -1,5 +1,5 @@
-import { authClient } from '~/src/shared/lib/auth-client'
-// import { useAuthUtils } from '~/src/shared/models/auth-utils'
+import { authClient } from '~shared/lib/auth-client'
+// import { useAuthUtils } from '~shared/models/auth-utils'
 
 export default defineNuxtRouteMiddleware(async () => {
   const { data: session } = await authClient.useSession(useFetch)

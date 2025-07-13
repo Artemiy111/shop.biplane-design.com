@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ForgetPasswordPage } from '~/src/pages/auth'
+import { ForgetPasswordPage } from '~pages/auth'
 </script>
 
 <template>

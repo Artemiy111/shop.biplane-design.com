@@ -1,10 +1,10 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { db } from '~~/server/db'
-import type { CategoryDb } from '~~/server/db/schema'
-import { publicProcedure, router } from '~~/server/trpc'
-import { modelPrequery } from '~~/server/trpc/query-templates'
+import { db } from '~server/db'
+import type { CategoryDb } from '~server/db/schema'
+import { publicProcedure, router } from '~server/trpc'
+import { modelPrequery } from '~server/trpc/query-templates'
 
 export const publicRouter = router({
   // getCategories: publicProcedure

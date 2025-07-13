@@ -2,12 +2,12 @@
 import type { BreadcrumbItem } from '@nuxt/ui'
 import { HeartIcon, LoaderCircleIcon } from 'lucide-vue-next'
 
-import { cn } from '~/src/shared/lib/cn'
-import { imageUrl } from '~/src/shared/lib/image'
-import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
-import { useToggleIsFavorite, useToggleIsInCart } from '~/src/shared/models/mutations'
-import { useModelBySlug } from '~/src/shared/models/queries'
-import { PageHeadingSkeleton } from '~/src/shared/ui/blocks/page-heading'
+import { cn } from '~shared/lib/cn'
+import { imageUrl } from '~shared/lib/image'
+import { formatPrice, getPriceAfterDiscount } from '~shared/lib/price'
+import { useToggleIsFavorite, useToggleIsInCart } from '~shared/models/mutations'
+import { useModelBySlug } from '~shared/models/queries'
+import { PageHeadingSkeleton } from '~shared/ui/blocks/page-heading'
 
 const { isModel, isSet, slug } = defineProps<{
   isModel: boolean

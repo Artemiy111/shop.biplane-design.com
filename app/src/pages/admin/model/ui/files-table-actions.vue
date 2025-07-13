@@ -2,11 +2,11 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { DownloadIcon, EditIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-vue-next'
 
-import { updateFileSchema } from '~/src/shared/config/validation/db'
-import type { UpdateFileSchema } from '~/src/shared/config/validation/db'
-import { useDeleteModelFile, useUpdateModelFile } from '~/src/shared/models/mutations'
+import { updateFileSchema } from '~shared/config/validation/db'
+import type { UpdateFileSchema } from '~shared/config/validation/db'
+import { useDeleteModelFile, useUpdateModelFile } from '~shared/models/mutations'
 
-import type { FileDb } from '~~/server/db/schema'
+import type { FileDb } from '~server/db/schema'
 
 const { modelSlug, file } = defineProps<{
   modelSlug: string

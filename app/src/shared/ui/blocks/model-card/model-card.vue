@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ImageOffIcon } from 'lucide-vue-next'
 
-import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
-import { useToggleIsFavorite, useToggleIsInCart } from '~/src/shared/models/mutations'
-import type { CategoryModel } from '~/src/shared/models/queries'
+import { formatPrice, getPriceAfterDiscount } from '~shared/lib/price'
+import { useToggleIsFavorite, useToggleIsInCart } from '~shared/models/mutations'
+import type { CategoryModel } from '~shared/models/queries'
 
 import ImageSlider from './image-slider.vue'
 

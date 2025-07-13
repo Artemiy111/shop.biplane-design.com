@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoginPage } from '~/src/pages/auth'
+import { LoginPage } from '~pages/auth'
 </script>
 
 <template>

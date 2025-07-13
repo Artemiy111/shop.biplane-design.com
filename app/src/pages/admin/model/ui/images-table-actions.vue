@@ -2,12 +2,12 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { EditIcon, EllipsisVerticalIcon, LinkIcon, TrashIcon } from 'lucide-vue-next'
 
-import { updateImageSchema } from '~/src/shared/config/validation/db'
-import type { UpdateImageSchema } from '~/src/shared/config/validation/db'
-import { imageUrl } from '~/src/shared/lib/image'
-import { useDeleteModelImage, useUpdateModelImage } from '~/src/shared/models/mutations'
+import { updateImageSchema } from '~shared/config/validation/db'
+import type { UpdateImageSchema } from '~shared/config/validation/db'
+import { imageUrl } from '~shared/lib/image'
+import { useDeleteModelImage, useUpdateModelImage } from '~shared/models/mutations'
 
-import type { ImageDbWithOptimized } from '~~/server/db/schema'
+import type { ImageDbWithOptimized } from '~server/db/schema'
 
 const { model, image } = defineProps<{
   model: { id: string, slug: string }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DashboardPage } from '~/src/pages/admin/dashboard'
+import { DashboardPage } from '~pages/admin/dashboard'
 
 definePageMeta({
   path: '/admin',

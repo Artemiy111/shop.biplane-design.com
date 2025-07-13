@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ResetPasswordPage } from '~/src/pages/auth'
+import { ResetPasswordPage } from '~pages/auth'
 </script>
 
 <template>

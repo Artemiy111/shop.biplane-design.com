@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AdminModelPage } from '~/src/pages/admin/model'
+import { AdminModelPage } from '~pages/admin/model'
 
 const slug = computed(() => useRoute('admin-models-slug').params.slug)
 
