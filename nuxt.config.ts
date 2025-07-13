@@ -15,10 +15,6 @@ export default defineNuxtConfig({
     '@tresjs/nuxt',
   ],
 
-  pages: {
-    pattern: ['**/*.vue', '!**/ui/**'],
-  },
-
   components: {
     dirs: [],
   },
@@ -42,6 +38,11 @@ export default defineNuxtConfig({
       s3BucketEndpointUrl: process.env.S3_BUCKET_ENDPOINT_URL,
     },
   },
+
+  dir: {
+    pages: 'routes',
+  },
+
   alias: {
     '~app': fileURLToPath(new URL('./app/src/app', import.meta.url)),
     '~layouts': fileURLToPath(new URL('./app/src/layouts', import.meta.url)),
@@ -68,15 +69,6 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-11-01',
 
-  vite: {
-
-  },
-
-  typescript: {
-    tsConfig: {
-
-    },
-  },
   telemetry: { enabled: false },
 
   eslint: {
