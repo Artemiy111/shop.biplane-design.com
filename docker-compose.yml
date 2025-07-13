@@ -12,9 +12,18 @@
 #     - app
 
 services:
+  pgweb: 
+    image: sosedoff/pgweb
+    ports:
+      - 8081:8081
+    networks:
+      - app
+    security_opt:
+      - label=disable
+    restart: unless-stopped
+
   postgres:
     image: postgres:17
-    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
@@ -27,6 +36,12 @@ services:
       - app
     security_opt:
       - label=disable
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
 
   redis:
     image: redis:alpine
@@ -38,7 +53,12 @@ services:
       - app
     security_opt:
       - label=disable
-    # command: redis-server --save "" --appendonly no
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
   rabbitmq:
     image: rabbitmq:4-management
@@ -48,7 +68,13 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     security_opt:
-      - label=disable 
+      - label=disable
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
@@ -68,6 +94,7 @@ services:
       - app
     security_opt:
       - label=disable
+    restart: unless-stopped
 
   tempo:
     image: grafana/tempo:latest
@@ -82,7 +109,8 @@ services:
     networks:
       - app
     security_opt:
-      - label=disable 
+      - label=disable
+    restart: unless-stopped
 
   loki:
     image: grafana/loki:latest
@@ -95,6 +123,7 @@ services:
       - app
     security_opt:
       - label=disable
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
@@ -108,6 +137,12 @@ services:
       - app
     security_opt:
       - label=disable
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   node-exporter:
       image: quay.io/prometheus/node-exporter:latest
@@ -126,15 +161,15 @@ services:
         - /:/host/root:ro
         - /etc/os-release:/etc/os-release:ro
         - /etc/hostname:/etc/host_hostname:ro
+      environment:
+      - "PODMAN_USERNS=keep-id"
       networks: 
         - app
       security_opt:
         - label=disable
         - seccomp=unconfined
       privileged: true
-      environment:
-      - "PODMAN_USERNS=keep-id"
-      # restart: unless-stopped
+      restart: unless-stopped
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -150,6 +185,8 @@ services:
       - app
     security_opt:
       - label=disable
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana:latest
     volumes:
@@ -168,7 +205,13 @@ services:
     networks:
       - app
     security_opt:
-      - label=disable 
+      - label=disable
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
       
 networks:
   app:
