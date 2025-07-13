@@ -2,14 +2,15 @@
   "name": "biplane-shop",
   "private": true,
   "type": "module",
+  "workspaces": ["app/shared/packages/*"],
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "bun --bun eslint .",
+    "lint:fix": "bun --bun eslint . --fix",
     "lint:style": "stylelint '**/*.{css,vue}'",
     "lint:style:fix": "stylelint '**/*.{css,vue}' --fix",
     "db:generate": "drizzle-kit generate",
@@ -78,6 +79,7 @@
     "zod-form-data": "^3.0.0"
   },
   "devDependencies": {
+    "@art/vue-eslint-config": "workspace:*",
     "@types/bun": "^1.2.18",
     "@types/nodemailer": "^6.4.17",
     "@types/sharp": "^0.32.0",

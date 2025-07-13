@@ -1,0 +1,13 @@
+{
+  "name": "@art/vue-eslint-config",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "eslint": "^9.31.0",
+    "eslint-plugin-vue": "^10.3.0",
+    "typescript": "^5.8.3"
+  }
+}
