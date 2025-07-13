@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ru } from '@nuxt/ui/locale'
 
-import { Footer } from '~widgets/footer'
-import { Header } from '~widgets/header'
+import { Footer, Header } from '~/widgets'
 
 defineSlots<{
   default: () => unknown

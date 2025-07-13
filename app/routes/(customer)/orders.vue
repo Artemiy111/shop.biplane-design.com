@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OrdersPage } from '~pages/customer/orders'
+import { OrdersPage } from '~/pages/customer/orders'
 
 definePageMeta({
   middleware: ['customer'],

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProfilePage } from '~pages/profile'
+import { ProfilePage } from '~/pages/profile'
 
 definePageMeta({
   middleware: ['auth'],

@@ -2,9 +2,9 @@ import { logger } from 'better-auth'
 import { Queue, Worker } from 'bullmq'
 import sharp from 'sharp'
 
-import type { ImageOptimizedMimeType } from '~shared/config/constants/mime-types'
-import { makeId } from '~shared/lib/id'
-import { extToMime } from '~shared/lib/image'
+import type { ImageOptimizedMimeType } from '~/shared/config/constants/mime-types'
+import { makeId } from '~/shared/lib/id'
+import { extToMime } from '~/shared/lib/image'
 
 import { db } from '~server/db'
 import { imagesOptimizedT } from '~server/db/schema'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PageHeading } from '~shared/ui/blocks/page-heading'
+import { PageHeading } from '~/shared/ui/blocks'
 
 const error = useError()
 </script>

@@ -1,7 +1,7 @@
 import { and, count, eq, sql } from 'drizzle-orm'
 import { z } from 'zod'
 
-import { getPriceAfterDiscount } from '~shared/lib/price'
+import { getPriceAfterDiscount } from '~/shared/lib/price'
 
 import { db } from '~server/db'
 import type { OrderItemDb } from '~server/db/schema'

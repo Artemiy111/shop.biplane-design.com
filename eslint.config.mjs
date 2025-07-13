@@ -48,31 +48,31 @@ export default withNuxt(
         customGroups: [
           {
             groupName: 'shared',
-            elementNamePattern: '^~shared/',
+            elementNamePattern: '^~/shared/',
           },
           {
             groupName: 'entities',
-            elementNamePattern: '^~entities/',
+            elementNamePattern: '^~/entities/',
           },
           {
             groupName: 'features',
-            elementNamePattern: '^~features/',
+            elementNamePattern: '^~/features/',
           },
           {
             groupName: 'widgets',
-            elementNamePattern: '^~widgets/',
+            elementNamePattern: '^~/widgets/',
           },
           {
             groupName: 'pages',
-            elementNamePattern: '^~pages/',
+            elementNamePattern: '^~/pages/',
           },
           {
             groupName: 'layouts',
-            elementNamePattern: '^~layouts/',
+            elementNamePattern: '^~/layouts/',
           },
           {
             groupName: 'app',
-            elementNamePattern: '^~app/',
+            elementNamePattern: '^~/app/',
           },
           {
             groupName: 'server',

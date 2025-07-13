@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CatalogPage } from '~pages/catalog'
+import { CatalogPage } from '~/pages/catalog'
 
 const brandSlug = computed(() => useRoute('catalog-b-slug').params.slug)
 </script>

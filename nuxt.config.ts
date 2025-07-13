@@ -25,7 +25,7 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
   app: { head: { htmlAttrs: { lang: 'ru' } } },
-  css: ['./app/src/shared/assets/main.css'],
+  css: ['./app/shared/assets/main.css'],
 
   colorMode: {
     storage: 'cookie',
@@ -44,13 +44,13 @@ export default defineNuxtConfig({
   },
 
   alias: {
-    '~app': fileURLToPath(new URL('./app/src/app', import.meta.url)),
-    '~layouts': fileURLToPath(new URL('./app/src/layouts', import.meta.url)),
-    '~pages': fileURLToPath(new URL('./app/src/pages', import.meta.url)),
-    '~widgets': fileURLToPath(new URL('./app/src/widgets', import.meta.url)),
-    '~features': fileURLToPath(new URL('./app/src/features', import.meta.url)),
-    '~entities': fileURLToPath(new URL('./app/src/entities', import.meta.url)),
-    '~shared': fileURLToPath(new URL('./app/src/shared', import.meta.url)),
+    // '~app': fileURLToPath(new URL('./app/app', import.meta.url)),
+    // '~layouts': fileURLToPath(new URL('./app/layouts', import.meta.url)),
+    // '~pages': fileURLToPath(new URL('./app/pages', import.meta.url)),
+    // '~widgets': fileURLToPath(new URL('./app/widgets', import.meta.url)),
+    // '~features': fileURLToPath(new URL('./app/features', import.meta.url)),
+    // '~entities': fileURLToPath(new URL('./app/entities', import.meta.url)),
+    // '~shared': fileURLToPath(new URL('./app/shared', import.meta.url)),
     '~server': fileURLToPath(new URL('./server', import.meta.url)),
   },
   build: {

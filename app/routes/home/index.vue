@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HomePage } from '~pages/home'
+import { HomePage } from '~/pages/home'
 
 definePageMeta({
   path: '/',
