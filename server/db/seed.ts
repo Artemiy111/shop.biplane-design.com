@@ -1,15 +1,6 @@
 import { logger } from 'better-auth'
 import { auth } from '../lib/auth'
 import {
-  type SetDb,
-  type DiscountDb,
-  type FileDb,
-  type ImageDb,
-  type ImageToModelDb,
-  type ModelDb,
-  type CategoryDb,
-  type PromocodeDb,
-  type ModelsToSetsDb,
   categoriesT,
   modelsT,
   imagesT,
@@ -20,6 +11,7 @@ import {
   setsT,
   modelsToSetsT,
 } from './schema'
+import type { SetDb, DiscountDb, FileDb, ImageDb, ImageToModelDb, ModelDb, CategoryDb, PromocodeDb, ModelsToSetsDb } from './schema'
 
 import { db } from '.'
 

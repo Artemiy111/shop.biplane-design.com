@@ -1,4 +1,5 @@
-import amqplib, { type ChannelModel } from 'amqplib'
+import amqplib from 'amqplib'
+import type { ChannelModel } from 'amqplib'
 
 interface RabbitConfig {
   url: string

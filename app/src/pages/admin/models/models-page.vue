@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import { useAdminModelsPreview, type AdminModelPreview } from './model'
+import { useAdminModelsPreview } from './model'
+import type { AdminModelPreview } from './model'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { getPriceAfterDiscount, formatPrice } from '~/src/shared/lib/price'
@@ -71,13 +72,13 @@ const columns: TableColumn<AdminModelPreview>[] = [
     <div v-else>
       <UTable
         class="overflow-auto"
-        :data="models"
         :columns
+        :data="models"
       >
         <template #image-cell="{ row }">
           <NuxtImg
-            :src="row.original.images[0]!.url || imageUrl(row.original.images[0]!)"
             class="max-w-30 h-auto w-auto aspect-square"
+            :src="row.original.images[0]!.url || imageUrl(row.original.images[0]!)"
           />
         </template>
       </UTable>

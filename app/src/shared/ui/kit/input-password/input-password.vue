@@ -3,9 +3,9 @@ import type { InputProps, InputEmits } from '@nuxt/ui/runtime/components/Input.v
 import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
 
 const props = defineProps<Omit<InputProps, 'type'>>()
-const emit = defineEmits<InputEmits>()
 const model = defineModel<string>()
 const show = defineModel<boolean>('show', { default: false })
+const emit = defineEmits<InputEmits>()
 </script>
 
 <template>
@@ -13,15 +13,15 @@ const show = defineModel<boolean>('show', { default: false })
     v-bind="props"
     v-model="model"
     :type="show ? 'text' : 'password'"
-    @blur="emit('blur', $event)"
-    @change="emit('change', $event)"
+    @blur="e => emit('blur', e)"
+    @change="e => emit('change', e)"
   >
     <template #trailing>
       <button
-        type="button"
         :aria-label="show ? 'Спрятать текст' : 'Показать текст'"
         :aria-pressed="show"
-        @click="show = !show"
+        type="button"
+        @click="() => show = !show"
       >
         <EyeOffIcon
           v-if="show"

@@ -134,31 +134,31 @@ const logout = async () => {
     >
       <UForm
         ref="userSettingsForm"
-        :schema="changeUserSettingsSchema"
-        :state="userSettingsState"
         class="flex flex-col h-fit gap-y-4 w-[380px] max-sm:w-full"
         loading-auto
-        @submit="onSubmit"
+        :schema="changeUserSettingsSchema"
+        :state="userSettingsState"
+        @submit="e => onSubmit(e)"
       >
         <UFormField
-          name="id"
-          label="Id"
           class="w-full"
+          label="Id"
+          name="id"
         >
           <InputPassword
             v-model="user.id"
-            :show="false"
-            variant="soft"
-            disabled
             class="w-full"
+            disabled
+            :show="false"
             :ui="{ base: 'disabled:cursor-default! aria-disabled:cursor-default!' }"
+            variant="soft"
           />
         </UFormField>
 
         <UFormField
-          name="user"
-          label="Имя"
           class="w-full"
+          label="Имя"
+          name="user"
         >
           <UInput
             v-model="userSettingsState.name"
@@ -166,10 +166,10 @@ const logout = async () => {
           />
         </UFormField>
         <UFormField
-          label="Email"
-          name="email"
           class="w-full"
           :help="user.emailVerified ? 'Почта подтверждена' : 'Почта не подтверждена'"
+          label="Email"
+          name="email"
         >
           <div class="flex gap-x-4 items-center relative">
             <UInput
@@ -192,23 +192,23 @@ const logout = async () => {
 
         <UButton
           v-if="!user.emailVerified"
-          type="button"
-          variant="outline"
           class="w-fit"
           :disabled="!!userSettingsForm?.dirtyFields.size"
-          @click="sendVerificationEmail()"
+          type="button"
+          variant="outline"
+          @click="() => sendVerificationEmail()"
         >
           Отправить письмо подтверждения почты
         </UButton>
 
         <UButton
-          type="submit"
-          color="neutral"
           class="mt-4 w-fit"
+          color="neutral"
           :disabled="!userSettingsForm?.dirtyFields.size || !!userSettingsForm?.errors.length"
           loading-auto
-          :trailing="true"
           loading-icon="i-lucide-loader-2"
+          trailing
+          type="submit"
         >
           Сохранить
         </UButton>
@@ -216,15 +216,15 @@ const logout = async () => {
 
       <UForm
         ref="changePasswordForm"
+        class="flex flex-col h-fit gap-y-4 w-[380px] max-sm:w-full"
         :schema="changePasswordSchema"
         :state="changePasswordState"
-        class="flex flex-col h-fit gap-y-4 w-[380px] max-sm:w-full"
-        @submit="changePassword"
+        @submit="e => changePassword(e)"
       >
         <UFormField
-          name="currentPassword"
-          label="Текущий пароль"
           class="w-full"
+          label="Текущий пароль"
+          name="currentPassword"
         >
           <InputPassword
             v-model="changePasswordState.currentPassword"
@@ -232,9 +232,9 @@ const logout = async () => {
           />
         </UFormField>
         <UFormField
-          name="newPassword"
-          label="Новый пароль"
           class="w-full"
+          label="Новый пароль"
+          name="newPassword"
         >
           <InputPassword
             v-model="changePasswordState.newPassword"
@@ -242,9 +242,9 @@ const logout = async () => {
           />
         </UFormField>
         <UFormField
-          name="confirmPassword"
-          label="Подтвердить пароль"
           class="w-full"
+          label="Подтвердить пароль"
+          name="confirmPassword"
         >
           <InputPassword
             v-model="changePasswordState.confirmPassword"
@@ -252,25 +252,25 @@ const logout = async () => {
           />
         </UFormField>
         <UButton
-          type="submit"
-          color="neutral"
-          variant="soft"
           class="mt-4 w-fit"
+          color="neutral"
           :disabled="!changePasswordForm?.dirtyFields.size || !!changePasswordForm?.errors.length"
           loading-auto
-          trailing
           loading-icon="i-lucide-loader-2"
+          trailing
+          type="submit"
+          variant="soft"
         >
           Изменить пароль
         </UButton>
       </UForm>
       <div class="mt-7">
         <UButton
-          variant="soft"
-          color="error"
           class="w-fit"
+          color="error"
           type="button"
-          @click="logout()"
+          variant="soft"
+          @click="() => logout()"
         >
           Выйти из аккаунта
         </UButton>

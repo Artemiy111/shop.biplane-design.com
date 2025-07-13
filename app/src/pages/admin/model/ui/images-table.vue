@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDownIcon, GripVerticalIcon, LinkIcon, LoaderCircleIcon, RefreshCwIcon, RefreshCwOffIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
 import type { TableColumn } from '@nuxt/ui'
 import { useSortable } from '@vueuse/integrations/useSortable'
 
@@ -25,7 +25,7 @@ const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder
     await updateImageOrder({ modelId: modelId, imageId, newSortOrder })
   }
   // eslint-disable-next-line no-empty
-  catch (_) {}
+  catch {}
 }
 
 const imagesForTable = computed(() => model.value.images
@@ -152,6 +152,7 @@ const columnPinning = ref({
 
 <template>
   <UDropdownMenu
+    :content="{ align: 'end' }"
     :items="imagesTableRef?.tableApi?.getAllColumns().filter(column => column.getCanHide()).map(column => ({
       label: column.columnDef.header as string,
       type: 'checkbox' as const,
@@ -163,29 +164,28 @@ const columnPinning = ref({
         e?.preventDefault()
       },
     }))"
-    :content="{ align: 'end' }"
   >
     <UButton
-      label="Колонки"
-      color="neutral"
-      variant="outline"
-      trailing-icon="i-lucide-chevron-down"
       class="ml-auto"
+      color="neutral"
+      label="Колонки"
+      trailing-icon="i-lucide-chevron-down"
+      variant="outline"
     />
   </UDropdownMenu>
 
   <UTable
     ref="imagesTableRef"
+    class="border-(--ui-border) border-1 rounded-md"
+    :column-pinning="columnPinning"
+    :columns="imagesTableColumns"
     :data="imagesForTable"
+    :get-row-id="row => row.id"
     :get-sub-rows="(row) => {
       if (isOriginal(row)) return row.optimized
       return undefined
     }"
-    :columns="imagesTableColumns"
     :sorting="[{ id: 'sortOrder', desc: false }]"
-    :get-row-id="row => row.id"
-    :column-pinning="columnPinning"
-    class="border-(--ui-border) border-1 rounded-md"
     :ui="{
       tbody: 'sortable-body',
       th: 'whitespace-nowrap',
@@ -197,20 +197,20 @@ const columnPinning = ref({
       <div
         v-if="isOriginal(row.original)"
         class="flex items-center gap-x-2"
-        :data-sortable="row.original.id"
         data-main-row
-        @pointerdown="row.toggleExpanded(false)"
+        :data-sortable="row.original.id"
+        @pointerdown="() => row.toggleExpanded(false)"
       >
         <UButton
-          variant="ghost"
+          class="not-hover:text-(--ui-text-dimmed)"
           color="neutral"
           square
-          class="not-hover:text-(--ui-text-dimmed)"
+          variant="ghost"
         >
           <GripVerticalIcon
             absolute-stroke-width
-            :stroke-width="1.5"
             class="size-6"
+            :stroke-width="1.5"
           />
         </UButton>
         {{ row.original.imageToModel.sortOrder }}
@@ -233,9 +233,9 @@ const columnPinning = ref({
         class="bg-black/1 w-max"
       >
         <NuxtImg
+          :alt="row.original.alt || ''"
           class="w-40 mix-blend-multiply aspect-square"
           :src="row.original.url ? row.original.url : imageUrl(row.original)"
-          :alt="row.original.alt || ''"
         />
       </div>
     </template>
@@ -243,10 +243,10 @@ const columnPinning = ref({
     <template #optimized-header="{ row }">
       <div class="w-full grid justify-center">
         <UIcon
-          :name="props.optimizedSubStatus === 'pending' ? 'i-lucide-loader-circle' : props.optimizedSubStatus === 'started' ? 'i-lucide-check' : 'i-lucide-refresh-cw-off'"
           class="size-5"
           :class="[props.optimizedSubStatus === 'pending' && 'animate-spin']"
           :color="props.optimizedSubStatus === 'pending' ? 'text-dimmed' : 'text-red-100'"
+          :name="props.optimizedSubStatus === 'pending' ? 'i-lucide-loader-circle' : props.optimizedSubStatus === 'started' ? 'i-lucide-check' : 'i-lucide-refresh-cw-off'"
         />
         <!-- <LoaderCircleIcon
           v-if="props.optimizedSubStatus === 'pending'"
@@ -272,16 +272,16 @@ const columnPinning = ref({
     <template #optimized-cell="{ row }">
       <UButton
         v-if="isOriginal(row.original) && row.original.optimized.length > 1"
-        variant="ghost"
         color="neutral"
         square
-        @click="row.toggleExpanded()"
+        variant="ghost"
+        @click="() => row.toggleExpanded()"
       >
         <ChevronDownIcon
           absolute-stroke-width
-          :stroke-width="1.5"
           class="size-6 transition duration-100"
           :class="[row.getIsExpanded() && 'rotate-180']"
+          :stroke-width="1.5"
         />
         <!-- <ChevronUpIcon
           v-else
@@ -295,23 +295,23 @@ const columnPinning = ref({
     <template #actions-cell="{ row }">
       <ImagesTableActions
         v-if="isOriginal(row.original)"
-        :model="model"
         :image="row.original"
+        :model="model"
       />
       <UButton
         v-else-if="isOptimized(row.original)"
-        square
-        variant="ghost"
-        color="neutral"
-        :to="imageUrl({ imageId: row.original.imageId, width: row.original.width, mimeType: row.original.mimeType })"
-        target="_blank"
-        rel="noopener noreferrer"
         class="not-hover:text-(--ui-text-dimmed)"
+        color="neutral"
+        rel="noopener noreferrer"
+        square
+        target="_blank"
+        :to="imageUrl({ imageId: row.original.imageId, width: row.original.width, mimeType: row.original.mimeType })"
+        variant="ghost"
       >
         <LinkIcon
           absolute-stroke-width
-          :stroke-width="1.5"
           class="size-6"
+          :stroke-width="1.5"
         />
       </UButton>
     </template>

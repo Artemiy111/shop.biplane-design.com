@@ -22,7 +22,7 @@ const { mutate } = useMutation({
       v-model="message"
       placeholder="message"
     />
-    <UButton @click="mutate()">
+    <UButton @click="() => mutate()">
       add to queue
     </UButton>
   </main>

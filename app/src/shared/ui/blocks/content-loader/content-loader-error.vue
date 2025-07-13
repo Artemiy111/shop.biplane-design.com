@@ -15,8 +15,8 @@ const emit = defineEmits<{
     <div class="[grid-row:3] flex flex-col items-center">
       <FrownIcon
         absolute-stroke-width
-        :stroke-width="1.5"
         class="size-10"
+        :stroke-width="1.5"
       />
       <h6 class="text-subheading mt-2">
         Не удалось загрузить
@@ -24,11 +24,11 @@ const emit = defineEmits<{
 
       <UButton
         v-if="showRefreshButton"
-        color="neutral"
-        variant="soft"
         class="w-fit mt-6"
+        color="neutral"
         loading-auto
-        @click="emit('refresh')"
+        variant="soft"
+        @click="() => emit('refresh')"
       >
         Попробовать снова
       </UButton>

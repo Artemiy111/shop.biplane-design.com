@@ -7,8 +7,9 @@ import {
   SunIcon,
   ShoppingBagIcon,
   UserIcon,
-  type LucideProps,
+
 } from 'lucide-vue-next'
+import type { LucideProps } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
 import { useCartItems, useFavoriteModels } from '~/src/shared/models/queries'
@@ -112,50 +113,50 @@ const rightItems = computed<
 
       <UNavigationMenu
         color="neutral"
-        variant="link"
+        content-orientation="vertical"
         fullscreen
         :items="centerItems"
-        content-orientation="vertical"
+        variant="link"
       />
 
       <div
         class="flex gap-3 items-center"
       >
         <UButton
-          square
           class="aspect-square cursor-pointer justify-center items-center"
           color="neutral"
-          variant="ghost"
           leading
-          @click="colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
+          square
+          variant="ghost"
+          @click="() => colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
         >
           <template #leading>
             <MoonIcon
               v-if="colorMode.value === 'dark'"
-              class="size-8 max-sm:size-6"
               absolute-stroke-width
+              class="size-8 max-sm:size-6"
               :stroke-width="1.5"
             />
             <SunIcon
               v-else
-              class="size-8 max-sm:size-6"
               absolute-stroke-width
+              class="size-8 max-sm:size-6"
               :stroke-width="1.5"
             />
           </template>
         </UButton>
         <USeparator
-          :orientation="'vertical'"
           class="h-8"
+          orientation="vertical"
         />
         <nav class="flex gap-x-3">
           <UButton
             v-for="item in rightItems"
             :key="(item.to as string)"
-            :to="item.to"
-            square
-            variant="ghost"
             color="neutral"
+            square
+            :to="item.to"
+            variant="ghost"
           >
             <UChip
               v-if="item.count"
@@ -165,16 +166,16 @@ const rightItems = computed<
               <component
                 :is="item.iconComponent"
                 absolute-stroke-width
-                :stroke-width="1.5"
                 class="size-8 max-sm:size-6 text-(--ui-text)"
+                :stroke-width="1.5"
               />
             </UChip>
             <component
               :is="item.iconComponent"
               v-else
               absolute-stroke-width
-              :stroke-width="1.5"
               class="size-8 max-sm:size-6 text-(--ui-text)"
+              :stroke-width="1.5"
             />
           </UButton>
         </nav>

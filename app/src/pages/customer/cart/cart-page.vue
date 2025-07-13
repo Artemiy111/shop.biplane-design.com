@@ -16,7 +16,7 @@ const { cartItems, status, refresh } = useCartItems()
         <ContentLoader v-if="status === 'pending'" />
         <ContentLoaderError
           v-else-if="status === 'error'"
-          @refresh="refresh"
+          @refresh="() => refresh()"
         />
 
         <template v-else-if="status === 'success'">
@@ -47,10 +47,10 @@ const { cartItems, status, refresh } = useCartItems()
                       {{ formatPrice(getPriceAfterDiscount(item.model.price, item.model.discount.discountPercentage)) }}
                     </div>
                     <UBadge
-                      color="primary"
-                      variant="soft"
                       class="@max-3xs/card:text-xs @max-3xs/card:px-1.5 @max-3xs/card:py-0.5"
+                      color="primary"
                       :ui="{ base: 'text-sm font-bold ' }"
+                      variant="soft"
                     >
                       {{ item.model.discount.discountPercentage }}%
                     </UBadge>
@@ -81,8 +81,8 @@ const { cartItems, status, refresh } = useCartItems()
               <UButton
                 class="w-fit mt-6"
                 color="neutral"
-                variant="soft"
                 to="/catalog"
+                variant="soft"
               >
                 В каталог
               </UButton>
@@ -107,8 +107,8 @@ const { cartItems, status, refresh } = useCartItems()
       </div>
 
       <UButton
-        size="giga"
         class="mt-6 w-full justify-center"
+        size="giga"
       >
         Перейти к оплате
       </UButton>
@@ -116,16 +116,16 @@ const { cartItems, status, refresh } = useCartItems()
       <UForm>
         <UFormField
           class="mt-4"
-          label="Купон"
           error="Неверный купон"
+          label="Купон"
         >
           <div class="flex gap-x-2">
             <UInput class="w-full" />
             <UButton
-              variant="outline"
-              color="neutral"
               class="w-11 justify-center aspect-square"
+              color="neutral"
               icon="i-lucide-check"
+              variant="outline"
             />
           </div>
         </UFormField>

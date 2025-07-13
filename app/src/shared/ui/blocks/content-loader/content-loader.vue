@@ -8,8 +8,8 @@ import { LoaderCircleIcon } from 'lucide-vue-next'
   >
     <LoaderCircleIcon
       absolute-stroke-width
-      :stroke-width="1.5"
       class="animate-spin size-8"
+      :stroke-width="1.5"
     />
   </div>
 </template>

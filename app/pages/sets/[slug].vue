@@ -8,7 +8,7 @@ const slug = computed(() => route.params.slug)
 <template>
   <ProductPage
     :is-model="false"
-    :is-set="true"
+    is-set
     :slug="slug"
   />
 </template>

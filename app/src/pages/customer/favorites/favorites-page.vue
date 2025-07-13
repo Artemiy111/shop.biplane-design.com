@@ -14,7 +14,7 @@ const { favoriteModels, status, refresh } = useFavoriteModels()
       <ContentLoader v-if="status === 'pending'" />
       <ContentLoaderError
         v-else-if="status === 'error'"
-        @refresh="refresh"
+        @refresh="() => refresh()"
       />
 
       <template v-else-if="status === 'success'">
@@ -37,8 +37,8 @@ const { favoriteModels, status, refresh } = useFavoriteModels()
             <UButton
               class="w-fit mt-6"
               color="neutral"
-              variant="soft"
               to="/catalog"
+              variant="soft"
             >
               В каталог
             </UButton>

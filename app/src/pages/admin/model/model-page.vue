@@ -5,7 +5,8 @@ import FilesTableActions from './ui/files-table-actions.vue'
 import ImagesTable from './ui/images-table.vue'
 import DiscountsSection from './ui/discounts-section.vue'
 import { revitVersions } from '~/src/shared/config/constants'
-import { updateModelSchema, type UpdateModelSchema } from '~/src/shared/config/validation/db'
+import { updateModelSchema } from '~/src/shared/config/validation/db'
+import type { UpdateModelSchema } from '~/src/shared/config/validation/db'
 import { useUpdateModel, useUploadModelImage } from '~/src/shared/models/mutations'
 import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
@@ -55,7 +56,7 @@ const onUpdateModel = async (event: FormSubmitEvent<UpdateModelSchema>) => {
     if (event.data.slug !== slug.value) navigateTo(`/admin/models/${event.data.slug}`)
   }
   // eslint-disable-next-line no-empty
-  catch (_) {}
+  catch {}
 }
 
 const filesTableColumns: TableColumn<FileDb>[] = [
@@ -119,7 +120,7 @@ const onUploadImage = async (event: Event) => {
   <main class="container">
     <ContentLoader
       v-if="status === 'pending'"
-      @refresh="refresh"
+      @refresh="() => refresh()"
     />
     <ContentLoaderError v-else-if="status === 'error'" />
     <div
@@ -136,14 +137,14 @@ const onUploadImage = async (event: Event) => {
             </h2>
             <UForm
               ref="updateModelForm"
-              :state="updateModelState"
-              :schema="updateModelSchema"
               class="flex flex-col gap-y-5"
-              @submit="onUpdateModel"
+              :schema="updateModelSchema"
+              :state="updateModelState"
+              @submit="(e) => onUpdateModel(e)"
             >
               <UFormField
-                name="name"
                 label="Название"
+                name="name"
               >
                 <UInput
                   v-model="updateModelState.name"
@@ -152,8 +153,8 @@ const onUploadImage = async (event: Event) => {
               </UFormField>
 
               <UFormField
-                name="slug"
                 label="Slug"
+                name="slug"
               >
                 <UInput
                   v-model="updateModelState.slug"
@@ -162,8 +163,8 @@ const onUploadImage = async (event: Event) => {
               </UFormField>
 
               <UFormField
-                name="description"
                 label="Описание"
+                name="description"
               >
                 <UTextarea
                   v-model="updateModelState.description"
@@ -172,47 +173,47 @@ const onUploadImage = async (event: Event) => {
               </UFormField>
 
               <UFormField
-                name="price"
                 label="Цена"
+                name="price"
               >
                 <UInput
                   v-model="updateModelState.price"
-                  type="number"
                   class="w-full"
-                  :step="100"
-                  :min="0"
                   :max="100_000"
+                  :min="0"
+                  :step="100"
+                  type="number"
                 />
               </UFormField>
 
               <UFormField
-                name="revitVersion"
                 label="Версия Revit"
+                name="revitVersion"
               >
                 <USelect
                   v-model="updateModelState.revitVersion"
-                  :items="revitVersions as unknown as any[]"
                   class="w-full"
+                  :items="revitVersions as unknown as any[]"
                 />
               </UFormField>
 
               <UFormField
-                name="categoryId"
                 label="Категория"
+                name="categoryId"
               >
                 <USelect
                   v-model="updateModelState.categoryId"
-                  :items="categoriesSelect"
                   class="w-full"
+                  :items="categoriesSelect"
                 />
               </UFormField>
 
               <UButton
-                type="submit"
-                color="neutral"
-                loading-auto
                 class="w-fit mt-5"
+                color="neutral"
                 :disabled="!!updateModelForm?.errors.length"
+                loading-auto
+                type="submit"
               >
                 Сохранить
               </UButton>
@@ -220,8 +221,8 @@ const onUploadImage = async (event: Event) => {
           </section>
 
           <ModelCard
-            :model="model"
             class="max-w-140"
+            :model="model"
           />
         </div>
 
@@ -231,14 +232,14 @@ const onUploadImage = async (event: Event) => {
           </h2>
 
           <UTable
-            :data="model.files"
-            :columns="filesTableColumns"
             class="overflow-x-auto"
+            :columns="filesTableColumns"
+            :data="model.files"
           >
             <template #actions-cell="{ row }">
               <FilesTableActions
-                :model-slug="model.slug"
                 :file="row.original as FileDb"
+                :model-slug="model.slug"
               />
             </template>
           </UTable>
@@ -253,14 +254,14 @@ const onUploadImage = async (event: Event) => {
 
           <UInput
             v-model="filesString"
-            type="file"
-            variant="soft"
-            size="lg"
             accept="image/*"
             class="w-full"
-            multiple
             :loading="isUploading"
-            @change="onUploadImage"
+            multiple
+            size="lg"
+            type="file"
+            variant="soft"
+            @change="(e) => onUploadImage(e)"
           />
 
           <ImagesTable

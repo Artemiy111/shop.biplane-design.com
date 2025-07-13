@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { type ResetPasswordSchema, resetPasswordSchema } from './config/shema'
+import { resetPasswordSchema } from './config/shema'
+import type { ResetPasswordSchema } from './config/shema'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { authClient } from '~/src/shared/models/auth-utils'
 import { InputPassword } from '~/src/shared/ui/kit'
@@ -45,25 +46,25 @@ const onSubmit = async (event: FormSubmitEvent<ResetPasswordSchema>) => {
     </PageHeading>
     <UForm
       ref="form"
+      class="flex flex-col gap-y-5 mt-1"
       :schema="resetPasswordSchema"
       :state="state"
-      class="flex flex-col gap-y-5 mt-1"
-      @submit="onSubmit"
+      @submit="e => onSubmit(e)"
     >
       <UFormField
-        name="token"
         label="Токен"
+        name="token"
       >
         <UInput
-          :model-value="state.token"
           class="w-full"
-          type="text"
           disabled
+          :model-value="state.token"
+          type="text"
         />
       </UFormField>
       <UFormField
-        name="password"
         label="Новый пароль"
+        name="password"
       >
         <InputPassword
           v-model="state.password"
@@ -71,8 +72,8 @@ const onSubmit = async (event: FormSubmitEvent<ResetPasswordSchema>) => {
         />
       </UFormField>
       <UFormField
-        name="confirm"
         label="Повторите пароль"
+        name="confirm"
       >
         <InputPassword
           v-model="state.confirm"
@@ -82,11 +83,11 @@ const onSubmit = async (event: FormSubmitEvent<ResetPasswordSchema>) => {
 
       <div class="flex gap-x-4 items-baseline">
         <UButton
-          type="submit"
-          color="neutral"
           class="w-fit mt-5"
-          loading-auto
+          color="neutral"
           :disabled="!!form?.errors.length "
+          loading-auto
+          type="submit"
         >
           Поменять пароль
         </UButton>

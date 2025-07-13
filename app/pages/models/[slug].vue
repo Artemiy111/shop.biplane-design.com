@@ -11,7 +11,7 @@ definePageMeta({
 
 <template>
   <ProductPage
-    :is-model="true"
+    is-model
     :is-set="false"
     :slug="slug"
   />

@@ -29,39 +29,45 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
     <NuxtImg
       v-for="(image, index) in images"
       :key="image.id"
-      :src="image.url || imageUrl(image)"
       :alt="model.name"
       class="aspect-square w-full object-contain"
       :class="[currentImage === index || images.length === 1 ? 'block mix-blend-multiply' : 'hidden']"
+      :src="image.url || imageUrl(image)"
     />
     <div
       v-if="actionsEnabled"
       :class="cn('flex flex-col gap-3 absolute top-4 right-4 @max-3xs/slider:right-2 @max-3xs/slider:top-2 text-neutral-800 z-1 w-fit h-fit')"
     >
-      <button @click.stop.prevent="emit('toggle:is-favorite', model.id)">
+      <button
+        type="button"
+        @click.stop.prevent="() => emit('toggle:is-favorite', model.id)"
+      >
         <HeartIcon
           absolute-stroke-width
-          :stroke-width="1.5"
           :class="cn('size-8 @max-3xs/slider:size-7 @max-4xs/slider:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none pointer-coarse:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
                      model.isFavorite && 'opacity-100 text-red-500 hover:text-red-300')"
+          :stroke-width="1.5"
         />
       </button>
-      <button @click.stop.prevent="emit('toggle:is-in-cart', model.id)">
+      <button
+        type="button"
+        @click.stop.prevent="() => emit('toggle:is-in-cart', model.id)"
+      >
         <ShoppingBagIcon
           absolute-stroke-width
-          :stroke-width="1.5"
           :class="cn('size-8 @max-3xs/slider:size-7 @max-4xs/slider:size-6 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none pointer-coarse:opacity-100 ',
                      'hover:text-red-500 duration-base cursor-pointer',
                      model.isInCart && 'opacity-100 text-red-500 hover:text-red-300',
                      '@max-xs/slider:hidden',
           )"
+          :stroke-width="1.5"
         />
       </button>
     </div>
     <div
-      :style="{ '--_img-cols': images.length }"
       class="grid grid-cols-[repeat(var(--_img-cols),1fr)] gap-2 justify-center absolute bottom-0 w-[calc(100%)-2*var(--spacing)] inset-y-0 inset-x-2"
+      :style="{ '--_img-cols': images.length }"
     >
       <template v-if="images.length > 1">
         <div
@@ -71,7 +77,7 @@ const images = computed(() => isTouchScreen.value ? [model.images[0]!] : model.i
         >
           <div
             class="w-full relative"
-            @mouseenter="currentImage = index"
+            @mouseenter="() => currentImage = index"
           >
             <div
               class="h-0.5 absolute bottom-0 inset-x-0"

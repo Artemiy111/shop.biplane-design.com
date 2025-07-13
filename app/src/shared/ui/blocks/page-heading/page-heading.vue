@@ -1,4 +1,8 @@
 <script setup lang="ts">
+defineSlots<{
+  default: () => unknown
+}>()
+
 const { as = 'h1', size = 'heading' } = defineProps<{
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p'
   size?: 'heading' | 'subheading'

@@ -2,6 +2,10 @@
 import { ru } from '@nuxt/ui/locale'
 import { Header } from '~/src/widgets/header'
 import { Footer } from '~/src/widgets/footer'
+
+defineSlots<{
+  default: () => unknown
+}>()
 </script>
 
 <template>

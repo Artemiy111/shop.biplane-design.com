@@ -2,28 +2,27 @@
 import { EditIcon, TrashIcon, DownloadIcon, EllipsisVerticalIcon } from 'lucide-vue-next'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { FileDb } from '~~/server/db/schema'
-import { updateFileSchema, type UpdateFileSchema } from '~/src/shared/config/validation/db'
+import { updateFileSchema } from '~/src/shared/config/validation/db'
+import type { UpdateFileSchema } from '~/src/shared/config/validation/db'
 import { useUpdateModelFile, useDeleteModelFile } from '~/src/shared/models/mutations'
 
-const props = defineProps<{
+const { modelSlug, file } = defineProps<{
   modelSlug: string
   file: FileDb
 }>()
-
-const { modelSlug, file } = toRefs(props)
 
 const editForm = useTemplateRef('editForm')
 const isEditOpen = ref(false)
 const isDeleteOpen = ref(false)
 
 const editState = ref<UpdateFileSchema>({
-  id: file.value.id,
-  originalFilename: file.value.originalFilename,
+  id: file.id,
+  originalFilename: file.originalFilename,
 })
 watchDeep(file, () => {
   editState.value = {
-    id: file.value.id,
-    originalFilename: file.value.originalFilename,
+    id: file.id,
+    originalFilename: file.originalFilename,
   }
 })
 
@@ -36,7 +35,7 @@ const onUpdateFile = async (event: FormSubmitEvent<UpdateFileSchema>) => {
 }
 
 const onDeleteFile = async () => {
-  await deleteFile(file.value.id)
+  await deleteFile(file.id)
   isDeleteOpen.value = false
 }
 </script>
@@ -46,41 +45,41 @@ const onDeleteFile = async () => {
     :ui="{ content: 'p-4' }"
   >
     <UButton
+      color="neutral"
       square
       variant="ghost"
-      color="neutral"
     >
       <EllipsisVerticalIcon
         absolute-stroke-width
-        :stroke-width="1.5"
         class="size-6"
+        :stroke-width="1.5"
       />
     </UButton>
     <template #content>
       <div class="flex gap-x-2">
         <UModal v-model:open="isEditOpen">
           <UButton
+            color="neutral"
             square
             variant="ghost"
-            color="neutral"
           >
             <EditIcon
               absolute-stroke-width
-              :stroke-width="1.5"
               class="size-6"
+              :stroke-width="1.5"
             />
           </UButton>
           <template #content>
             <UForm
               ref="editForm"
-              :state="editState"
-              :schema="updateFileSchema"
               class="flex flex-col gap-y-5 m-8"
-              @submit="onUpdateFile"
+              :schema="updateFileSchema"
+              :state="editState"
+              @submit="(e) => onUpdateFile(e)"
             >
               <UFormField
-                name="originalFilename"
                 label="Имя файла"
+                name="originalFilename"
               >
                 <UInput
                   v-model="editState.originalFilename"
@@ -88,11 +87,11 @@ const onDeleteFile = async () => {
                 />
               </UFormField>
               <UButton
-                type="submit"
-                color="neutral"
-                loading-auto
                 class="w-fit "
+                color="neutral"
                 :disabled="!!editForm?.errors.length"
+                loading-auto
+                type="submit"
               >
                 Сохранить
               </UButton>
@@ -101,26 +100,26 @@ const onDeleteFile = async () => {
         </UModal>
         <UModal v-model:open="isDeleteOpen">
           <UButton
+            color="neutral"
             square
             variant="ghost"
-            color="neutral"
           >
             <TrashIcon
               absolute-stroke-width
-              :stroke-width="1.5"
               class="size-6"
+              :stroke-width="1.5"
             />
           </UButton>
           <template #content>
             <div class="flex flex-col gap-y-4 m-8">
               Точно хотите удалить файл?
               <UButton
-                type="submit"
-                color="error"
-                loading-auto
                 class="w-fit"
+                color="error"
                 :disabled="!!editForm?.errors.length"
-                @click="onDeleteFile"
+                loading-auto
+                type="submit"
+                @click="e => onDeleteFile()"
               >
                 Да
               </UButton>
@@ -128,14 +127,14 @@ const onDeleteFile = async () => {
           </template>
         </UModal>
         <UButton
+          color="neutral"
           square
           variant="ghost"
-          color="neutral"
         >
           <DownloadIcon
             absolute-stroke-width
-            :stroke-width="1.5"
             class="size-6"
+            :stroke-width="1.5"
           />
         </UButton>
       </div>

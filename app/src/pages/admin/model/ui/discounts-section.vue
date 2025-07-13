@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import { parseDate, type DateValue } from '@internationalized/date'
+import { parseDate } from '@internationalized/date'
+import type { DateValue } from '@internationalized/date'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { useSelectModelDiscount } from '~/src/shared/models/mutations'
-import { useDiscounts, type ModelDto } from '~/src/shared/models/queries'
+import { useDiscounts } from '~/src/shared/models/queries'
+import type { ModelDto } from '~/src/shared/models/queries'
 import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
 const props = defineProps<{
@@ -109,11 +111,11 @@ const discountsTable: TableColumn<DiscountDate>[] = [
         </h2>
         <UButton
           v-if="model.discountId"
-          variant="soft"
           color="neutral"
           loading-auto
           size="sm"
-          @click="onSelectDiscount(null)"
+          variant="soft"
+          @click="() => onSelectDiscount(null)"
         >
           Убрать
         </UButton>
@@ -121,27 +123,27 @@ const discountsTable: TableColumn<DiscountDate>[] = [
       <UTabs
         v-model="discountViewTab"
         color="neutral"
+        :items="[{ icon: 'i-lucide-list', value: 'table' }, { icon: 'i-lucide-calendar', value: 'calendar' }]"
         :ui="{
           indicator: 'bg-(--ui-bg)',
           trigger: 'data-[state=active]:text-(--ui-text)',
         }"
-        :items="[{ icon: 'i-lucide-list', value: 'table' }, { icon: 'i-lucide-calendar', value: 'calendar' }]"
       />
     </div>
     <UTable
       v-if="discountViewTab === 'table'"
-      :data="discountDates"
       :columns="discountsTable"
+      :data="discountDates"
       :sorting="[{ id: 'isActive', desc: false }]"
     >
       <template #actions-cell="{ row }">
         <UButton
-          variant="soft"
           color="neutral"
+          :disabled="!row.original.isActive"
           loading-auto
           size="sm"
-          :disabled="!row.original.isActive"
-          @click="onSelectDiscount(row.original.id)"
+          variant="soft"
+          @click="() => onSelectDiscount(row.original.id)"
         >
           Выбрать
         </UButton>
@@ -150,8 +152,8 @@ const discountsTable: TableColumn<DiscountDate>[] = [
 
     <UCalendar
       v-else
-      :year-controls="false"
       :ui="{ root: 'w-full', headCell: 'text-start', cell: '@container/cell grid justify-center', cellTrigger: 'w-[100cqw] m-0 h-10 p-2 rounded-lg' }"
+      :year-controls="false"
     >
       <template #day="{ day }">
         <UPopover>
@@ -184,12 +186,12 @@ const discountsTable: TableColumn<DiscountDate>[] = [
                   {{ dateFormatter.formatRange(new Date(discount.startDate), new Date(discount.endDate)) }}
                 </span>
                 <UButton
-                  variant="soft"
-                  size="sm"
                   color="neutral"
-                  loading-auto
                   :disabled="!discount.isActive"
-                  @click="onSelectDiscount(discount.id)"
+                  loading-auto
+                  size="sm"
+                  variant="soft"
+                  @click="() => onSelectDiscount(discount.id)"
                 >
                   Выбрать
                 </UButton>

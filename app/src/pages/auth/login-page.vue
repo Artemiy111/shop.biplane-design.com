@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { type LoginSchema, loginSchema } from './config/shema'
+import { loginSchema } from './config/shema'
+import type { LoginSchema } from './config/shema'
 import { authClient } from '~/src/shared/models/auth-utils'
 import PageHeading from '~/src/shared/ui/blocks/page-heading/page-heading.vue'
 import { InputPassword } from '~/src/shared/ui/kit'
@@ -40,14 +41,14 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
     </PageHeading>
     <UForm
       ref="form"
+      class="flex flex-col gap-y-5 mt-1"
       :schema="loginSchema"
       :state="state"
-      class="flex flex-col gap-y-5 mt-1"
-      @submit="onSubmit"
+      @submit="(e) => onSubmit(e)"
     >
       <UFormField
-        name="email"
         label="Email"
+        name="email"
         placeholder="Email"
       >
         <UInput
@@ -57,8 +58,8 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
         />
       </UFormField>
       <UFormField
-        name="password"
         label="Пароль"
+        name="password"
       >
         <InputPassword
           v-model="state.password"
@@ -74,11 +75,11 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>) => {
       <div class="flex flex-col gap-4">
         <div class="flex gap-x-4 items-baseline">
           <UButton
-            type="submit"
-            color="neutral"
-            loading-auto
             class="w-fit mt-5"
+            color="neutral"
             :disabled="!!form?.errors.length "
+            loading-auto
+            type="submit"
           >
             Войти
           </UButton>

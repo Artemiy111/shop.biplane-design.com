@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { type RegisterSchema, registerSchema } from './config/shema'
+import { registerSchema } from './config/shema'
+import type { RegisterSchema } from './config/shema'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { authClient } from '~/src/shared/models/auth-utils'
 import { InputPassword } from '~/src/shared/ui/kit'
@@ -37,34 +38,34 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
     </PageHeading>
     <UForm
       ref="form"
+      class="flex flex-col gap-y-5 mt-1"
       :schema="registerSchema"
       :state="state"
-      class="flex flex-col gap-y-5 mt-1"
-      @submit="onSubmit"
+      @submit="e => onSubmit(e)"
     >
       <UFormField
-        name="name"
         label="Имя"
+        name="name"
       >
         <UInput
           v-model="state.name"
-          type="text"
           class="w-full"
+          type="text"
         />
       </UFormField>
       <UFormField
-        name="email"
         label="Email"
+        name="email"
       >
         <UInput
           v-model="state.email"
-          type="email"
           class="w-full"
+          type="email"
         />
       </UFormField>
       <UFormField
-        name="password"
         label="Пароль"
+        name="password"
       >
         <InputPassword
           v-model="state.password"
@@ -72,8 +73,8 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
         />
       </UFormField>
       <UFormField
-        name="confirm"
         label="Повторите пароль"
+        name="confirm"
       >
         <InputPassword
           v-model="state.confirm"
@@ -83,11 +84,11 @@ const onSubmit = async (event: FormSubmitEvent<RegisterSchema>) => {
 
       <div class="flex gap-x-4 items-baseline">
         <UButton
-          type="submit"
-          color="neutral"
-          loading-auto
           class="w-fit mt-5"
+          color="neutral"
           :disabled="!!form?.errors.length "
+          loading-auto
+          type="submit"
         >
           Зарегистрироваться
         </UButton>

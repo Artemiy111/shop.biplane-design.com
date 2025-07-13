@@ -18,25 +18,25 @@ const { toggleIsInCart } = useToggleIsInCart()
     class="@container/card grid card-grid"
   >
     <NuxtLink
-      :to="`/models/${model.slug}`"
       class="[grid-area:image]"
+      :to="`/models/${model.slug}`"
     >
       <ImageSlider
         v-if="model.images.length"
         :model="model"
-        @toggle:is-favorite="toggleIsFavorite"
-        @toggle:is-in-cart="toggleIsInCart"
+        @toggle:is-favorite="id => toggleIsFavorite(id)"
+        @toggle:is-in-cart="id => toggleIsInCart(id)"
       />
       <div
         v-else
-        :to="`/models/${model.slug}`"
         class="grid justify-center items-center h-full bg-(--ui-bg-muted)"
+        :to="`/models/${model.slug}`"
       >
         <ImageOffIcon
-          :absolute-stroke-width="true"
-          :stroke-width="1.5"
-          name="i-lucide-image-off"
+          absolute-stroke-width
           class="size-8 stroke-1"
+          name="i-lucide-image-off"
+          :stroke-width="1.5"
         />
       </div>
     </NuxtLink>
@@ -44,9 +44,9 @@ const { toggleIsInCart } = useToggleIsInCart()
       <UBadge
         v-for="file in model.files"
         :key="file.id"
-        variant="soft"
         color="neutral"
         :ui="{ base: 'text-xs px-1.5 py-0.5' }"
+        variant="soft"
       >
         <!-- {{ mimeToExt(file.mimeType) }} -->
         Revit 2023
@@ -93,9 +93,9 @@ const { toggleIsInCart } = useToggleIsInCart()
       <div class="@max-xs/card:block hidden mt-4 @max-3xs/card:mt-3">
         <UButton
           class="w-full justify-center @max-3xs/card:text-xs"
-          variant="soft"
           :color="model.isInCart ? 'error' : 'neutral'"
-          @click="toggleIsInCart(model.id)"
+          variant="soft"
+          @click="() => toggleIsInCart(model.id)"
         >
           {{ model.isInCart ? 'Убрать' : 'В корзину' }}
         </UButton>

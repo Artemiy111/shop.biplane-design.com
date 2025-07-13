@@ -103,26 +103,26 @@ const whyUs = [
       </div>
       <div class="relative cursor-grab">
         <TresCanvas
-          shadows
           alpha
           preset="realistic"
+          shadows
         >
           <TresPerspectiveCamera />
           <OrbitControls />
           <TresAmbientLight :intensity="0.5" />
 
           <TresDirectionalLight
-            :position="[4, 4, 2]"
             cast-shadow
+            :position="[4, 4, 2]"
           />
           <TresAxesHelper :scale="2" />
           <Suspense>
             <FBXModel
-              path="/table.fbx"
-              :scale="0.001"
               cast-shadow
-              :rotation="[-Math.PI / 2, 0, 0]"
+              path="/table.fbx"
               receive-shadow
+              :rotation="[-Math.PI / 2, 0, 0]"
+              :scale="0.001"
             />
           </Suspense>
 
@@ -195,8 +195,8 @@ const whyUs = [
         <NuxtLink
           v-for="item in categories"
           :key="item.to"
-          :to="item.to"
           class="hover:text-primary transition duration-base"
+          :to="item.to"
         >
           <div class="relative">
 
@@ -218,8 +218,8 @@ const whyUs = [
         <NuxtLink
           v-for="brand in brands"
           :key="brand.to"
-          :to="brand.to"
           class="hover:text-primary transition duration-base"
+          :to="brand.to"
         >
           <div class="relative">
 

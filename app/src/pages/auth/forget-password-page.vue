@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { forgetPasswordSchema, type ForgetPasswordSchema } from './config/shema'
+import { forgetPasswordSchema } from './config/shema'
+import type { ForgetPasswordSchema } from './config/shema'
 import { authClient } from '~/src/shared/models/auth-utils'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 
@@ -34,14 +35,14 @@ const onSubmit = async (event: FormSubmitEvent<ForgetPasswordSchema>) => {
 
     <UForm
       ref="form"
+      class="flex flex-col gap-y-5 mt-1"
       :schema="forgetPasswordSchema"
       :state="state"
-      class="flex flex-col gap-y-5 mt-1"
-      @submit="onSubmit"
+      @submit="e => onSubmit(e)"
     >
       <UFormField
-        name="email"
         label="Email"
+        name="email"
       >
         <UInput
           v-model="state.email"
@@ -52,11 +53,11 @@ const onSubmit = async (event: FormSubmitEvent<ForgetPasswordSchema>) => {
 
       <div class="flex flex-wrap gap-y-6 gap-x-8 items-baseline ">
         <UButton
-          type="submit"
-          color="neutral"
-          loading-auto
           class="w-fit mt-4"
+          color="neutral"
           :disabled="!!form?.errors.length "
+          loading-auto
+          type="submit"
         >
           Сбросить пароль
         </UButton>

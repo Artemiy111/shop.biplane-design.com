@@ -11,7 +11,7 @@ const { mutate } = useMutation({
   <main class="container">
     <h1>Text</h1>
 
-    <UButton @click="mutate()">
+    <UButton @click="() => mutate()">
       Войти анонимно
     </UButton>
 

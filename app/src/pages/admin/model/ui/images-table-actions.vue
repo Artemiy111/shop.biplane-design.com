@@ -2,31 +2,31 @@
 import { EditIcon, TrashIcon, EllipsisVerticalIcon, LinkIcon } from 'lucide-vue-next'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { ImageDbWithOptimized } from '~~/server/db/schema'
-import { updateImageSchema, type UpdateImageSchema } from '~/src/shared/config/validation/db'
+import { updateImageSchema } from '~/src/shared/config/validation/db'
+import type { UpdateImageSchema } from '~/src/shared/config/validation/db'
 import { useUpdateModelImage, useDeleteModelImage } from '~/src/shared/models/mutations'
 import { imageUrl } from '~/src/shared/lib/image'
 
-const props = defineProps<{
+const { model, image } = defineProps<{
   model: { id: string, slug: string }
   image: ImageDbWithOptimized
 }>()
-
-const { model, image } = toRefs(props)
 
 const editForm = useTemplateRef('editForm')
 const isEditModalOpen = ref(false)
 const isDeleteOpen = ref(false)
 
 const editState = ref<UpdateImageSchema>({
-  id: image.value.id,
-  originalFilename: image.value.originalFilename,
-  alt: image.value.alt,
+  id: image.id,
+  originalFilename: image.originalFilename,
+  alt: image.alt,
 })
-watchDeep(image, () => {
+
+watchDeep(() => image, () => {
   editState.value = {
-    id: image.value.id,
-    originalFilename: image.value.originalFilename,
-    alt: image.value.alt,
+    id: image.id,
+    originalFilename: image.originalFilename,
+    alt: image.alt,
   }
 })
 
@@ -43,7 +43,7 @@ const onUpdateImage = async (event: FormSubmitEvent<UpdateImageSchema>) => {
 // }
 
 const onDeleteImage = async () => {
-  await deleteImage(image.value.id)
+  await deleteImage(image.id)
   isDeleteOpen.value = false
 }
 </script>
@@ -53,14 +53,14 @@ const onDeleteImage = async () => {
     :ui="{ content: 'p-4' }"
   >
     <UButton
+      color="neutral"
       square
       variant="ghost"
-      color="neutral"
     >
       <EllipsisVerticalIcon
         absolute-stroke-width
-        :stroke-width="1.5"
         class="size-6"
+        :stroke-width="1.5"
       />
     </UButton>
     <template #content>
@@ -69,27 +69,27 @@ const onDeleteImage = async () => {
           v-model:open="isEditModalOpen"
         >
           <UButton
+            color="neutral"
             square
             variant="ghost"
-            color="neutral"
           >
             <EditIcon
               absolute-stroke-width
-              :stroke-width="1.5"
               class="size-6"
+              :stroke-width="1.5"
             />
           </UButton>
           <template #content>
             <UForm
               ref="editForm"
-              :state="editState"
-              :schema="updateImageSchema"
               class="flex flex-col gap-y-5 m-8"
-              @submit="onUpdateImage"
+              :schema="updateImageSchema"
+              :state="editState"
+              @submit="e => onUpdateImage(e)"
             >
               <UFormField
-                name="originalFilename"
                 label="Имя файла"
+                name="originalFilename"
               >
                 <UInput
                   v-model="editState.originalFilename"
@@ -97,8 +97,8 @@ const onDeleteImage = async () => {
                 />
               </UFormField>
               <UFormField
-                name="alt"
                 label="Подпись"
+                name="alt"
               >
                 <UInput
                   v-model="editState.alt"
@@ -106,11 +106,11 @@ const onDeleteImage = async () => {
                 />
               </UFormField>
               <UButton
-                type="submit"
-                color="neutral"
-                loading-auto
                 class="w-fit "
+                color="neutral"
                 :disabled="!!editForm?.errors.length"
+                loading-auto
+                type="submit"
               >
                 Сохранить
               </UButton>
@@ -119,26 +119,26 @@ const onDeleteImage = async () => {
         </UModal>
         <UModal v-model:open="isDeleteOpen">
           <UButton
+            color="neutral"
             square
             variant="ghost"
-            color="neutral"
           >
             <TrashIcon
               absolute-stroke-width
-              :stroke-width="1.5"
               class="size-6"
+              :stroke-width="1.5"
             />
           </UButton>
           <template #content>
             <div class="flex flex-col gap-y-4 m-8">
               Точно хотите удалить картинку?
               <UButton
-                type="submit"
-                color="error"
-                loading-auto
                 class="w-fit"
+                color="error"
                 :disabled="!!editForm?.errors.length"
-                @click="onDeleteImage"
+                loading-auto
+                type="submit"
+                @click="() => onDeleteImage()"
               >
                 Да
               </UButton>
@@ -146,17 +146,17 @@ const onDeleteImage = async () => {
           </template>
         </UModal>
         <UButton
-          square
-          variant="ghost"
           color="neutral"
-          :to="image.url ? image.url : imageUrl(image)"
-          target="_blank"
           rel="noopener noreferrer"
+          square
+          target="_blank"
+          :to="image.url ? image.url : imageUrl(image)"
+          variant="ghost"
         >
           <LinkIcon
             absolute-stroke-width
-            :stroke-width="1.5"
             class="size-6"
+            :stroke-width="1.5"
           />
         </UButton>
       </div>

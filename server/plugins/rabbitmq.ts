@@ -1,6 +1,6 @@
 // import { rabbitMQService } from '../services/rabbitmq'
 
-export default defineNitroPlugin(async (nitroApp) => {
+export default defineNitroPlugin(async (_nitroApp) => {
   // console.log('Connecting to rabbitmq')
   // await rabbitMQService.connect()
   // console.log('Connected to rabbitmq')

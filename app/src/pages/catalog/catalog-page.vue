@@ -64,7 +64,7 @@ const brands = ref<Brand[]>([
     <ContentLoader v-if="status === 'pending'" />
     <ContentLoaderError
       v-else-if="status === 'error'"
-      @refresh="refresh"
+      @refresh="() => refresh()"
     />
     <div
       v-else
@@ -83,10 +83,10 @@ const brands = ref<Brand[]>([
             >
               <UButton
                 active-variant="soft"
-                variant="ghost"
                 color="neutral"
                 size="md"
                 :to="`/catalog/c/${c.slug}`"
+                variant="ghost"
               >
                 {{ c.name }}
               </UButton>
@@ -106,10 +106,10 @@ const brands = ref<Brand[]>([
             >
               <UButton
                 active-variant="soft"
-                variant="ghost"
                 color="neutral"
                 size="md"
                 :to="`/catalog/b/${b.slug}`"
+                variant="ghost"
               >
                 {{ b.name }}
               </UButton>

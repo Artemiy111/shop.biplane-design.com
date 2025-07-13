@@ -50,11 +50,10 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
     <div class="">
       <UCarousel
         v-slot="{ item: image }"
-        loop
         :arrows="model.images.length > 1"
         :dots="model.images.length > 1"
-        wheel-gestures
         :items="model.images"
+        loop
         :ui="{
           item: 'rounded-none',
           // controls: 'w-[calc(100%-2*var(--spacing))] relative',
@@ -62,12 +61,13 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
           dots: 'bottom-4 w-full px-4 grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-4 justify-center',
           dot: 'rounded-none h-1 w-full',
         }"
+        wheel-gestures
       >
         <NuxtImg
-          :src="image.url || imageUrl(image)"
           :alt="model.name"
-          :width="image.width || undefined"
           :height="image.height || undefined"
+          :src="image.url || imageUrl(image)"
+          :width="image.width || undefined"
         />
       </UCarousel>
     </div>
@@ -80,7 +80,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
         v-if="!model.description"
         class="mt-2"
       >
-        {{ 'Этот товар самый лучший из всех, что вы видели' }}
+        Этот товар самый лучший из всех, что вы видели
       </p>
 
       <div class="mt-6">
@@ -105,19 +105,22 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
       </div>
 
       <div class="flex gap-x-4 mt-6">
-        <button @click="toggleIsFavorite(model.id)">
+        <button
+          type="button"
+          @click="() => toggleIsFavorite(model.id)"
+        >
           <HeartIcon
-            :size="32"
-            :absolute-stroke-width="true"
-            :stroke-width="1.5"
+            absolute-stroke-width
             :class="cn('hover:text-red-500 duration-300 cursor-pointer',
                        model.isFavorite && ' text-red-500  hover:text-red-300')"
+            :size="32"
+            :stroke-width="1.5"
           />
         </button>
         <UButton
           size="lg"
           :variant="model.isInCart ? 'soft' : 'solid'"
-          @click="toggleIsInCart(model.id)"
+          @click="() => toggleIsInCart(model.id)"
         >
           {{ model.isInCart ? 'Удалить из корзины' : 'Добавить в корзину' }}
         </UButton>
