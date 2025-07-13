@@ -5,7 +5,7 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 
 import ImagesTableActions from './images-table-actions.vue'
 import { imageUrl, mimeToExt } from '~/src/shared/lib/image'
-import { useUpdateModelImageOrderMutation } from '~/src/shared/models/mutations'
+import { useUpdateModelImageOrder } from '~/src/shared/models/mutations'
 import type { ModelDto } from '~/src/shared/models/queries'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { getReadableSize } from '~/src/shared/lib/get-readable-size'
@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const { model } = toRefs(props)
 
-const { updateImageOrder } = useUpdateModelImageOrderMutation(model)
+const { updateImageOrder } = useUpdateModelImageOrder(model)
 
 const onUpdateImageOrder = async (modelId: string, imageId: string, newSortOrder: number) => {
   try {

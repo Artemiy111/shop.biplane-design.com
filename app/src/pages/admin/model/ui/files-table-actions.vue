@@ -3,7 +3,7 @@ import { EditIcon, TrashIcon, DownloadIcon, EllipsisVerticalIcon } from 'lucide-
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { FileDb } from '~~/server/db/schema'
 import { updateFileSchema, type UpdateFileSchema } from '~/src/shared/config/validation/db'
-import { useUpdateModelFileMutation, useDeleteModelFileMutation } from '~/src/shared/models/mutations'
+import { useUpdateModelFile, useDeleteModelFile } from '~/src/shared/models/mutations'
 
 const props = defineProps<{
   modelSlug: string
@@ -27,8 +27,8 @@ watchDeep(file, () => {
   }
 })
 
-const { updateFile } = useUpdateModelFileMutation(modelSlug)
-const { deleteFile } = useDeleteModelFileMutation(modelSlug)
+const { updateFile } = useUpdateModelFile(modelSlug)
+const { deleteFile } = useDeleteModelFile(modelSlug)
 
 const onUpdateFile = async (event: FormSubmitEvent<UpdateFileSchema>) => {
   await updateFile(event.data)

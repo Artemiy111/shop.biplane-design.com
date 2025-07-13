@@ -3,7 +3,7 @@ import { EditIcon, TrashIcon, EllipsisVerticalIcon, LinkIcon } from 'lucide-vue-
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { ImageDbWithOptimized } from '~~/server/db/schema'
 import { updateImageSchema, type UpdateImageSchema } from '~/src/shared/config/validation/db'
-import { useUpdateModelImageMutation, useDeleteModelImageMutation } from '~/src/shared/models/mutations'
+import { useUpdateModelImage, useDeleteModelImage } from '~/src/shared/models/mutations'
 import { imageUrl } from '~/src/shared/lib/image'
 
 const props = defineProps<{
@@ -30,8 +30,8 @@ watchDeep(image, () => {
   }
 })
 
-const { updateImage } = useUpdateModelImageMutation(model)
-const { deleteImage } = useDeleteModelImageMutation(model)
+const { updateImage } = useUpdateModelImage(model)
+const { deleteImage } = useDeleteModelImage(model)
 
 const onUpdateImage = async (event: FormSubmitEvent<UpdateImageSchema>) => {
   await updateImage(event.data)

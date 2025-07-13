@@ -2,7 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 import { parseDate, type DateValue } from '@internationalized/date'
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
-import { useSelectModelDiscountMutation } from '~/src/shared/models/mutations'
+import { useSelectModelDiscount } from '~/src/shared/models/mutations'
 import { useDiscounts, type ModelDto } from '~/src/shared/models/queries'
 import { FancyId } from '~/src/shared/ui/kit/fancy-id'
 
@@ -14,7 +14,7 @@ const { model } = toRefs(props)
 const slug = computed(() => props.model.slug)
 
 const selectedDay = ref<DateValue | null>(null)
-const { selectDiscount } = useSelectModelDiscountMutation(slug)
+const { selectDiscount } = useSelectModelDiscount(slug)
 
 type DiscountDate = typeof discountDates.value[0]
 

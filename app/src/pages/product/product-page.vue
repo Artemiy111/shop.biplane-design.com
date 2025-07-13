@@ -6,7 +6,7 @@ import { useModelBySlug } from '~/src/shared/models/queries'
 import { PageHeadingSkeleton } from '~/src/shared/ui/blocks/page-heading'
 import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { cn } from '~/src/shared/lib/cn'
-import { useToggleIsFavoriteMutation, useToggleIsInCartMutation } from '~/src/shared/models/mutations'
+import { useToggleIsFavorite, useToggleIsInCart } from '~/src/shared/models/mutations'
 
 const { isModel, isSet, slug } = defineProps<{
   isModel: boolean
@@ -16,8 +16,8 @@ const { isModel, isSet, slug } = defineProps<{
 
 const { model } = useModelBySlug(toRef(() => slug))
 
-const { toggleIsFavorite } = useToggleIsFavoriteMutation()
-const { toggleIsInCart } = useToggleIsInCartMutation()
+const { toggleIsFavorite } = useToggleIsFavorite()
+const { toggleIsInCart } = useToggleIsInCart()
 
 const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
   ? [

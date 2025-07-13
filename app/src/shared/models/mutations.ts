@@ -2,7 +2,7 @@ import { useAuthUtils } from '~/src/shared/models/auth-utils'
 import type { UpdateFileSchema, UpdateImageSchema, UpdateModelSchema, UpdateImageOrderSchema } from '~/src/shared/config/validation/db'
 import { useApi } from '~/src/shared/api'
 
-export const useToggleIsFavoriteMutation = defineMutation(() => {
+export const useToggleIsFavorite = defineMutation(() => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -30,7 +30,7 @@ export const useToggleIsFavoriteMutation = defineMutation(() => {
   }
 })
 
-export const useToggleIsInCartMutation = defineMutation(() => {
+export const useToggleIsInCart = defineMutation(() => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -58,7 +58,7 @@ export const useToggleIsInCartMutation = defineMutation(() => {
   }
 })
 
-export const useUpdateModelMutation = (slug: Ref<string>) => {
+export const useUpdateModel = (slug: MaybeRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -73,7 +73,7 @@ export const useUpdateModelMutation = (slug: Ref<string>) => {
       toast.add({ color: 'error', title: 'Не удалось изменить модель' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(slug) }] })
     },
   })
 
@@ -83,7 +83,7 @@ export const useUpdateModelMutation = (slug: Ref<string>) => {
   }
 }
 
-export const useUpdateModelFileMutation = (slug: Ref<string>) => {
+export const useUpdateModelFile = (slug: MaybeRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -98,7 +98,7 @@ export const useUpdateModelFileMutation = (slug: Ref<string>) => {
       toast.add({ color: 'error', title: 'Не удалось изменить файл' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(slug) }] })
     },
   })
 
@@ -108,7 +108,7 @@ export const useUpdateModelFileMutation = (slug: Ref<string>) => {
   }
 }
 
-export const useDeleteModelFileMutation = (slug: Ref<string>) => {
+export const useDeleteModelFile = (slug: MaybeRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -123,7 +123,7 @@ export const useDeleteModelFileMutation = (slug: Ref<string>) => {
       toast.add({ color: 'error', title: 'Не удалось удалить файл' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(slug) }] })
     },
   })
 
@@ -133,7 +133,7 @@ export const useDeleteModelFileMutation = (slug: Ref<string>) => {
   }
 }
 
-export const useSelectModelDiscountMutation = (slug: Ref<string>) => {
+export const useSelectModelDiscount = (slug: MaybeRefOrGetter<string>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -142,13 +142,13 @@ export const useSelectModelDiscountMutation = (slug: Ref<string>) => {
     mutation: async (discountId: string | null) => {
       if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
-      await useApi().admin.models.selectDiscount.mutate({ slug: slug.value, discountId })
+      await useApi().admin.models.selectDiscount.mutate({ slug: toValue(slug), discountId })
     },
     onError: () => {
       toast.add({ color: 'error', title: 'Не удалось изменить скидку' })
     },
     onSettled: async () => {
-      await qc.invalidateQueries({ key: ['models', { slug: slug.value }] })
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(slug) }] })
     },
   })
 
@@ -158,7 +158,7 @@ export const useSelectModelDiscountMutation = (slug: Ref<string>) => {
   }
 }
 
-export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefined>) => {
+export const useUploadModelImage = (model: MaybeRefOrGetter<{ slug: string } | undefined>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -175,8 +175,8 @@ export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefi
       toast.add({ color: 'success', title: 'Картинка загружена' })
     },
     onSettled: async (_, __, _vars) => {
-      if (!model.value) return
-      await qc.invalidateQueries({ key: ['models', { slug: model.value.slug }] })
+      if (!toValue(model)) return
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(model)!.slug }] })
     },
   })
 
@@ -186,7 +186,7 @@ export const useUploadModelImageMutation = (model: Ref<{ slug: string } | undefi
   }
 }
 
-export const useUpdateModelImageMutation = (model: Ref<{ slug: string }>) => {
+export const useUpdateModelImage = (model: MaybeRefOrGetter<{ slug: string }>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -201,7 +201,7 @@ export const useUpdateModelImageMutation = (model: Ref<{ slug: string }>) => {
       toast.add({ color: 'error', title: 'Не удалось изменить картинку' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: model.value.slug }] })
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(model).slug }] })
     },
   })
 
@@ -211,7 +211,7 @@ export const useUpdateModelImageMutation = (model: Ref<{ slug: string }>) => {
   }
 }
 
-export const useUpdateModelImageOrderMutation = (model: Ref<{ slug: string, id: string } | undefined>) => {
+export const useUpdateModelImageOrder = (model: MaybeRefOrGetter<{ slug: string, id: string } | undefined>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -226,8 +226,8 @@ export const useUpdateModelImageOrderMutation = (model: Ref<{ slug: string, id: 
       toast.add({ color: 'error', title: 'Не удалось изменить порядок картинки' })
     },
     onSettled: async (_, __, _vars) => {
-      if (!model.value) return
-      await qc.invalidateQueries({ key: ['models', { slug: model.value.slug }] })
+      if (!toValue(model)) return
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(model)!.slug }] })
     },
   })
 
@@ -237,7 +237,7 @@ export const useUpdateModelImageOrderMutation = (model: Ref<{ slug: string, id: 
   }
 }
 
-export const useDeleteModelImageMutation = (model: Ref<{ id: string, slug: string }>) => {
+export const useDeleteModelImage = (model: MaybeRefOrGetter<{ id: string, slug: string }>) => {
   const toast = useToast()
   const authUtils = useAuthUtils()
   const qc = useQueryCache()
@@ -246,13 +246,13 @@ export const useDeleteModelImageMutation = (model: Ref<{ id: string, slug: strin
     mutation: async (id: string) => {
       if (!authUtils.isAdmin) return toast.add({ color: 'error', title: 'Войдите как админ' })
 
-      await useApi().admin.images.deleteImage.mutate({ modelId: model.value.id, imageId: id })
+      await useApi().admin.images.deleteImage.mutate({ modelId: toValue(model).id, imageId: id })
     },
     onError: () => {
       toast.add({ color: 'error', title: 'Не удалось удалить картинку' })
     },
     onSettled: async (_, __, _vars) => {
-      await qc.invalidateQueries({ key: ['models', { slug: model.value.slug }] })
+      await qc.invalidateQueries({ key: ['models', { slug: toValue(model).slug }] })
     },
   })
 

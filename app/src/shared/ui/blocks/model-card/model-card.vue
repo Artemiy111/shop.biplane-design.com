@@ -2,15 +2,15 @@
 import { ImageOffIcon } from 'lucide-vue-next'
 import ImageSlider from './image-slider.vue'
 import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
-import { useToggleIsFavoriteMutation, useToggleIsInCartMutation } from '~/src/shared/models/mutations'
+import { useToggleIsFavorite, useToggleIsInCart } from '~/src/shared/models/mutations'
 import type { CategoryModel } from '~/src/shared/models/queries'
 
 const { model } = defineProps<{
   model: CategoryModel
 }>()
 
-const { toggleIsFavorite } = useToggleIsFavoriteMutation()
-const { toggleIsInCart } = useToggleIsInCartMutation()
+const { toggleIsFavorite } = useToggleIsFavorite()
+const { toggleIsInCart } = useToggleIsInCart()
 </script>
 
 <template>

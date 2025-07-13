@@ -6,7 +6,7 @@ import ImagesTable from './ui/images-table.vue'
 import DiscountsSection from './ui/discounts-section.vue'
 import { revitVersions } from '~/src/shared/config/constants'
 import { updateModelSchema, type UpdateModelSchema } from '~/src/shared/config/validation/db'
-import { useUpdateModelMutation, useUploadModelImageMutation } from '~/src/shared/models/mutations'
+import { useUpdateModel, useUploadModelImage } from '~/src/shared/models/mutations'
 import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
@@ -30,7 +30,7 @@ const categoriesSelect = computed(() => categories.value.map(category => ({
 
 const { model, status, refresh } = useModelBySlug(slug)
 
-const { updateModel } = useUpdateModelMutation(slug)
+const { updateModel } = useUpdateModel(slug)
 
 const updateModelForm = useTemplateRef('updateModelForm')
 const updateModelState = ref<Partial<UpdateModelSchema>>({})
@@ -89,7 +89,7 @@ const filesTableColumns: TableColumn<FileDb>[] = [
   },
 ]
 
-const { uploadImage } = useUploadModelImageMutation(model)
+const { uploadImage } = useUploadModelImage(model)
 const { optimizedImagesSubscription, status: subStatus } = useOptimizedImagesSubscription(slug)
 onUnmounted(() => optimizedImagesSubscription.unsubscribe())
 
