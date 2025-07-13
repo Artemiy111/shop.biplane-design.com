@@ -7,13 +7,12 @@ import {
   ShoppingBagIcon,
   SunIcon,
   UserIcon,
-
 } from 'lucide-vue-next'
 import type { LucideProps } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 
 import { useAuthUtils, useCartItems, useFavoriteModels } from '~/shared/model'
-import { Logo } from '~/shared/ui/kit'
+import { Logo } from '~/shared/ui'
 
 const colorMode = useColorMode()
 const authUtils = useAuthUtils()

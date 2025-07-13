@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { OrbitControls } from '@tresjs/cientos'
 
-import { PageHeading } from '~/shared/ui/blocks'
+import { PageHeading } from '~/shared/ui'
 
 type Category = {
   name: string

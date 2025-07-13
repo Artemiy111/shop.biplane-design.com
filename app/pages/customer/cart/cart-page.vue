@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatPrice, getPriceAfterDiscount, imageUrl } from '~/shared/lib'
 import { useCartItems } from '~/shared/model'
-import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui/blocks'
+import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui'
 
 const { cartItems, status, refresh } = useCartItems()
 </script>

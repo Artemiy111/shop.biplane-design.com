@@ -5,8 +5,7 @@ import { z } from 'zod'
 
 import { emailSchema, minMaxString, passwordSchema } from '~/shared/config/validation/base'
 import { authClient, useAuthUtils } from '~/shared/model'
-import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui/blocks'
-import { InputPassword } from '~/shared/ui/kit'
+import { ContentLoader, ContentLoaderError, InputPassword, PageHeading } from '~/shared/ui'
 
 const authUtils = useAuthUtils()
 const user = authUtils.useUser()

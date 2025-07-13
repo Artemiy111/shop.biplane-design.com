@@ -6,7 +6,7 @@ import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
 import { dateFormatter, formatBytes, imageUrl, mimeToExt } from '~/shared/lib'
 import { useUpdateModelImageOrder } from '~/shared/model'
 import type { ModelDto } from '~/shared/model'
-import { FancyId } from '~/shared/ui/kit'
+import { FancyId } from '~/shared/ui'
 
 import ImagesTableActions from './images-table-actions.vue'
 

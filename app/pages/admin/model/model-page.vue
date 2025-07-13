@@ -6,8 +6,7 @@ import { updateModelSchema } from '~/shared/config/validation'
 import type { UpdateModelSchema } from '~/shared/config/validation'
 import { dateFormatter, formatBytes } from '~/shared/lib'
 import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription, useUpdateModel, useUploadModelImage } from '~/shared/model'
-import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui/blocks'
-import { FancyId } from '~/shared/ui/kit'
+import { ContentLoader, ContentLoaderError, FancyId, ModelCard, PageHeading } from '~/shared/ui'
 
 import type { FileDb } from '~server/db/schema'
 

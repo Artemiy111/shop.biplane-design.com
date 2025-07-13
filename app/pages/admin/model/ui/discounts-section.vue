@@ -6,7 +6,7 @@ import type { TableColumn } from '@nuxt/ui'
 import { dateFormatter } from '~/shared/lib'
 import { useDiscounts, useSelectModelDiscount } from '~/shared/model'
 import type { ModelDto } from '~/shared/model'
-import { FancyId } from '~/shared/ui/kit'
+import { FancyId } from '~/shared/ui'
 
 const props = defineProps<{
   model: ModelDto

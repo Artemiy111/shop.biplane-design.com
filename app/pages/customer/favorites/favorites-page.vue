@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFavoriteModels } from '~/shared/model'
-import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui/blocks'
+import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui'
 
 const { favoriteModels, status, refresh } = useFavoriteModels()
 </script>

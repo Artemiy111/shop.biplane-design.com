@@ -3,8 +3,7 @@ import type { TableColumn } from '@nuxt/ui'
 import { NuxtImg, ULink } from '#components'
 
 import { formatPrice, getPriceAfterDiscount, imageUrl } from '~/shared/lib'
-import { ContentLoader, ContentLoaderError, PageHeading } from '~/shared/ui/blocks'
-import { FancyId } from '~/shared/ui/kit'
+import { ContentLoader, ContentLoaderError, FancyId, PageHeading } from '~/shared/ui'
 
 import { useAdminModelsPreview } from './model'
 import type { AdminModelPreview } from './model'

@@ -2,8 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 
 import { authClient } from '~/shared/model'
-import { PageHeading } from '~/shared/ui'
-import { InputPassword } from '~/shared/ui/kit'
+import { InputPassword, PageHeading } from '~/shared/ui'
 
 import { registerSchema } from './config/schema'
 import type { RegisterSchema } from './config/schema'

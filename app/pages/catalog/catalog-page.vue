@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useModels } from '~/shared/model'
-import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui/blocks'
+import { ContentLoader, ContentLoaderError, ModelCard, PageHeading } from '~/shared/ui'
 
 const props = defineProps<{
   categorySlug?: string

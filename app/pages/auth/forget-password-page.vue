@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 
 import { authClient } from '~/shared/model'
-import { PageHeading } from '~/shared/ui/blocks'
+import { PageHeading } from '~/shared/ui'
 
 import { forgetPasswordSchema } from './config/schema'
 import type { ForgetPasswordSchema } from './config/schema'

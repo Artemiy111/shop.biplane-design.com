@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PageHeading } from '~/shared/ui/blocks'
+import { PageHeading } from '~/shared/ui'
 </script>
 
 <template>

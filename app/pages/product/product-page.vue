@@ -4,7 +4,7 @@ import { HeartIcon, LoaderCircleIcon } from 'lucide-vue-next'
 
 import { cn, formatPrice, getPriceAfterDiscount, imageUrl } from '~/shared/lib'
 import { useModelBySlug, useToggleIsFavorite, useToggleIsInCart } from '~/shared/model'
-import { PageHeadingSkeleton } from '~/shared/ui/blocks'
+import { PageHeadingSkeleton } from '~/shared/ui'
 
 const { isModel, isSet, slug } = defineProps<{
   isModel: boolean
