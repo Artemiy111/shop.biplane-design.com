@@ -1,16 +1,17 @@
+import { logger } from 'better-auth'
 import { Queue, Worker } from 'bullmq'
 import sharp from 'sharp'
-import { logger } from 'better-auth'
 
-import { redis } from '~~/server/lib/redis'
+import type { ImageOptimizedMimeType } from '~/src/shared/config/constants/mime-types'
+import { makeId } from '~/src/shared/lib/id'
+import { extToMime } from '~/src/shared/lib/image'
+
 import { db } from '~~/server/db'
 import { imagesOptimizedT } from '~~/server/db/schema'
 import { ee } from '~~/server/lib/ee'
 import { env } from '~~/server/lib/env'
 import { minio } from '~~/server/lib/minio'
-import type { ImageOptimizedMimeType } from '~/src/shared/config/constants/mime-types'
-import { makeId } from '~/src/shared/lib/id'
-import { extToMime } from '~/src/shared/lib/image'
+import { redis } from '~~/server/lib/redis'
 
 export const imageOptimizationQueue = new Queue('image-optimization', {
   connection: redis,

@@ -1,6 +1,6 @@
-import { useAuthUtils } from '~/src/shared/models/auth-utils'
-import type { UpdateFileSchema, UpdateImageSchema, UpdateModelSchema, UpdateImageOrderSchema } from '~/src/shared/config/validation/db'
 import { useApi } from '~/src/shared/api'
+import type { UpdateFileSchema, UpdateImageOrderSchema, UpdateImageSchema, UpdateModelSchema } from '~/src/shared/config/validation/db'
+import { useAuthUtils } from '~/src/shared/models/auth-utils'
 
 export const useToggleIsFavorite = defineMutation(() => {
   const toast = useToast()

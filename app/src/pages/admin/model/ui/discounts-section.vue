@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
 import { parseDate } from '@internationalized/date'
 import type { DateValue } from '@internationalized/date'
+import type { TableColumn } from '@nuxt/ui'
+
 import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { useSelectModelDiscount } from '~/src/shared/models/mutations'
 import { useDiscounts } from '~/src/shared/models/queries'

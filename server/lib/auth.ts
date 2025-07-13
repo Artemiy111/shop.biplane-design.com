@@ -1,10 +1,12 @@
 import { betterAuth } from 'better-auth'
-import { anonymous, admin } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { admin, anonymous } from 'better-auth/plugins'
 import { eq } from 'drizzle-orm'
+
 import { db } from '../db'
 import * as schema from '../db/schema'
-import { sendVerificationEmail, sendChangeEmailVerification, sendResetPassword } from './email'
+
+import { sendChangeEmailVerification, sendResetPassword, sendVerificationEmail } from './email'
 
 const names = [
   'Фасадный Гуру',

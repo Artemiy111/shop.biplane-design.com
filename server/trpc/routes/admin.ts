@@ -1,22 +1,24 @@
 import { on } from 'events'
-import { eq, max, and, sql, lte, gt, gte, lt } from 'drizzle-orm'
-import { z } from 'zod'
-import sharp from 'sharp'
-import { Mutex } from 'redis-semaphore'
-import { idSchema, requiredString } from '~/src/shared/config/validation/base'
 
-import { updateModelSchema, createModelSchema, updateFileSchema, createDiscountSchema, updateDiscountSchema, updateImageSchema, uploadImageSchema, updateImageOrderSchema } from '~/src/shared/config/validation/db'
+import { and, eq, gt, gte, lt, lte, max, sql } from 'drizzle-orm'
+import { Mutex } from 'redis-semaphore'
+import sharp from 'sharp'
+import { z } from 'zod'
+
+import type { ImageMimeType } from '~/src/shared/config/constants/mime-types'
+import { idSchema, requiredString } from '~/src/shared/config/validation/base'
+import { createDiscountSchema, createModelSchema, updateDiscountSchema, updateFileSchema, updateImageOrderSchema, updateImageSchema, updateModelSchema, uploadImageSchema } from '~/src/shared/config/validation/db'
+import { makeId } from '~/src/shared/lib/id'
+
 import { db } from '~~/server/db'
 import { discountsT, filesT, imagesT, imageToModelT, modelsT } from '~~/server/db/schema'
-import { logger } from '~~/server/lib/logger'
-import { router, adminProcedure } from '~~/server/trpc'
-import { minio } from '~~/server/lib/minio'
+import { ee } from '~~/server/lib/ee'
 import { env } from '~~/server/lib/env'
-import { makeId } from '~/src/shared/lib/id'
-import type { ImageMimeType } from '~/src/shared/config/constants/mime-types'
+import { logger } from '~~/server/lib/logger'
+import { minio } from '~~/server/lib/minio'
 import { redis } from '~~/server/lib/redis'
 import { imageOptimizationQueue } from '~~/server/services/image-optimization-queue'
-import { ee } from '~~/server/lib/ee'
+import { adminProcedure, router } from '~~/server/trpc'
 
 export const adminRouter = router({
   getCategoriesSimple: adminProcedure.query(async () => {

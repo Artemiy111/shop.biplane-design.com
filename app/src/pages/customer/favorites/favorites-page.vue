@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ModelCard } from '~/src/shared/ui/blocks/model-card'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { useFavoriteModels } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
+import { ModelCard } from '~/src/shared/ui/blocks/model-card'
+import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 
 const { favoriteModels, status, refresh } = useFavoriteModels()
 </script>

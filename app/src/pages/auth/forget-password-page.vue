@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { forgetPasswordSchema } from './config/shema'
-import type { ForgetPasswordSchema } from './config/shema'
+
 import { authClient } from '~/src/shared/models/auth-utils'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
+
+import { forgetPasswordSchema } from './config/shema'
+import type { ForgetPasswordSchema } from './config/shema'
 
 const toast = useToast()
 const form = useTemplateRef('form')

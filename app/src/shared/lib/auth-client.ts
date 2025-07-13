@@ -1,5 +1,5 @@
+import { adminClient, anonymousClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/vue'
-import { anonymousClient, adminClient } from 'better-auth/client/plugins'
 
 export const authClient = createAuthClient({
   plugins: [anonymousClient(), adminClient()],

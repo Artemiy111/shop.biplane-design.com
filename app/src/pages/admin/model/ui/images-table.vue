@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
 import type { TableColumn } from '@nuxt/ui'
 import { useSortable } from '@vueuse/integrations/useSortable'
+import { ChevronDownIcon, GripVerticalIcon, LinkIcon } from 'lucide-vue-next'
 
-import ImagesTableActions from './images-table-actions.vue'
+import { dateFormatter } from '~/src/shared/lib/date-formatter'
+import { getReadableSize } from '~/src/shared/lib/get-readable-size'
 import { imageUrl, mimeToExt } from '~/src/shared/lib/image'
 import { useUpdateModelImageOrder } from '~/src/shared/models/mutations'
 import type { ModelDto } from '~/src/shared/models/queries'
-import { dateFormatter } from '~/src/shared/lib/date-formatter'
-import { getReadableSize } from '~/src/shared/lib/get-readable-size'
 import { FancyId } from '~/src/shared/ui/kit/fancy-id'
+
+import ImagesTableActions from './images-table-actions.vue'
 
 const props = defineProps<{
   model: ModelDto

@@ -4,13 +4,14 @@ import {
   ContainerIcon,
   HeartIcon,
   MoonIcon,
-  SunIcon,
   ShoppingBagIcon,
+  SunIcon,
   UserIcon,
 
 } from 'lucide-vue-next'
 import type { LucideProps } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
+
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
 import { useCartItems, useFavoriteModels } from '~/src/shared/models/queries'
 import { Logo } from '~/src/shared/ui/kit/logo'

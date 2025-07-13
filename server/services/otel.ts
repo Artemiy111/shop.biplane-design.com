@@ -1,13 +1,12 @@
-import { NodeSDK } from '@opentelemetry/sdk-node'
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node'
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus'
-
-import {
-  PeriodicExportingMetricReader,
-  ConsoleMetricExporter,
-} from '@opentelemetry/sdk-metrics'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+import {
+  ConsoleMetricExporter,
+  PeriodicExportingMetricReader,
+} from '@opentelemetry/sdk-metrics'
+import { NodeSDK } from '@opentelemetry/sdk-node'
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node'
 
 const metricExporter = new PrometheusExporter({
   port: 8888, // Порт для метрик Prometheus

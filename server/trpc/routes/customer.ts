@@ -1,11 +1,13 @@
+import { and, count, eq, sql } from 'drizzle-orm'
 import { z } from 'zod'
-import { count, eq, and, sql } from 'drizzle-orm'
-import { modelPrequery, setPrequery } from '~~/server/trpc/query-templates'
-import { router, customerProcedure } from '~~/server/trpc'
+
 import { getPriceAfterDiscount } from '~/src/shared/lib/price'
+
 import { db } from '~~/server/db'
 import type { OrderItemDb } from '~~/server/db/schema'
-import { favoritesT, ordersT, cartItemsT } from '~~/server/db/schema'
+import { cartItemsT, favoritesT, ordersT } from '~~/server/db/schema'
+import { customerProcedure, router } from '~~/server/trpc'
+import { modelPrequery, setPrequery } from '~~/server/trpc/query-templates'
 
 export const customerRouter = router({
   getFavorites: customerProcedure.query(async ({ ctx: { user } }) => {

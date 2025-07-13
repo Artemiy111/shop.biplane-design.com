@@ -1,4 +1,5 @@
 import type { UnwrapRef } from 'vue'
+
 import { useApi } from '~/src/shared/api'
 import { useAuthUtils } from '~/src/shared/models/auth-utils'
 

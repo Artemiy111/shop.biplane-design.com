@@ -1,17 +1,19 @@
 import { logger } from 'better-auth'
+
 import { auth } from '../lib/auth'
+
 import {
   categoriesT,
-  modelsT,
+  discountsT,
+  filesT,
   imagesT,
   imageToModelT,
-  filesT,
-  discountsT,
+  modelsT,
+  modelsToSetsT,
   promocodesT,
   setsT,
-  modelsToSetsT,
 } from './schema'
-import type { SetDb, DiscountDb, FileDb, ImageDb, ImageToModelDb, ModelDb, CategoryDb, PromocodeDb, ModelsToSetsDb } from './schema'
+import type { CategoryDb, DiscountDb, FileDb, ImageDb, ImageToModelDb, ModelDb, ModelsToSetsDb, PromocodeDb, SetDb } from './schema'
 
 import { db } from '.'
 

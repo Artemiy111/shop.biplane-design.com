@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useModels } from '~/src/shared/models/queries'
+import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 // import type { UnwrapRef } from 'vue'
 import { ModelCard } from '~/src/shared/ui/blocks/model-card'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import { useModels } from '~/src/shared/models/queries'
-import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 
 const props = defineProps<{
   categorySlug?: string

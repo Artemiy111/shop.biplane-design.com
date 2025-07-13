@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import { useAdminModelsPreview } from './model'
-import type { AdminModelPreview } from './model'
+import { NuxtImg, ULink } from '#components'
+
+import { imageUrl } from '~/src/shared/lib/image'
+import { formatPrice, getPriceAfterDiscount } from '~/src/shared/lib/price'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import { getPriceAfterDiscount, formatPrice } from '~/src/shared/lib/price'
-import { NuxtImg, ULink } from '#components'
-import { imageUrl } from '~/src/shared/lib/image'
 import { FancyId } from '~/src/shared/ui/kit/fancy-id'
+
+import { useAdminModelsPreview } from './model'
+import type { AdminModelPreview } from './model'
 
 const { models, status } = useAdminModelsPreview()
 

@@ -1,4 +1,5 @@
 import Redis from 'ioredis'
+
 import { logger } from '~~/server/lib/logger'
 
 export const redis = new Redis({

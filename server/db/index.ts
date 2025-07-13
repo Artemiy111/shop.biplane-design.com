@@ -1,7 +1,9 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
+
 import { env } from '../lib/env'
 import { logger } from '../lib/logger'
+
 import { relations } from './relations'
 
 const pool = new Pool({

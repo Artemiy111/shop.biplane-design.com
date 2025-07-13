@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { HeartIcon, ShoppingBagIcon } from 'lucide-vue-next'
-import type { CategoryModel } from '~/src/shared/models/queries'
-import { imageUrl } from '~/src/shared/lib/image'
+
 import { cn } from '~/src/shared/lib/cn'
+import { imageUrl } from '~/src/shared/lib/image'
 import { useIsTouchScreen } from '~/src/shared/models/device'
+import type { CategoryModel } from '~/src/shared/models/queries'
 
 const { model, actionsEnabled = true } = defineProps<{
   actionsEnabled?: boolean

@@ -1,4 +1,5 @@
 import * as Minio from 'minio'
+
 import { env } from './env'
 
 export const minio = new Minio.Client({

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { OrbitControls } from '@tresjs/cientos'
+
 import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 
 type Category = {

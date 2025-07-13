@@ -1,20 +1,111 @@
+import perfectionist from 'eslint-plugin-perfectionist'
+
 // @ts-check
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
   // Your custom configs here
   {
+    plugins: { perfectionist },
+    rules: {
+      /**
+       * Сортировка по FSD
+       */
+
+      'import/order': 'off',
+
+      'perfectionist/sort-exports': [
+        'error',
+        {
+          groupKind: 'values-first',
+          type: 'alphabetical',
+        },
+      ],
+      'perfectionist/sort-imports': ['error', {
+        type: 'alphabetical',
+        groups: [
+          'builtin',
+          'external',
+
+          'shared',
+          'entities',
+          'features',
+          'widgets',
+          'pages',
+          'layouts',
+          'app',
+
+          'server',
+
+          'internal',
+
+          'parent',
+          'sibling',
+          'index',
+          'object',
+          'unknown',
+        ],
+        customGroups: [
+          {
+            groupName: 'shared',
+            elementNamePattern: '^~/src/shared/',
+          },
+          {
+            groupName: 'entities',
+            elementNamePattern: '^~/src/entities/',
+          },
+          {
+            groupName: 'features',
+            elementNamePattern: '^~/src/features/',
+          },
+          {
+            groupName: 'widgets',
+            elementNamePattern: '^~/src/widgets/',
+          },
+          {
+            groupName: 'pages',
+            elementNamePattern: '^~/src/pages/',
+          },
+          {
+            groupName: 'layouts',
+            elementNamePattern: '^~/src/layouts/',
+          },
+          {
+            groupName: 'app',
+            elementNamePattern: '^~/src/app/',
+          },
+          {
+            groupName: 'server',
+            elementNamePattern: '^~~/server/',
+          },
+        ],
+        internalPattern: ['^~/.+', '^~~/src/.+'],
+        newlinesBetween: 'always',
+      }],
+      'perfectionist/sort-named-imports': [
+        'error',
+        {
+          groupKind: 'values-first',
+          type: 'alphabetical',
+        },
+      ],
+      'perfectionist/sort-vue-attributes': 'off',
+    },
+  },
+  {
     rules: {
       'vue/attributes-order': ['error', {
         alphabetical: true,
       }],
       /**
-         * props в kebab-case
-         * @reason Более естественно для html тегов
-         * @example data-smth aria-label :my-custom-props
-         */
+       * props в kebab-case
+       * @reason Более естественно для html тегов
+       * @example data-smth aria-label :my-custom-props
+       */
       'vue/attribute-hyphenation': ['error', 'always'],
-      /** emits в kebab-case */
+      /**
+       * emits в kebab-case
+       */
       'vue/v-on-event-hyphenation': ['error', 'always', {
         autofix: true,
       }],
@@ -26,10 +117,10 @@ export default withNuxt(
       'vue/slot-name-casing': ['error', 'kebab-case'], /** slots в kebab-case */
       'vue/prop-name-casing': ['error', 'camelCase'], /** props в camelCase в defineProps */
       /**
-         * Всегда писать стрелочную функцию в emit
-         * @reason Явная передача события
-         * @example @update="(e) => update(e)"
-         */
+       * Всегда писать стрелочную функцию в emit
+       * @reason Явная передача события
+       * @example @update="(e) => update(e)"
+       */
       'vue/v-on-handler-style': ['error', 'inline-function'],
       'vue/define-emits-declaration': ['error', 'type-literal'],
       'vue/define-macros-order': ['error', { order: [
@@ -45,9 +136,9 @@ export default withNuxt(
       'vue/html-button-has-type': 'error',
       'vue/html-comment-content-spacing': 'error',
       /**
-         * Можно называть компоненты 1 словом
-         * @example <Header />
-         */
+       * Можно называть компоненты 1 словом
+       * @example <Header />
+       */
       'vue/multi-word-component-names': 'off',
       'vue/next-tick-style': 'error',
       'vue/no-duplicate-attr-inheritance': 'error',
@@ -72,8 +163,8 @@ export default withNuxt(
       'vue/v-for-delimiter-style': ['error', 'in'],
       'vue/valid-define-options': 'error',
       /**
-         * Разрешает emits как emit('word:kebab-case')
-         */
+       * Разрешает emits как emit('word:kebab-case')
+       */
       'vue/custom-event-name-casing': ['error', 'kebab-case', {
         ignores: [
 

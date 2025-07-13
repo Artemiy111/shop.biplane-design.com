@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { EditIcon, TrashIcon, DownloadIcon, EllipsisVerticalIcon } from 'lucide-vue-next'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import type { FileDb } from '~~/server/db/schema'
+import { DownloadIcon, EditIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-vue-next'
+
 import { updateFileSchema } from '~/src/shared/config/validation/db'
 import type { UpdateFileSchema } from '~/src/shared/config/validation/db'
-import { useUpdateModelFile, useDeleteModelFile } from '~/src/shared/models/mutations'
+import { useDeleteModelFile, useUpdateModelFile } from '~/src/shared/models/mutations'
+
+import type { FileDb } from '~~/server/db/schema'
 
 const { modelSlug, file } = defineProps<{
   modelSlug: string

@@ -1,8 +1,9 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, index, primaryKey, date, unique } from 'drizzle-orm/pg-core'
-import { makeId } from '~/src/shared/lib/id'
+import { boolean, date, decimal, index, integer, pgTable, primaryKey, text, timestamp, unique } from 'drizzle-orm/pg-core'
+
+import { orderStatuses, paymentProviders, refundStatuses, revitVersions } from '~/src/shared/config/constants'
+import { mimeTypesImages, mimeTypesImagesOptimized, mimeTypesRevit } from '~/src/shared/config/constants/mime-types'
 import { userRoles } from '~/src/shared/config/constants/user'
-import { mimeTypesImages, mimeTypesRevit, mimeTypesImagesOptimized } from '~/src/shared/config/constants/mime-types'
-import { paymentProviders, orderStatuses, refundStatuses, revitVersions } from '~/src/shared/config/constants'
+import { makeId } from '~/src/shared/lib/id'
 
 export const usersT = pgTable('users', {
   id: text().primaryKey().$default(makeId),

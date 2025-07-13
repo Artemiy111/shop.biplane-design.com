@@ -1,6 +1,8 @@
-import { sql } from 'drizzle-orm'
 import { logger } from 'better-auth'
+import { sql } from 'drizzle-orm'
+
 import { imageToModelT } from './schema'
+
 import { db } from '.'
 
 const push = async () => {

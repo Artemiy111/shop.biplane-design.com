@@ -1,5 +1,5 @@
 import { mimeTypesImages } from '~/src/shared/config/constants/mime-types'
-import type { ImageExt, ImageMimeType, RevitMimeType, RevitExt, ImageOptimizedMimeType } from '~/src/shared/config/constants/mime-types'
+import type { ImageExt, ImageMimeType, ImageOptimizedMimeType, RevitExt, RevitMimeType } from '~/src/shared/config/constants/mime-types'
 
 export const mimeToExt = (mime: ImageMimeType | RevitMimeType) => {
   if (mimeTypesImages.includes(mime as ImageMimeType)) return mime.split('/').pop()! as ImageExt

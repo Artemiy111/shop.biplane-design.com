@@ -1,6 +1,8 @@
 import type { UnwrapRef } from 'vue'
-import { useAuthUtils } from './auth-utils'
+
 import { useApi } from '~/src/shared/api'
+
+import { useAuthUtils } from './auth-utils'
 
 export const useCategoriesSimple = defineQuery(() => {
   const authUtils = useAuthUtils()

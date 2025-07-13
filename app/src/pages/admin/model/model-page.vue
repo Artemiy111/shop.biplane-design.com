@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui'
 
-import FilesTableActions from './ui/files-table-actions.vue'
-import ImagesTable from './ui/images-table.vue'
-import DiscountsSection from './ui/discounts-section.vue'
 import { revitVersions } from '~/src/shared/config/constants'
 import { updateModelSchema } from '~/src/shared/config/validation/db'
 import type { UpdateModelSchema } from '~/src/shared/config/validation/db'
+import { dateFormatter } from '~/src/shared/lib/date-formatter'
+import { getReadableSize } from '~/src/shared/lib/get-readable-size'
 import { useUpdateModel, useUploadModelImage } from '~/src/shared/models/mutations'
 import { useCategoriesSimple, useModelBySlug, useOptimizedImagesSubscription } from '~/src/shared/models/queries'
 import { ContentLoader, ContentLoaderError } from '~/src/shared/ui/blocks/content-loader'
-import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
-import type { FileDb } from '~~/server/db/schema'
-import { dateFormatter } from '~/src/shared/lib/date-formatter'
 import { ModelCard } from '~/src/shared/ui/blocks/model-card'
-import { getReadableSize } from '~/src/shared/lib/get-readable-size'
+import { PageHeading } from '~/src/shared/ui/blocks/page-heading'
 import { FancyId } from '~/src/shared/ui/kit/fancy-id'
+
+import type { FileDb } from '~~/server/db/schema'
+
+import DiscountsSection from './ui/discounts-section.vue'
+import FilesTableActions from './ui/files-table-actions.vue'
+import ImagesTable from './ui/images-table.vue'
 
 const props = defineProps<{
   slug: string

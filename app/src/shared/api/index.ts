@@ -1,5 +1,5 @@
+import { httpSubscriptionLink, isNonJsonSerializable, splitLink } from '@trpc/client'
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from 'trpc-nuxt/client'
-import { splitLink, isNonJsonSerializable, httpSubscriptionLink } from '@trpc/client'
 
 import type { AppRouter } from '~~/server/trpc/routes'
 

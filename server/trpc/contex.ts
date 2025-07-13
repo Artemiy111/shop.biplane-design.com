@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+
 import { auth } from '~~/server/lib/auth'
 // import { rabbitMQService } from '~~/server/services/rabbitmq'
 
