@@ -6,6 +6,9 @@ on:
     - cron: '0 21 * * *'
   workflow_dispatch: # возможность запустить вручную из вкладки Actions
 
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -14,6 +17,8 @@ jobs:
       # 1. Клонируем репозиторий в среду GitHub Actions
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # 2. Ставим Bun последней версии
       - name: Setup Bun
