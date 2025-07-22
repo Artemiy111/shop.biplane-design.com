@@ -1,0 +1,40 @@
+name: Update Deps
+
+on:
+  schedule:
+    # Запускается каждый день в 21:00 UTC (это 00:00 по Москве)
+    - cron: '0 21 * * *'
+  workflow_dispatch: # возможность запустить вручную из вкладки Actions
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Клонируем репозиторий в среду GitHub Actions
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 2. Ставим Bun последней версии
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # 3. Устанавливаем зависимости из package.json (сгенерируется bun.lock)
+      - name: Install deps
+        run: bun install
+
+      # 4. Обновляем зависимости
+      - name: Update deps
+        run: bun update
+
+      # 5. Коммитим изменения (если есть) и пушим в ту же ветку
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock package.json
+          # Проверяем, есть ли изменения
+          git diff --cached --quiet || git commit -m "chore: update bun dependencies"
+          git push
