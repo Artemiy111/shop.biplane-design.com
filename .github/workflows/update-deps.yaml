@@ -14,27 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Клонируем репозиторий в среду GitHub Actions
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. Ставим Bun последней версии
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      # 3. Устанавливаем зависимости из package.json (сгенерируется bun.lock)
       - name: Install deps
         run: bun install
 
-      # 4. Обновляем зависимости
       - name: Update deps
         run: bun update
 
-      # 5. Коммитим изменения (если есть) и пушим в ту же ветку
       - name: Commit and push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
