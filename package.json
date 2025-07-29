@@ -62,7 +62,7 @@
     "lucide-vue-next": "^0.525.0",
     "minio": "^8.0.5",
     "nodemailer": "^7.0.5",
-    "nuxt": "^4.0.1",
+    "nuxt": "^4.0.2",
     "pg": "^8.16.3",
     "pinia": "^3.0.3",
     "redis-semaphore": "^5.6.2",
@@ -75,7 +75,7 @@
     "vue": "^3.5.18",
     "vue-router": "^4.5.1",
     "winston": "^3.17.0",
-    "zod": "^4.0.10",
+    "zod": "^4.0.13",
     "zod-form-data": "^3.0.0"
   },
   "devDependencies": {
