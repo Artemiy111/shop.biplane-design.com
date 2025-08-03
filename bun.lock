@@ -4,7 +4,7 @@
     "": {
       "name": "nuxt-app",
       "dependencies": {
-        "@iconify-json/lucide": "^1.2.59",
+        "@iconify-json/lucide": "^1.2.60",
         "@nuxt/eslint": "1.6.0",
         "@nuxt/fonts": "0.11.4",
         "@nuxt/icon": "1.15.0",
