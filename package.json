@@ -25,7 +25,7 @@
     "db:studio": "drizzle-kit studio --verbose"
   },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.62",
+    "@iconify-json/lucide": "^1.2.63",
     "@nuxt/eslint": "1.6.0",
     "@nuxt/fonts": "0.11.4",
     "@nuxt/icon": "1.15.0",
