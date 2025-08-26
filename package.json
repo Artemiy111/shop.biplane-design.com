@@ -53,7 +53,7 @@
     "@vueuse/nuxt": "^13.7.0",
     "amqplib": "^0.10.9",
     "better-auth": "^1.3.7",
-    "bullmq": "^5.58.1",
+    "bullmq": "^5.58.2",
     "clsx": "^2.1.1",
     "drizzle-orm": "^1.0.0-beta.1-fd5d1e8",
     "eslint": "^9.34.0",
@@ -75,12 +75,12 @@
     "vue": "^3.5.20",
     "vue-router": "^4.5.1",
     "winston": "^3.17.0",
-    "zod": "^4.1.1",
+    "zod": "^4.1.3",
     "zod-form-data": "^3.0.0"
   },
   "devDependencies": {
     "@art/vue-eslint-config": "workspace:*",
-    "@types/bun": "^1.2.20",
+    "@types/bun": "^1.2.21",
     "@types/nodemailer": "^6.4.19",
     "@types/sharp": "^0.32.0",
     "@types/sortablejs": "^1.15.8",
