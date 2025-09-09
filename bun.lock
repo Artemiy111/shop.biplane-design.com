@@ -31,7 +31,7 @@
         "@vueuse/integrations": "^13.9.0",
         "@vueuse/nuxt": "^13.9.0",
         "amqplib": "^0.10.9",
-        "better-auth": "^1.3.8",
+        "better-auth": "^1.3.9",
         "bullmq": "^5.58.5",
         "clsx": "^2.1.1",
         "drizzle-orm": "^1.0.0-beta.1-fd5d1e8",
@@ -788,7 +788,7 @@
 
     "@petamoriken/float16": ["@petamoriken/float16@3.9.2", "", {}, "sha512-VgffxawQde93xKxT3qap3OH+meZf7VaSB5Sqd4Rqc+FP5alWbpOyan/7tRbOAvynjpG3GpdtAuGU/NdhQpmrog=="],
 
-    "@pinia/colada": ["@pinia/colada@0.17.3", "", { "dependencies": { "@vue/devtools-api": "^8.0.0" }, "peerDependencies": { "pinia": "^2.2.6 || ^3.0.0", "vue": "^3.5.17" } }, "sha512-zFB+YywNo8P6X2PrWtDlgZXg72dd0IiSVorUeJqvi/zffrYlJOGd7vrzjPexFLp/yvxQTP2qo7VyvdGuoAK+NA=="],
+    "@pinia/colada": ["@pinia/colada@0.17.4", "", { "dependencies": { "@vue/devtools-api": "^8.0.0" }, "peerDependencies": { "pinia": "^2.2.6 || ^3.0.0", "vue": "^3.5.17" } }, "sha512-UHru0YLO55DsXqDzt7ehFBndN8jl9Sp1atG713jvW/w8odL0ZwJ4Hs6+9bKMeYsgst5ABmWZenANBeKVg9uEMA=="],
 
     "@pinia/colada-nuxt": ["@pinia/colada-nuxt@0.2.1", "", { "dependencies": { "@nuxt/kit": "^3.17.4" }, "peerDependencies": { "@pinia/colada": ">=0.17.0" } }, "sha512-bYeuu6ITlNrnRTUoRXsPo+TttNDWa9MZbJ1rS/ElmzA4liPAXJD4mozJ6PS46Rb7inBFYWTDNvRfHXBuweifmg=="],
 
