@@ -25,7 +25,7 @@
     "db:studio": "drizzle-kit studio --verbose"
   },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.66",
+    "@iconify-json/lucide": "^1.2.67",
     "@nuxt/eslint": "1.6.0",
     "@nuxt/fonts": "0.11.4",
     "@nuxt/icon": "1.15.0",
@@ -40,7 +40,7 @@
     "@opentelemetry/sdk-node": "^0.203.0",
     "@opentelemetry/sdk-trace-node": "^2.1.0",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@pinia/colada": "^0.17.4",
+    "@pinia/colada": "^0.17.5",
     "@pinia/colada-nuxt": "0.2.1",
     "@pinia/nuxt": "0.11.2",
     "@tresjs/cientos": "^4.3.1",
@@ -75,7 +75,7 @@
     "vue": "^3.5.21",
     "vue-router": "^4.5.1",
     "winston": "^3.17.0",
-    "zod": "^4.1.5",
+    "zod": "^4.1.8",
     "zod-form-data": "^3.0.1"
   },
   "devDependencies": {
