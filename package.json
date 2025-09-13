@@ -62,7 +62,7 @@
     "lucide-vue-next": "^0.525.0",
     "minio": "^8.0.6",
     "nodemailer": "^7.0.6",
-    "nuxt": "^4.1.1",
+    "nuxt": "^4.1.2",
     "pg": "^8.16.3",
     "pinia": "^3.0.3",
     "redis-semaphore": "^5.6.2",
