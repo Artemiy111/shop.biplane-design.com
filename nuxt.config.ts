@@ -58,10 +58,6 @@ export default defineNuxtConfig({
     transpile: ['trpc-nuxt'],
   },
 
-  future: {
-    compatibilityVersion: 4,
-  },
-
   experimental: {
     typedPages: true,
     crossOriginPrefetch: true,
