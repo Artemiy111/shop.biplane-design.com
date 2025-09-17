@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import 'dotenv/config'
 
 const envString = z.string().min(3)
 

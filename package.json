@@ -1,5 +1,5 @@
 {
-  "name": "biplane-shop",
+  "name": "biplane-design-shop",
   "private": true,
   "type": "module",
   "workspaces": ["app/shared/packages/*"],
@@ -19,8 +19,8 @@
     "db:dropmigtaion": "drizzle-kit dropmigration",
     "db:seed": "bun tsx ./server/db/seed.ts",
     "db:drop": "bun tsx ./server/db/drop.ts",
-    "db:create": "podman exec -it shopbiplane-designcom_postgres_1 psql -U postgres -c \"CREATE DATABASE biplane;\"",
-    "db:destroy": "podman exec -it shopbiplane-designcom_postgres_1 psql -U postgres -c \"DROP DATABASE IF EXISTS biplane;\"",
+    "db:create": "docker exec -it biplane-design-shop-postgres-1 psql -U postgres -c \"CREATE DATABASE biplane;\"",
+    "db:destroy": "docker exec -it biplane-design-shop-postgres-1 psql -U postgres -c \"DROP DATABASE IF EXISTS biplane;\"",
     "db:init": "bun run db:destroy && bun run db:create && bun run db:push && bun run db:seed",
     "db:studio": "drizzle-kit studio --verbose"
   },

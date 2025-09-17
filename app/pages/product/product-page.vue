@@ -105,7 +105,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
       <div class="flex gap-x-4 mt-6">
         <button
           type="button"
-          @click="() => toggleIsFavorite(model.id)"
+          @click="() => toggleIsFavorite(model!.id)"
         >
           <HeartIcon
             absolute-stroke-width
@@ -118,7 +118,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => model.value
         <UButton
           size="lg"
           :variant="model.isInCart ? 'soft' : 'solid'"
-          @click="() => toggleIsInCart(model.id)"
+          @click="() => toggleIsInCart(model!.id)"
         >
           {{ model.isInCart ? 'Удалить из корзины' : 'Добавить в корзину' }}
         </UButton>

@@ -10,7 +10,7 @@
 #     - pgadmin_data:/var/lib/pgadmin
 #   networks:
 #     - app
-
+name: biplane-design-shop
 services:
   pgweb: 
     image: sosedoff/pgweb
@@ -76,142 +76,142 @@ services:
       timeout: 5s
       retries: 3
 
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    entrypoint: ["/otelcol-contrib"]
-    command: ["--config=/etc/otel-config.yaml"]
-    volumes:
-      - ./docker/otel-config.yaml:/etc/otel-config.yaml
-    ports:
-      - "4317:4317"  # OTLP gRPC
-      - "4318:4318"  # OTLP HTTP
-      - "8889:8889"  # Metrics
-    depends_on:
-      - tempo
-      - loki
-      - prometheus
-    networks:
-      - app
-    security_opt:
-      - label=disable
-    restart: unless-stopped
+  # otel-collector:
+  #   image: otel/opentelemetry-collector-contrib:latest
+  #   entrypoint: ["/otelcol-contrib"]
+  #   command: ["--config=/etc/otel-config.yaml"]
+  #   volumes:
+  #     - ./docker/otel-config.yaml:/etc/otel-config.yaml
+  #   ports:
+  #     - "4317:4317"  # OTLP gRPC
+  #     - "4318:4318"  # OTLP HTTP
+  #     - "8889:8889"  # Metrics
+  #   depends_on:
+  #     - tempo
+  #     - loki
+  #     - prometheus
+  #   networks:
+  #     - app
+  #   security_opt:
+  #     - label=disable
+  #   restart: unless-stopped
 
-  tempo:
-    image: grafana/tempo:latest
-    command: -config.file=/etc/tempo.yaml
-    volumes:
-      - ./docker/tempo.yaml:/etc/tempo.yaml
-      - tempo_data:/tmp/tempo
-    ports:
-      - "3200:3200"   # HTTP
-      - "4320:4320"   # OTLP gRPC
-      - "9095:9095"
-    networks:
-      - app
-    security_opt:
-      - label=disable
-    restart: unless-stopped
+  # tempo:
+  #   image: grafana/tempo:latest
+  #   command: -config.file=/etc/tempo.yaml
+  #   volumes:
+  #     - ./docker/tempo.yaml:/etc/tempo.yaml
+  #     - tempo_data:/tmp/tempo
+  #   ports:
+  #     - "3200:3200"   # HTTP
+  #     - "4320:4320"   # OTLP gRPC
+  #     - "9095:9095"
+  #   networks:
+  #     - app
+  #   security_opt:
+  #     - label=disable
+  #   restart: unless-stopped
 
-  loki:
-    image: grafana/loki:latest
-    volumes:
-      - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
-      - loki_data:/var/lib/loki
-    ports:
-      - "3100:3100"
-    networks:
-      - app
-    security_opt:
-      - label=disable
-    restart: unless-stopped
+  # loki:
+  #   image: grafana/loki:latest
+  #   volumes:
+  #     - ./docker/loki-config.yaml:/etc/loki/local-config.yaml
+  #     - loki_data:/var/lib/loki
+  #   ports:
+  #     - "3100:3100"
+  #   networks:
+  #     - app
+  #   security_opt:
+  #     - label=disable
+  #   restart: unless-stopped
 
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./docker/prometheus.yaml:/etc/prometheus/prometheus.yml
-      - ./docker/prometheus-rules.yaml:/etc/prometheus/prometheus-rules.yaml
-      - prometheus_data:/prometheus
-    ports:
-      - "9090:9090"
-    networks:
-      - app
-    security_opt:
-      - label=disable
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   volumes:
+  #     - ./docker/prometheus.yaml:/etc/prometheus/prometheus.yml
+  #     - ./docker/prometheus-rules.yaml:/etc/prometheus/prometheus-rules.yaml
+  #     - prometheus_data:/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   networks:
+  #     - app
+  #   security_opt:
+  #     - label=disable
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
 
-  node-exporter:
-      image: quay.io/prometheus/node-exporter:latest
-      ports:
-        - "9100:9100"
-      command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/host/root'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
-      - '--no-collector.wifi'
-      - '--no-collector.hwmon'
-      volumes:
-        - /proc:/host/proc:ro
-        - /sys:/host/sys:ro
-        - /:/host/root:ro
-        - /etc/os-release:/etc/os-release:ro
-        - /etc/hostname:/etc/host_hostname:ro
-      environment:
-      - "PODMAN_USERNS=keep-id"
-      networks: 
-        - app
-      security_opt:
-        - label=disable
-        - seccomp=unconfined
-      privileged: true
-      restart: unless-stopped
+  # node-exporter:
+  #     image: quay.io/prometheus/node-exporter:latest
+  #     ports:
+  #       - "9100:9100"
+  #     command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--path.rootfs=/host/root'
+  #     - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+  #     - '--no-collector.wifi'
+  #     - '--no-collector.hwmon'
+  #     volumes:
+  #       - /proc:/host/proc:ro
+  #       - /sys:/host/sys:ro
+  #       - /:/host/root:ro
+  #       - /etc/os-release:/etc/os-release:ro
+  #       - /etc/hostname:/etc/host_hostname:ro
+  #     environment:
+  #     - "PODMAN_USERNS=keep-id"
+  #     networks: 
+  #       - app
+  #     security_opt:
+  #       - label=disable
+  #       - seccomp=unconfined
+  #     privileged: true
+  #     restart: unless-stopped
 
-  alertmanager:
-    image: prom/alertmanager:latest
-    command:
-      - --config.file=/etc/alertmanager/alertmanager.yml
-    ports:
-      - "9093:9093"
-    volumes:
-      - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
-    depends_on:
-      - prometheus
-    networks:
-      - app
-    security_opt:
-      - label=disable
-    restart: unless-stopped
+  # alertmanager:
+  #   image: prom/alertmanager:latest
+  #   command:
+  #     - --config.file=/etc/alertmanager/alertmanager.yml
+  #   ports:
+  #     - "9093:9093"
+  #   volumes:
+  #     - ./docker/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+  #   depends_on:
+  #     - prometheus
+  #   networks:
+  #     - app
+  #   security_opt:
+  #     - label=disable
+  #   restart: unless-stopped
 
-  grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - grafana_data:/var/lib/grafana
-    ports:
-      - "3001:3000"
-    depends_on:
-      - tempo
-      - loki
-      - prometheus
-      - alertmanager
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    networks:
-      - app
-    security_opt:
-      - label=disable
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   volumes:
+  #     - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+  #     - grafana_data:/var/lib/grafana
+  #   ports:
+  #     - "3001:3000"
+  #   depends_on:
+  #     - tempo
+  #     - loki
+  #     - prometheus
+  #     - alertmanager
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   networks:
+  #     - app
+  #   security_opt:
+  #     - label=disable
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
       
 networks:
   app:

@@ -1,9 +1,9 @@
-import { boolean, date, decimal, index, integer, pgTable, primaryKey, text, timestamp, unique } from 'drizzle-orm/pg-core'
+import { boolean, date, decimal, index, integer, numeric, pgTable, primaryKey, real, text, timestamp, unique } from 'drizzle-orm/pg-core'
 
-import { orderStatuses, paymentProviders, refundStatuses, revitVersions } from '~/shared/config/constants'
-import { mimeTypesImages, mimeTypesImagesOptimized, mimeTypesRevit } from '~/shared/config/constants/mime-types'
-import { userRoles } from '~/shared/config/constants/user'
-import { makeId } from '~/shared/lib/id'
+import { orderStatuses, paymentProviders, refundStatuses, revitVersions } from '../../app/shared/config/constants'
+import { mimeTypesImages, mimeTypesImagesOptimized, mimeTypesRevit } from '../../app/shared/config/constants/mime-types'
+import { userRoles } from '../../app/shared/config/constants/user'
+import { makeId } from '../../app/shared/lib/id'
 
 export const usersT = pgTable('users', {
   id: text().primaryKey().$default(makeId),
@@ -79,7 +79,7 @@ export const setsT = pgTable('sets', {
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
-  price: decimal({ mode: 'number' }).notNull(),
+  price: real().notNull(),
   discountId: text().references(() => discountsT.id),
   imageId: text().references(() => imagesT.id),
   createdAt: timestamp({ mode: 'string' }).defaultNow(),
@@ -96,7 +96,7 @@ export const modelsT = pgTable('models', {
   // fileFormat: text(),
   // fileSize: integer(),
   revitVersion: text({ enum: revitVersions }).notNull(),
-  price: decimal({ mode: 'number' }).notNull(),
+  price: real().notNull(),
   discountId: text().references(() => discountsT.id, { onUpdate: 'cascade', onDelete: 'set null' }),
   // show: boolean().notNull().default(true),
   createdAt: timestamp({ mode: 'string' }).defaultNow(),
@@ -168,7 +168,7 @@ export type FileDb = typeof filesT.$inferSelect
 export const discountsT = pgTable('discounts', {
   id: text().primaryKey().$default(makeId),
   label: text(),
-  discountPercentage: decimal({ mode: 'number' }).notNull(),
+  discountPercentage: real().notNull(),
   startDate: date({ mode: 'string' }),
   endDate: date({ mode: 'string' }),
 })
@@ -178,7 +178,7 @@ export type DiscountDb = typeof discountsT.$inferSelect
 export const promocodesT = pgTable('promocodes', {
   id: text().primaryKey().$default(makeId),
   code: text().notNull().unique(),
-  discountPercentage: decimal({ mode: 'number' }).notNull(),
+  discountPercentage: real().notNull(),
   startDate: date({ mode: 'string' }),
   endDate: date({ mode: 'string' }),
   maxUsage: integer(),
@@ -190,8 +190,8 @@ export type PromocodeDb = typeof promocodesT.$inferSelect
 export const ordersT = pgTable('orders', {
   id: text().primaryKey().$default(makeId),
   userId: text().notNull().references(() => usersT.id, { onDelete: 'restrict' }),
-  totalPrice: decimal({ mode: 'number' }).notNull(),
-  totalPriceBeforeDiscount: decimal({ mode: 'number' }).notNull(),
+  totalPrice: real().notNull(),
+  totalPriceBeforeDiscount: real().notNull(),
 
   promocodeId: text().references(() => promocodesT.id),
   createdAt: timestamp().notNull().defaultNow(),
@@ -209,8 +209,8 @@ export const orderItemsT = pgTable('order_items', {
   orderId: text().notNull().references(() => ordersT.id, { onDelete: 'restrict' }),
   modelId: text().references(() => modelsT.id),
   setId: text().references(() => setsT.id),
-  price: decimal({ mode: 'number' }).notNull(),
-  priceBeforeDiscount: decimal({ mode: 'number' }).notNull(),
+  price: real().notNull(),
+  priceBeforeDiscount: real().notNull(),
   discountId: text().references(() => discountsT.id),
 }, t => [index().on(t.orderId)])
 
