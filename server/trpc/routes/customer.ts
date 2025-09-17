@@ -210,7 +210,7 @@ export const customerRouter = router({
           totalPrice,
           totalPriceBeforeDiscount,
           promocodeId: promocode?.id,
-          paymentProviter: 'tbank',
+          paymentProvider: 'tbank',
           paymentStatus: 'pending',
           paymentUrl: null,
           paymentId: null,
